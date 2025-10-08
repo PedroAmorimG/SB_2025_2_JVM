@@ -1,20 +1,24 @@
+#ifndef CLASS_PARSER_H
+#define CLASS_PARSER_H
+
 #include "jvm_types.h"
 #include <fstream>
 #include <vector>
-
+#define view true
 u1 read_1byte(std::ifstream &file);
 u2 read_2bytes(std::ifstream &file);
 u4 read_4bytes(std::ifstream &file);
 
-u4 read_magic(std::ifstream &file, bool debug);
-u2 read_major_version(std::ifstream &file, bool debug);
-u2 read_minor_version(std::ifstream &file, bool debug);
-u2 read_constant_pool_count(std::ifstream &file, bool debug);
+u4 read_magic(std::ifstream &file, bool debug = view);
+u2 read_major_version(std::ifstream &file, bool debug = view);
+u2 read_minor_version(std::ifstream &file, bool debug = view);
+u2 read_constant_pool_count(std::ifstream &file, bool debug = view);
 std::vector<ConstantPoolEntry> read_constant_pool(std::ifstream &file,
-                                                  u2 count);
-u2 read_access_flags(std::ifstream &file, bool debug);
-u2 read_this_class(std::ifstream &file, bool debug);
-u2 read_super_class(std::ifstream &file, bool debug);
+                                                  u2 count,
+                                                  bool debug);
+u2 read_access_flags(std::ifstream &file, bool debug = view);
+u2 read_this_class(std::ifstream &file, bool debug = view);
+u2 read_super_class(std::ifstream &file, bool debug = view);
 u2 read_interface_count(std::ifstream &file);
 std::vector<u2> read_interfaces(std::ifstream &file, u2 count);
 u2 read_field_count(std::ifstream &file);
@@ -23,3 +27,5 @@ u2 read_method_count(std::ifstream &file);
 std::vector<MethodInfo> read_methods(std::ifstream &file, u2 count);
 u2 read_attribute_count(std::ifstream &file);
 std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count);
+
+#endif

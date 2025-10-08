@@ -25,7 +25,7 @@ u4 read_4bytes(std::ifstream &file) {
   return (half_word1 << 16) | half_word2;
 }
 
-u4 read_magic(std::ifstream &file, bool debug = false) {
+u4 read_magic(std::ifstream &file, bool debug) {
   u4 magic = read_4bytes(file);
 
   if (debug) {
@@ -34,7 +34,7 @@ u4 read_magic(std::ifstream &file, bool debug = false) {
   return magic;
 }
 
-u2 read_major_version(std::ifstream &file, bool debug = false) {
+u2 read_major_version(std::ifstream &file, bool debug) {
   u2 major = read_2bytes(file);
 
   if (debug) {
@@ -44,7 +44,7 @@ u2 read_major_version(std::ifstream &file, bool debug = false) {
   return major;
 }
 
-u2 read_minor_version(std::ifstream &file, bool debug = false) {
+u2 read_minor_version(std::ifstream &file, bool debug) {
   u2 minor = read_2bytes(file);
 
   if (debug) {
@@ -54,7 +54,7 @@ u2 read_minor_version(std::ifstream &file, bool debug = false) {
   return minor;
 }
 
-u2 read_constant_pool_count(std::ifstream &file, bool debug = false) {
+u2 read_constant_pool_count(std::ifstream &file, bool debug) {
   u2 count = read_2bytes(file);
 
   if (debug) {
@@ -149,7 +149,7 @@ ConstantPoolEntry read_constant_pool_entry(std::ifstream &file) {
 }
 
 std::vector<ConstantPoolEntry> read_constant_pool(std::ifstream &file, u2 count,
-                                                  bool debug = false) {
+                                                  bool debug) {
   std::vector<ConstantPoolEntry> pool;
   pool.emplace_back(ConstantTag::None, EmptyInfo{});
 
@@ -166,7 +166,7 @@ std::vector<ConstantPoolEntry> read_constant_pool(std::ifstream &file, u2 count,
   return pool;
 }
 
-u2 read_access_flags(std::ifstream &file, bool debug = false) {
+u2 read_access_flags(std::ifstream &file, bool debug) {
   u2 flag = read_2bytes(file);
 
   if (debug) {
@@ -176,7 +176,7 @@ u2 read_access_flags(std::ifstream &file, bool debug = false) {
   return flag;
 }
 
-u2 read_this_class(std::ifstream &file, bool debug = false) {
+u2 read_this_class(std::ifstream &file, bool debug) {
   u2 index = read_2bytes(file);
 
   if (debug) {
@@ -186,7 +186,7 @@ u2 read_this_class(std::ifstream &file, bool debug = false) {
   return index;
 }
 
-u2 read_super_class(std::ifstream &file, bool debug = false) {
+u2 read_super_class(std::ifstream &file, bool debug) {
   u2 index = read_2bytes(file);
 
   if (debug) {

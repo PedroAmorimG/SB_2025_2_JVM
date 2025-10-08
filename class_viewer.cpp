@@ -1,4 +1,6 @@
 #include "class_viewer.h"
+#include "class_parser.h"
+#include "jvm_types.h"
 #include <cstring>
 #include <iomanip>
 #include <iostream>
@@ -23,7 +25,7 @@ void print_constant_pool_count(u2 count) {
   std::cout << "Constant pool count: " << count << std::endl;
 }
 
-void print_constant_entry(size_t index, const ConstantPoolEntry &entry) {
+void print_constant_entry(u2 index, const ConstantPoolEntry &entry) {
   const ConstantTag tag = entry.first;
   const ConstantInfo &info = entry.second;
 
