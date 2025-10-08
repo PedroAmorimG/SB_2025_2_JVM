@@ -160,7 +160,7 @@ void print_access_flags(u2 flag) {
     if (i != flags.size() - 1) {
       std::cout << ", ";
     } else {
-      std::cout << std::endl;
+      std::cout << "]" << std::endl;
     }
   }
 }

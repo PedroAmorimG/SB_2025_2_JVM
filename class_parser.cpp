@@ -19,8 +19,8 @@ u2 read_2bytes(std::ifstream &file) {
 }
 
 u4 read_4bytes(std::ifstream &file) {
-  u1 half_word1 = read_2bytes(file);
-  u1 half_word2 = read_2bytes(file);
+  u2 half_word1 = read_2bytes(file);
+  u2 half_word2 = read_2bytes(file);
 
   return (half_word1 << 16) | half_word2;
 }
