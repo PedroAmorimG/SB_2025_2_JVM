@@ -10,8 +10,8 @@ u4 read_magic(std::ifstream &file, bool debug);
 u2 read_major_version(std::ifstream &file, bool debug);
 u2 read_minor_version(std::ifstream &file, bool debug);
 u2 read_constant_pool_count(std::ifstream &file, bool debug);
-std::vector<ConstantPoolEntry> read_constant_pool(std::ifstream &file,
-                                                  u2 count);
+std::vector<ConstantPoolEntry> read_constant_pool(std::ifstream &file, u2 count,
+                                                  bool debug);
 u2 read_access_flags(std::ifstream &file, bool debug);
 u2 read_this_class(std::ifstream &file, bool debug);
 u2 read_super_class(std::ifstream &file, bool debug);
