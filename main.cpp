@@ -13,8 +13,7 @@ int main(int argc, char *argv[]) {
 
     if (arg == "--debug") {
       debug = true;
-    }
-    else if (arg.rfind("filepath=", 0) == 0){
+    } else if (arg.rfind("filepath=", 0) == 0) {
       filepath = arg.substr(9);
     }
   }

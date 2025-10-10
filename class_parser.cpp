@@ -81,7 +81,8 @@ ConstantPoolEntry read_constant_pool_entry(std::ifstream &file) {
     u2 class_index = read_2bytes(file);
     u2 name_and_type_index = read_2bytes(file);
 
-    info.fieldref_info = ConstantFieldrefInfo{.class_index = class_index, .name_and_type_index = name_and_type_index};
+    info.fieldref_info = ConstantFieldrefInfo{
+        .class_index = class_index, .name_and_type_index = name_and_type_index};
 
     break;
   }
@@ -89,15 +90,17 @@ ConstantPoolEntry read_constant_pool_entry(std::ifstream &file) {
     u2 class_index = read_2bytes(file);
     u2 name_and_type_index = read_2bytes(file);
 
-    info.methodref_info = ConstantMethodrefInfo{.class_index= class_index, .name_and_type_index= name_and_type_index};
-    
+    info.methodref_info = ConstantMethodrefInfo{
+        .class_index = class_index, .name_and_type_index = name_and_type_index};
+
     break;
   }
   case ConstantTag::CONSTANT_InterfaceMethodref: {
     u2 class_index = read_2bytes(file);
     u2 name_and_type_index = read_2bytes(file);
 
-    info.interface_methodref_info = ConstantInterfaceMethodrefInfo{.class_index= class_index, .name_and_type_index= name_and_type_index};
+    info.interface_methodref_info = ConstantInterfaceMethodrefInfo{
+        .class_index = class_index, .name_and_type_index = name_and_type_index};
 
     break;
   }
@@ -105,14 +108,14 @@ ConstantPoolEntry read_constant_pool_entry(std::ifstream &file) {
     u2 name_index = read_2bytes(file);
     u2 descriptor_index = read_2bytes(file);
 
-    info.name_and_type_info = ConstantNameAndTypeInfo{.name_index=name_index, .descriptor_index=descriptor_index};
+    info.name_and_type_info = ConstantNameAndTypeInfo{
+        .name_index = name_index, .descriptor_index = descriptor_index};
 
     break;
-
   }
   case ConstantTag::CONSTANT_Utf8: {
     u2 length = read_2bytes(file);
-    u1 *bytes;
+    u1 *bytes = new u1[length];
 
     file.read(reinterpret_cast<char *>(bytes), length);
 
@@ -145,7 +148,8 @@ ConstantPoolEntry read_constant_pool_entry(std::ifstream &file) {
     u4 high_bytes = read_4bytes(file);
     u4 low_bytes = read_4bytes(file);
 
-    info.long_info = ConstantLongInfo{.high_bytes = high_bytes, .low_bytes= low_bytes};
+    info.long_info =
+        ConstantLongInfo{.high_bytes = high_bytes, .low_bytes = low_bytes};
 
     break;
   }
@@ -153,15 +157,16 @@ ConstantPoolEntry read_constant_pool_entry(std::ifstream &file) {
     u4 high_bytes = read_4bytes(file);
     u4 low_bytes = read_4bytes(file);
 
-    info.double_info = ConstantDoubleInfo{.high_bytes = high_bytes, .low_bytes = low_bytes};
+    info.double_info =
+        ConstantDoubleInfo{.high_bytes = high_bytes, .low_bytes = low_bytes};
 
     break;
   }
   default: {
     info.empty = EmptyInfo{};
   }
-  return std::make_pair(tag, info);
   }
+  return std::make_pair(tag, info);
 }
 
 std::vector<ConstantPoolEntry> read_constant_pool(std::ifstream &file, u2 count,
