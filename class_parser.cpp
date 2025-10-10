@@ -65,93 +65,111 @@ u2 read_constant_pool_count(std::ifstream &file, bool debug = false) {
 }
 
 ConstantPoolEntry read_constant_pool_entry(std::ifstream &file) {
-  ConstantTag tag{read_1byte(file)};
+  ConstantTag tag = static_cast<ConstantTag>(read_1byte(file));
+  ConstantInfo info;
 
   switch (tag) {
-  case CONSTANT_Class: {
+  case ConstantTag::CONSTANT_Class: {
 
     u2 name_index = read_2bytes(file);
-    return std::pair(tag, ConstantClassInfo{.name_index = name_index});
+
+    info.class_info = ConstantClassInfo{.name_index = name_index};
+
+    break;
   }
-  case CONSTANT_Fieldref: {
+  case ConstantTag::CONSTANT_Fieldref: {
     u2 class_index = read_2bytes(file);
     u2 name_and_type_index = read_2bytes(file);
 
-    return std::pair(
-        tag, ConstantFieldrefInfo{.class_index = class_index,
-                                  .name_and_type_index = name_and_type_index});
+    info.fieldref_info = ConstantFieldrefInfo{.class_index = class_index, .name_and_type_index = name_and_type_index};
+
+    break;
   }
-  case CONSTANT_Methodref: {
+  case ConstantTag::CONSTANT_Methodref: {
     u2 class_index = read_2bytes(file);
     u2 name_and_type_index = read_2bytes(file);
 
-    return std::pair(
-        tag, ConstantMethodrefInfo{.class_index = class_index,
-                                   .name_and_type_index = name_and_type_index});
+    info.methodref_info = ConstantMethodrefInfo{.class_index= class_index, .name_and_type_index= name_and_type_index};
+    
+    break;
   }
-  case CONSTANT_InterfaceMethodref: {
+  case ConstantTag::CONSTANT_InterfaceMethodref: {
     u2 class_index = read_2bytes(file);
     u2 name_and_type_index = read_2bytes(file);
 
-    return std::pair(tag, ConstantInterfaceMethodrefInfo{
-                              .class_index = class_index,
-                              .name_and_type_index = name_and_type_index});
+    info.interface_methodref_info = ConstantInterfaceMethodrefInfo{.class_index= class_index, .name_and_type_index= name_and_type_index};
+
+    break;
   }
-  case CONSTANT_NameAndType: {
+  case ConstantTag::CONSTANT_NameAndType: {
     u2 name_index = read_2bytes(file);
     u2 descriptor_index = read_2bytes(file);
 
-    return std::pair(
-        tag, ConstantNameAndTypeInfo{.name_index = name_index,
-                                     .descriptor_index = descriptor_index});
-  }
-  case CONSTANT_Utf8: {
-    ConstantUTF8Info info;
-    info.length = read_2bytes(file);
-    info.bytes.resize(info.length);
-    file.read(reinterpret_cast<char *>(info.bytes.data()), info.length);
+    info.name_and_type_info = ConstantNameAndTypeInfo{.name_index=name_index, .descriptor_index=descriptor_index};
 
-    return std::pair(tag, info);
+    break;
+
   }
-  case CONSTANT_String: {
+  case ConstantTag::CONSTANT_Utf8: {
+    u2 length = read_2bytes(file);
+    u1 *bytes;
+
+    file.read(reinterpret_cast<char *>(bytes), length);
+
+    info.utf8_info = ConstantUTF8Info{.length = length, .bytes = bytes};
+
+    break;
+  }
+  case ConstantTag::CONSTANT_String: {
     u2 string_index = read_2bytes(file);
 
-    return std::pair(tag, ConstantStringInfo{.string_index = string_index});
+    info.string_info = ConstantStringInfo{.string_index = string_index};
+
+    break;
   }
-  case CONSTANT_Integer: {
+  case ConstantTag::CONSTANT_Integer: {
     u4 bytes = read_4bytes(file);
 
-    return std::pair(tag, ConstantIntegerInfo{.bytes = bytes});
+    info.integer_info = ConstantIntegerInfo{.bytes = bytes};
+
+    break;
   }
-  case CONSTANT_Float: {
+  case ConstantTag::CONSTANT_Float: {
     u4 bytes = read_4bytes(file);
 
-    return std::pair(tag, ConstantFloatInfo{.bytes = bytes});
+    info.float_info = ConstantFloatInfo{.bytes = bytes};
+
+    break;
   }
-  case CONSTANT_Long: {
+  case ConstantTag::CONSTANT_Long: {
     u4 high_bytes = read_4bytes(file);
     u4 low_bytes = read_4bytes(file);
 
-    return std::pair(tag, ConstantLongInfo{.high_bytes = high_bytes,
-                                           .low_bytes = low_bytes});
+    info.long_info = ConstantLongInfo{.high_bytes = high_bytes, .low_bytes= low_bytes};
+
+    break;
   }
-  case CONSTANT_Double: {
+  case ConstantTag::CONSTANT_Double: {
     u4 high_bytes = read_4bytes(file);
     u4 low_bytes = read_4bytes(file);
 
-    return std::pair(tag, ConstantDoubleInfo{.high_bytes = high_bytes,
-                                             .low_bytes = low_bytes});
+    info.double_info = ConstantDoubleInfo{.high_bytes = high_bytes, .low_bytes = low_bytes};
+
+    break;
   }
   default: {
-    return std::pair(ConstantTag::None, EmptyInfo{});
+    info.empty = EmptyInfo{};
   }
+  return std::make_pair(tag, info);
   }
 }
 
 std::vector<ConstantPoolEntry> read_constant_pool(std::ifstream &file, u2 count,
                                                   bool debug = false) {
   std::vector<ConstantPoolEntry> pool;
-  pool.emplace_back(ConstantTag::None, EmptyInfo{});
+  ConstantInfo empty_info;
+  empty_info.empty = EmptyInfo{};
+  pool.emplace_back(ConstantTag::None, empty_info);
 
   for (u2 i = 1; i < count; i++) {
     ConstantPoolEntry entry = read_constant_pool_entry(file);

@@ -23,54 +23,54 @@ void print_constant_pool_count(u2 count) {
   std::cout << "Constant pool count: " << count << std::endl;
 }
 
-void print_constant_entry(size_t index, const ConstantPoolEntry &entry) {
+void print_constant_entry(u2 index, const ConstantPoolEntry &entry) {
   const ConstantTag tag = entry.first;
   const ConstantInfo &info = entry.second;
 
   std::cout << "#" << std::setw(3) << index << " ";
 
   switch (tag) {
-  case CONSTANT_Class: {
-    const auto &v = std::get<ConstantClassInfo>(info);
+  case ConstantTag::CONSTANT_Class: {
+    const auto &v = info.class_info;
     std::cout << "Class\t\tname_index = " << v.name_index;
     break;
   }
 
-  case CONSTANT_Fieldref: {
-    const auto &v = std::get<ConstantFieldrefInfo>(info);
+  case ConstantTag::CONSTANT_Fieldref: {
+    const auto &v = info.fieldref_info;
     std::cout << "Fieldref\tclass_index = " << v.class_index
               << ", name_and_type_index = " << v.name_and_type_index;
     break;
   }
 
-  case CONSTANT_Methodref: {
-    const auto &v = std::get<ConstantMethodrefInfo>(info);
+  case ConstantTag::CONSTANT_Methodref: {
+    const auto &v = info.methodref_info;
     std::cout << "Methodref\tclass_index = " << v.class_index
               << ", name_and_type_index = " << v.name_and_type_index;
     break;
   }
 
-  case CONSTANT_InterfaceMethodref: {
-    const auto &v = std::get<ConstantInterfaceMethodrefInfo>(info);
+  case ConstantTag::CONSTANT_InterfaceMethodref: {
+    const auto &v = info.interface_methodref_info;
     std::cout << "InterfaceMethodref\tclass_index = " << v.class_index
               << ", name_and_type_index = " << v.name_and_type_index;
     break;
   }
 
-  case CONSTANT_String: {
-    const auto &v = std::get<ConstantStringInfo>(info);
+  case ConstantTag::CONSTANT_String: {
+    const auto &v = info.string_info;
     std::cout << "String\t\tstring_index = " << v.string_index;
     break;
   }
 
-  case CONSTANT_Integer: {
-    const auto &v = std::get<ConstantIntegerInfo>(info);
+  case ConstantTag::CONSTANT_Integer: {
+    const auto &v = info.integer_info;
     std::cout << "Integer\t\tbytes = 0x" << std::hex << v.bytes << std::dec;
     break;
   }
 
-  case CONSTANT_Float: {
-    const auto &v = std::get<ConstantFloatInfo>(info);
+  case ConstantTag::CONSTANT_Float: {
+    const auto &v = info.float_info;
     float f;
     std::memcpy(&f, &v.bytes, sizeof(float));
     std::cout << "Float\t\tvalue = " << f << " (bits = 0x" << std::hex
@@ -78,15 +78,15 @@ void print_constant_entry(size_t index, const ConstantPoolEntry &entry) {
     break;
   }
 
-  case CONSTANT_Long: {
-    const auto &v = std::get<ConstantLongInfo>(info);
+  case ConstantTag::CONSTANT_Long: {
+    const auto &v = info.long_info;
     uint64_t value = (static_cast<uint64_t>(v.high_bytes) << 32) | v.low_bytes;
     std::cout << "Long\t\tvalue = " << value;
     break;
   }
 
-  case CONSTANT_Double: {
-    const auto &v = std::get<ConstantDoubleInfo>(info);
+  case ConstantTag::CONSTANT_Double: {
+    const auto &v = info.double_info;
     uint64_t bits = (static_cast<uint64_t>(v.high_bytes) << 32) | v.low_bytes;
     double d;
     std::memcpy(&d, &bits, sizeof(double));
@@ -94,23 +94,23 @@ void print_constant_entry(size_t index, const ConstantPoolEntry &entry) {
     break;
   }
 
-  case CONSTANT_NameAndType: {
-    const auto &v = std::get<ConstantNameAndTypeInfo>(info);
+  case ConstantTag::CONSTANT_NameAndType: {
+    const auto &v = info.name_and_type_info;
     std::cout << "NameAndType\tname_index = " << v.name_index
               << ", descriptor_index = " << v.descriptor_index;
     break;
   }
 
-  case CONSTANT_Utf8: {
-    const auto &v = std::get<ConstantUTF8Info>(info);
+  case ConstantTag::CONSTANT_Utf8: {
+    const auto &v = info.utf8_info;
     std::cout << "Utf8\t\t\"";
-    for (auto c : v.bytes)
-      std::cout << static_cast<char>(c);
+    for (u2 i = 0; i < v.length; i++)
+      std::cout << static_cast<char>(v.bytes[i]);
     std::cout << "\" (" << v.length << " bytes)";
     break;
   }
 
-  case None: {
+  case ConstantTag::None: {
     std::cout << "(empty)";
     break;
   }

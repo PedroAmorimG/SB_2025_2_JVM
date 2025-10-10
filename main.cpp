@@ -1,26 +1,21 @@
 #include "class_parser.h"
 #include <cstring>
-#include <filesystem>
 #include <fstream>
 #include <iostream>
-#include <regex>
 #include <string>
 
 int main(int argc, char *argv[]) {
   bool debug = false;
-  std::filesystem::path filepath;
-  std::smatch match;
-  std::regex debug_regex(R"(--debug)");
-  std::regex filepath_regex(R"(filepath=([^\s]+))");
+  std::string filepath = "";
 
   for (int i = argc - 1; i >= 0; i--) {
     std::string arg(argv[i]);
 
-    if (std::regex_search(arg, match, debug_regex))
+    if (arg == "--debug") {
       debug = true;
-
-    if (std::regex_search(arg, match, filepath_regex)) {
-      filepath = match[1];
+    }
+    else if (arg.rfind("filepath=", 0) == 0){
+      filepath = arg.substr(9);
     }
   }
 

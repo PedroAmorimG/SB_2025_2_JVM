@@ -2,8 +2,8 @@
 #define JVM_TYPES_H
 
 #include <stdint.h>
-#include <variant>
 #include <vector>
+#include <utility>
 
 // Tipos básicos
 using u1 = uint8_t;
@@ -15,7 +15,7 @@ static_assert(sizeof(u1) == 1 && sizeof(u2) == 2 && sizeof(u4) == 4 &&
               "Fixed-width integer sizes required");
 
 // Tags do constant pool
-enum ConstantTag : u1 {
+enum class ConstantTag : u1 {
   CONSTANT_Class = 7,
   CONSTANT_Fieldref = 9,
   CONSTANT_Methodref = 10,
@@ -61,7 +61,7 @@ struct ConstantNameAndTypeInfo {
 
 struct ConstantUTF8Info {
   u2 length;
-  std::vector<u1> bytes;
+  u1 *bytes;
 };
 
 struct ConstantStringInfo {
@@ -89,12 +89,22 @@ struct ConstantDoubleInfo {
 struct EmptyInfo // Índice 0 do pool de constantes
 {};
 
-using ConstantInfo =
-    std::variant<EmptyInfo, ConstantClassInfo, ConstantFieldrefInfo,
-                 ConstantMethodrefInfo, ConstantInterfaceMethodrefInfo,
-                 ConstantStringInfo, ConstantIntegerInfo, ConstantFloatInfo,
-                 ConstantLongInfo, ConstantDoubleInfo, ConstantNameAndTypeInfo,
-                 ConstantUTF8Info>;
+
+union ConstantInfo{
+    EmptyInfo empty;
+    ConstantClassInfo class_info;
+    ConstantFieldrefInfo fieldref_info;
+    ConstantMethodrefInfo methodref_info;
+    ConstantInterfaceMethodrefInfo interface_methodref_info;
+    ConstantStringInfo string_info;
+    ConstantIntegerInfo integer_info;
+    ConstantFloatInfo float_info;
+    ConstantLongInfo long_info;
+    ConstantDoubleInfo double_info;
+    ConstantNameAndTypeInfo name_and_type_info;
+    ConstantUTF8Info utf8_info;
+    };
+
 
 using ConstantPoolEntry = std::pair<ConstantTag, ConstantInfo>;
 
