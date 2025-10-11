@@ -172,3 +172,12 @@ void print_this_class(u2 index) {
 void print_super_class(u2 index) {
   std::cout << "Super class index: #" << index << std::endl;
 }
+
+void print_interface_count(u2 index) {
+  std::cout << "Interface count index: #" << index << std::endl;
+}
+
+void print_read_interfaces(u2 index, u2 entry) {
+  std::cout << "#" << std::setw(3) << index << " ";
+  std::cout << "Class\t\tname_index = " << entry << std::endl;
+}

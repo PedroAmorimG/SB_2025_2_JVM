@@ -8,3 +8,6 @@ void print_constant_entry(u2 index, const ConstantPoolEntry &entry);
 void print_access_flags(u2 flag);
 void print_this_class(u2 index);
 void print_super_class(u2 index);
+void print_interface_count(u2 index);
+void print_read_interfaces(u2 index, u2 entry);
+

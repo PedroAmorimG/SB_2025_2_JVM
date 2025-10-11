@@ -38,8 +38,10 @@ int main(int argc, char *argv[]) {
   read_access_flags(file, debug);
   read_this_class(file, debug);
   read_super_class(file, debug);
-
+  u2 interfaces_count = read_interface_count(file, debug);
+  read_interfaces(file, interfaces_count, debug);
   file.close();
 
   return 0;
 }
+

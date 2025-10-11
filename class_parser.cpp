@@ -218,3 +218,29 @@ u2 read_super_class(std::ifstream &file, bool debug = false) {
 
   return index;
 }
+
+u2 read_interface_count(std::ifstream &file, bool debug) {
+  u2 index = read_2bytes(file);
+
+  if (debug) {
+    print_interface_count(index);
+  }
+
+  return index;
+}
+
+std::vector<u2> read_interfaces(std::ifstream &file, u2 count, bool debug) {
+  std::vector<u2> interfaces;
+
+  for (u2 i = 0; i < count; i++) {
+    u2 entry = read_2bytes(file);
+
+    if (debug) {
+      print_read_interfaces(i, entry);
+    }
+
+    interfaces.push_back(entry);
+  }
+
+  return interfaces;
+}
