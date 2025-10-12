@@ -244,3 +244,13 @@ std::vector<u2> read_interfaces(std::ifstream &file, u2 count, bool debug) {
 
   return interfaces;
 }
+
+u2 read_field_count(std::ifstream &file, bool debug) {
+  u2 index = read_2bytes(file);
+
+  if (debug) {
+    print_field_count(index);
+  }
+
+  return index;
+}

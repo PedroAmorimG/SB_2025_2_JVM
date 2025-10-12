@@ -9,5 +9,5 @@ void print_access_flags(u2 flag);
 void print_this_class(u2 index);
 void print_super_class(u2 index);
 void print_interface_count(u2 index);
-void print_read_interfaces(u2 index, u2 entry);
-
+void print_read_interfaces(u2 index, const u2 entry);
+void print_field_count(u2 index);

@@ -177,7 +177,11 @@ void print_interface_count(u2 index) {
   std::cout << "Interface count index: #" << index << std::endl;
 }
 
-void print_read_interfaces(u2 index, u2 entry) {
+void print_read_interfaces(u2 index,const u2 entry) {
   std::cout << "#" << std::setw(3) << index << " ";
   std::cout << "Class\t\tname_index = " << entry << std::endl;
+}
+
+void print_field_count(u2 index) {
+  std::cout << "Field count index: #" << index << std::endl;
 }
