@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
               << std::endl;
   }
 
-  std::ifstream file(filepath);
+  std::ifstream file(filepath, std::ios::binary);
 
   if (!file) {
     std::cout << "Não foi possível abrir o arquivo selecionado" << std::endl;
@@ -40,11 +40,10 @@ int main(int argc, char *argv[]) {
   read_super_class(file, debug);
   u2 interfaces_count = read_interface_count(file, debug);
   read_interfaces(file, interfaces_count, debug);
-  //u2 field_count = read_field_count(file, debug);
-  //read_fields(file, field_count, debug);
+  // u2 field_count = read_field_count(file, debug);
+  // read_fields(file, field_count, debug);
 
   file.close();
 
   return 0;
 }
-
