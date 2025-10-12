@@ -254,3 +254,81 @@ u2 read_field_count(std::ifstream &file, bool debug) {
 
   return index;
 }
+
+FieldInfo read_fields_info(std::ifstream &file, bool debug) {
+  FieldAccessFlag access_flag = static_cast<FieldAccessFlag>(read_2bytes(file));
+  u2 name_index = read_2bytes(file);
+  u2 descriptor_index = read_2bytes(file);
+  u2 attributes_count = read_2bytes(file);
+  std::vector<AttributeInfo> attributes = read_attributes(file, attributes_count, debug);
+
+  return FieldInfo{.access_flags = access_flag,
+                   .name_index = name_index,
+                   .descriptor_index = descriptor_index,
+                   .attributes_count = attributes_count,
+                   .attributes = attributes};
+
+}
+
+
+std::vector<FieldInfo> read_fields(std::ifstream &file, u2 count, bool debug) {
+  std::vector<FieldInfo> fieldvector;
+
+  for (u2 i = 0; i < count; i++) {
+    FieldInfo entry = read_fields_info(file, debug);
+
+    if (debug) {
+      print_read_fields(i, entry);
+    }
+
+    fieldvector.push_back(entry);
+  }
+
+  return fieldvector;
+
+}
+
+u2 read_attribute_count(std::ifstream &file, bool debug) {
+  u2 index = read_2bytes(file);
+
+  if (debug) {
+    print_attribute_count(index);
+  }
+
+  return index;
+}
+
+AttributeInfo read_attribute_Info(std::ifstream &file, bool debug) {
+  u2 attribute_name_index = read_2bytes(file);
+  u4 attribute_length = read_4bytes(file);
+  std::vector<u1> info;
+
+  for (u4 i = 0; i < attribute_length + 6; i++) {
+    u1 entry = read_1byte(file);
+
+    if (debug) {
+      print_attribute_info_entry(i, entry);
+    }
+
+    info.push_back(entry);
+  }
+  return AttributeInfo{.attribute_name_index = attribute_name_index,
+                       .attribute_length = attribute_length,
+                       .info = info};
+}
+
+std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count, bool debug) {
+  std::vector<AttributeInfo> attributesvector;
+
+  for (u2 i = 0; i < count; i++) {
+    AttributeInfo entry = read_attribute_Info(file, debug);
+
+    if (debug) {
+      print_read_attributes(i, entry);
+    }
+
+    attributesvector.push_back(entry);
+  }
+
+  return attributesvector;
+}
