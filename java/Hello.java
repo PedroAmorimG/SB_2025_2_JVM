@@ -1,3 +1,5 @@
+package java;
+
 // Classe que implementa a interface
 /*
 public class Hello {
@@ -34,15 +36,14 @@ public class Hello implements HelloWorld {
     // Método principal
     public static void main(String[] args) {
         Hello h = new Hello(); // cria um objeto da classe
-        h.sayHello();          // chama o método implementado
+        h.sayHello(); // chama o método implementado
     }
 }
-
 
 /*
-public class Hello {
-    public static void main(String[] args) {
-        System.out.println("Olá, mundo!");
-    }
-}
-     */
+ * public class Hello {
+ * public static void main(String[] args) {
+ * System.out.println("Olá, mundo!");
+ * }
+ * }
+ */
