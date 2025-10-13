@@ -184,6 +184,12 @@ std::vector<ConstantPoolEntry> read_constant_pool(std::ifstream &file, u2 count,
     }
 
     pool.push_back(entry);
+
+    if (entry.first == ConstantTag::CONSTANT_Long ||
+        entry.first == ConstantTag::CONSTANT_Double) {
+      pool.push_back(ConstantPoolEntry(ConstantTag::None, empty_info));
+      i++;
+    }
   }
 
   return pool;
@@ -260,16 +266,15 @@ FieldInfo read_fields_info(std::ifstream &file, bool debug) {
   u2 name_index = read_2bytes(file);
   u2 descriptor_index = read_2bytes(file);
   u2 attributes_count = read_2bytes(file);
-  std::vector<AttributeInfo> attributes = read_attributes(file, attributes_count, debug);
+  std::vector<AttributeInfo> attributes =
+      read_attributes(file, attributes_count, debug);
 
   return FieldInfo{.access_flags = access_flag,
                    .name_index = name_index,
                    .descriptor_index = descriptor_index,
                    .attributes_count = attributes_count,
                    .attributes = attributes};
-
 }
-
 
 std::vector<FieldInfo> read_fields(std::ifstream &file, u2 count, bool debug) {
   std::vector<FieldInfo> fieldvector;
@@ -285,7 +290,6 @@ std::vector<FieldInfo> read_fields(std::ifstream &file, u2 count, bool debug) {
   }
 
   return fieldvector;
-
 }
 
 u2 read_attribute_count(std::ifstream &file, bool debug) {
@@ -317,7 +321,8 @@ AttributeInfo read_attribute_Info(std::ifstream &file, bool debug) {
                        .info = info};
 }
 
-std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count, bool debug) {
+std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count,
+                                           bool debug) {
   std::vector<AttributeInfo> attributesvector;
 
   for (u2 i = 0; i < count; i++) {

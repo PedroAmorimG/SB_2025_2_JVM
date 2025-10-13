@@ -1,3 +1,6 @@
+#ifndef CLASS_PARSER_H
+#define CLASS_PARSER_H
+
 #include "jvm_types.h"
 #include <fstream>
 #include <vector>
@@ -22,4 +25,7 @@ std::vector<FieldInfo> read_fields(std::ifstream &file, u2 count, bool debug);
 u2 read_method_count(std::ifstream &file, bool debug);
 std::vector<MethodInfo> read_methods(std::ifstream &file, u2 count, bool debug);
 u2 read_attribute_count(std::ifstream &file, bool debug);
-std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count, bool debug);
+std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count,
+                                           bool debug);
+
+#endif // CLASS_PARSER_H

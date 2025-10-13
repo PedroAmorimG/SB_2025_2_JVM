@@ -19,18 +19,26 @@ int main(int argc, char *argv[]) {
   }
 
   if (filepath == "") {
-    std::cout << "Arquivo não selecionado. Utilize o parâmetro 'filepath=' "
-                 "para passar um caminho"
+    std::cout << "File not selected. Use param 'filepath=' "
+                 "to describe the .class file path"
               << std::endl;
+    return 1;
   }
 
   std::ifstream file(filepath, std::ios::binary);
 
   if (!file) {
-    std::cout << "Não foi possível abrir o arquivo selecionado" << std::endl;
+    std::cout << "Couldn't open the file" << std::endl;
+    return 1;
   }
 
-  read_magic(file, debug);
+  u4 magic = read_magic(file, debug);
+
+  if (magic != 0xCAFEBABE) {
+    std::cout << "Not a valid .class file" << std::endl;
+    return 1;
+  }
+
   read_major_version(file, debug);
   read_minor_version(file, debug);
   u2 pool_count = read_constant_pool_count(file, debug);

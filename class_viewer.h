@@ -1,3 +1,6 @@
+#ifndef CLASS_VIEWER_H
+#define CLASS_VIEWER_H
+
 #include "jvm_types.h"
 
 void print_magic(u4 magic);
@@ -15,3 +18,5 @@ void print_read_fields(u2 index, const FieldInfo entry);
 void print_attribute_count(u2 index);
 void print_read_attributes(u2 index, const AttributeInfo entry);
 void print_attribute_info_entry(u4 index, const u2 entry);
+
+#endif
