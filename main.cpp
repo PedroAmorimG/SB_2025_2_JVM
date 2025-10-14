@@ -48,8 +48,8 @@ int main(int argc, char *argv[]) {
   read_super_class(file, debug);
   u2 interfaces_count = read_interface_count(file, debug);
   read_interfaces(file, interfaces_count, debug);
-  // u2 field_count = read_field_count(file, debug);
-  // read_fields(file, field_count, debug);
+  u2 field_count = read_field_count(file, debug);
+  read_fields(file, field_count, debug);
 
   file.close();
 

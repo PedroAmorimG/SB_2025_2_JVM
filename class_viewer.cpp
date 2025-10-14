@@ -187,8 +187,58 @@ void print_field_count(u2 index) {
   std::cout << "Field count index: #" << index << std::endl;
 }
 
-void print_read_fields(u2 index, const FieldInfo entry) {}
+void print_read_fields(u2 index, const FieldInfo entry) {
 
-void print_attribute_count(u2 index) {}
-void print_read_attributes(u2 index, const AttributeInfo entry) {}
-void print_attribute_info_entry(u4 index, const u2 entry) {}
+ std::cout << "Access flags: 0x"
+          << std::setfill('0') << std::setw(4) << std::hex << std::uppercase 
+          << entry.access_flags 
+          << std::dec << " [";
+  std::vector<std::string> flags;
+
+  if (entry.access_flags & 0x0001) flags.push_back("ACC_PUBLIC");
+  if (entry.access_flags & 0x0002) flags.push_back("ACC_PRIVATE");
+  if (entry.access_flags & 0x0004) flags.push_back("ACC_PROTECTED");
+  if (entry.access_flags & 0x0008) flags.push_back("ACC_STATIC");
+  if (entry.access_flags & 0x0010) flags.push_back("ACC_FINAL");
+  if (entry.access_flags & 0x0040) flags.push_back("ACC_VOLATILE");
+  if (entry.access_flags & 0x0080) flags.push_back("ACC_TRANSIENT");
+  if (entry.access_flags & 0x4000) flags.push_back("ACC_ENUM");
+
+  for (u1 i = 0; i < flags.size(); ++i) {
+      std::cout << flags[i];
+      if (i < flags.size() - 1) std::cout << ", ";
+  }
+
+  std::cout << "]" << std::endl;
+
+  std::cout << "Name_index = " << entry.name_index << " " << std::endl;
+  std::cout << "Descriptor_index = " << entry.descriptor_index 
+  << " " << std::endl;
+  std::cout << "Attribute count = " << entry.attributes_count 
+  << " " <<std::endl;
+  print_read_attributes(entry.attributes_count, entry.attributes);  // Chamar no method também
+}
+
+void print_attribute_count(u2 index) {
+  std::cout << "Attribute count index: #" << index << std::endl;
+}
+
+
+void print_read_attributes(u2 index, const std::vector<AttributeInfo> entry) {
+  for (u2 i = 0; i < index && i < entry.size(); i++) {
+        const AttributeInfo& attribute = entry[i];
+        std::cout << "\tAttribute name_index " << 
+        attribute.attribute_name_index << " " << std::endl;
+        std::cout << "\tinfo length " << attribute.attribute_length << std::endl;
+        print_attribute_info_entry(attribute.attribute_length , attribute.info);
+  }
+}
+
+void print_attribute_info_entry(u4 index, const std::vector<u1> entry) {
+  for (u4 i = 0; i < index && i < entry.size(); i++) {
+        const u1& info = entry[i];
+        std::cout << "\t\t#" << std::setw(3) << i << " ";
+        std::cout << "Info of attribute\t\t info = " << static_cast<int>(info) 
+        << " " << std::endl;
+  }
+}

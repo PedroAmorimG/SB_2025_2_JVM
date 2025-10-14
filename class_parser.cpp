@@ -307,13 +307,8 @@ AttributeInfo read_attribute_Info(std::ifstream &file, bool debug) {
   u4 attribute_length = read_4bytes(file);
   std::vector<u1> info;
 
-  for (u4 i = 0; i < attribute_length + 6; i++) {
+  for (u4 i = 0; i < attribute_length; i++) {
     u1 entry = read_1byte(file);
-
-    if (debug) {
-      print_attribute_info_entry(i, entry);
-    }
-
     info.push_back(entry);
   }
   return AttributeInfo{.attribute_name_index = attribute_name_index,
@@ -327,11 +322,6 @@ std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count,
 
   for (u2 i = 0; i < count; i++) {
     AttributeInfo entry = read_attribute_Info(file, debug);
-
-    if (debug) {
-      print_read_attributes(i, entry);
-    }
-
     attributesvector.push_back(entry);
   }
 
