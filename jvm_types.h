@@ -2,8 +2,8 @@
 #define JVM_TYPES_H
 
 #include <stdint.h>
-#include <vector>
 #include <utility>
+#include <vector>
 
 // Tipos básicos
 using u1 = uint8_t;
@@ -89,22 +89,20 @@ struct ConstantDoubleInfo {
 struct EmptyInfo // Índice 0 do pool de constantes
 {};
 
-
-union ConstantInfo{
-    EmptyInfo empty;
-    ConstantClassInfo class_info;
-    ConstantFieldrefInfo fieldref_info;
-    ConstantMethodrefInfo methodref_info;
-    ConstantInterfaceMethodrefInfo interface_methodref_info;
-    ConstantStringInfo string_info;
-    ConstantIntegerInfo integer_info;
-    ConstantFloatInfo float_info;
-    ConstantLongInfo long_info;
-    ConstantDoubleInfo double_info;
-    ConstantNameAndTypeInfo name_and_type_info;
-    ConstantUTF8Info utf8_info;
-    };
-
+union ConstantInfo {
+  EmptyInfo empty;
+  ConstantClassInfo class_info;
+  ConstantFieldrefInfo fieldref_info;
+  ConstantMethodrefInfo methodref_info;
+  ConstantInterfaceMethodrefInfo interface_methodref_info;
+  ConstantStringInfo string_info;
+  ConstantIntegerInfo integer_info;
+  ConstantFloatInfo float_info;
+  ConstantLongInfo long_info;
+  ConstantDoubleInfo double_info;
+  ConstantNameAndTypeInfo name_and_type_info;
+  ConstantUTF8Info utf8_info;
+};
 
 using ConstantPoolEntry = std::pair<ConstantTag, ConstantInfo>;
 
