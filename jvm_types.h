@@ -136,7 +136,6 @@ struct CodeAttribute {
     std::vector<AttributeInfo> attributes; 
 };
 
-// implementar sourcefile attribute e unknown attribute
 struct SourceFileAttribute {
     u2 sourcefile_index;
 };
@@ -145,21 +144,22 @@ struct UnknownAttribute {
     std::vector<u1> info; 
 };
 
-union AttributeData {
-    CodeAttribute code_info;
-    SourceFileAttribute sourcefile_info;
-    UnknownAttribute unknown_info;
-    AttributeData() {} 
-    ~AttributeData() {}
-};
+// REMOVA A SUA UNION ATTRIBUTEDATA INTEIRA (ela não é mais necessária)
 
 struct AttributeInfo {
   u2 attribute_name_index;
   std::string attribute_name;
   u4 attribute_length;
-  // std::vector<u1> info; TROCADO PELO QUE ESTÁ EMBAIXO vvvv
-  AttributeData data;
+  
+  // vvv SUBSTITUA A UNION POR ISSO vvv
+  // Colocamos todos os possíveis dados de atributo aqui.
+  // Apenas aquele que corresponde ao attribute_name será preenchido.
+  CodeAttribute code_info;
+  SourceFileAttribute sourcefile_info;
+  UnknownAttribute unknown_info;
+  // ^^^ SUBSTITUA A UNION POR ISSO ^^^
 };
+
 
 struct FieldInfo {
   FieldAccessFlag access_flags;

@@ -72,7 +72,6 @@ int main(int argc, char *argv[]) {
       if (class_file.fields_count > 0) {
         std::cout << "\n--- Fields (" << class_file.fields_count << ") ---" << std::endl;
         for (u2 i = 0; i < class_file.fields_count; i++) {
-            // Imprime o "Field #" e depois chama a função que acabamos de corrigir
             std::cout << "Field #" << i << ":" << std::endl; 
             print_read_fields(i, class_file.fields[i], class_file);
         }
