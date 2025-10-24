@@ -18,5 +18,10 @@ void print_read_fields(u2 index, const FieldInfo entry);
 void print_attribute_count(u2 index);
 void print_read_attributes(u2 index, const std::vector<AttributeInfo> entry);
 void print_attribute_info_entry(u4 index, const std::vector<u1> entry);
+//void print_methods_count(u2 count);
+
+struct ClassFile; 
+void print_methods_count(u2 count);
+void print_methods(const ClassFile &cf);
 
 #endif

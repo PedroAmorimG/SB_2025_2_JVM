@@ -228,8 +228,8 @@ void print_read_fields(u2 index, const FieldInfo entry) {
                         entry.attributes); // Chamar no method também
 }
 
-void print_attribute_count(u2 index) {
-  std::cout << "Attribute count index: #" << index << std::endl;
+void print_attribute_count(u2 count) {
+  std::cout << "Class Attributes count: " << count << std::endl;
 }
 
 void print_read_attributes(u2 index, const std::vector<AttributeInfo> entry) {
@@ -249,4 +249,39 @@ void print_attribute_info_entry(u4 index, const std::vector<u1> entry) {
     std::cout << "Info of attribute\t\t info = " << static_cast<int>(info)
               << " " << std::endl;
   }
+}
+
+std::string get_utf8_from_pool(const std::vector<ConstantPoolEntry>& pool, u2 index) {
+    if (index > 0 && index < pool.size()) {
+        const auto& entry = pool[index];
+        if (entry.first == ConstantTag::CONSTANT_Utf8) {
+            const auto& utf8_info = entry.second.utf8_info;
+            return std::string(reinterpret_cast<const char*>(utf8_info.bytes), utf8_info.length);
+        }
+    }
+    return "<invalid index>";
+}
+
+void print_methods_count(u2 count) {
+    std::cout << "Methods count: " << count << std::endl;
+}
+
+void print_methods(const ClassFile &cf) {
+    std::cout << "\n--- Methods (" << cf.methods_count << ") ---" << std::endl;
+    for (u2 i = 0; i < cf.methods_count; i++) {
+        const auto& method = cf.methods[i];
+        
+        std::string name = get_utf8_from_pool(cf.constant_pool, method.name_index);
+        std::string descriptor = get_utf8_from_pool(cf.constant_pool, method.descriptor_index);
+
+        std::cout << "Method #" << i << ": " << name << descriptor << std::endl;
+        std::cout << "  Name Index:      #" << method.name_index << std::endl;
+        std::cout << "  Descriptor Index: #" << method.descriptor_index << std::endl;
+        std::cout << "  Access Flags:    0x" << std::hex << method.access_flags << std::dec << std::endl;
+        std::cout << "  Attributes Count: " << method.attributes_count << std::endl;
+
+        if (method.attributes_count > 0) {
+            print_read_attributes(method.attributes_count, method.attributes);
+        }
+    }
 }
