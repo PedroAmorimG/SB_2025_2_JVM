@@ -73,7 +73,7 @@ ConstantPoolEntry read_constant_pool_entry(std::ifstream &file) {
 
     u2 name_index = read_2bytes(file);
 
-    info.class_info = ConstantClassInfo{.name_index = name_index};
+    info.class_info.name_index = name_index;
 
     break;
   }
@@ -81,8 +81,8 @@ ConstantPoolEntry read_constant_pool_entry(std::ifstream &file) {
     u2 class_index = read_2bytes(file);
     u2 name_and_type_index = read_2bytes(file);
 
-    info.fieldref_info = ConstantFieldrefInfo{
-        .class_index = class_index, .name_and_type_index = name_and_type_index};
+    info.fieldref_info.class_index = class_index;
+    info.fieldref_info.name_and_type_index = name_and_type_index;
 
     break;
   }
@@ -90,8 +90,8 @@ ConstantPoolEntry read_constant_pool_entry(std::ifstream &file) {
     u2 class_index = read_2bytes(file);
     u2 name_and_type_index = read_2bytes(file);
 
-    info.methodref_info = ConstantMethodrefInfo{
-        .class_index = class_index, .name_and_type_index = name_and_type_index};
+    info.methodref_info.class_index = class_index;
+    info.methodref_info.name_and_type_index = name_and_type_index;
 
     break;
   }
@@ -99,8 +99,8 @@ ConstantPoolEntry read_constant_pool_entry(std::ifstream &file) {
     u2 class_index = read_2bytes(file);
     u2 name_and_type_index = read_2bytes(file);
 
-    info.interface_methodref_info = ConstantInterfaceMethodrefInfo{
-        .class_index = class_index, .name_and_type_index = name_and_type_index};
+    info.interface_methodref_info.class_index = class_index;
+    info.interface_methodref_info.name_and_type_index = name_and_type_index;
 
     break;
   }
@@ -108,8 +108,8 @@ ConstantPoolEntry read_constant_pool_entry(std::ifstream &file) {
     u2 name_index = read_2bytes(file);
     u2 descriptor_index = read_2bytes(file);
 
-    info.name_and_type_info = ConstantNameAndTypeInfo{
-        .name_index = name_index, .descriptor_index = descriptor_index};
+    info.name_and_type_info.name_index = name_index;
+    info.name_and_type_info.descriptor_index = descriptor_index;
 
     break;
   }
@@ -119,28 +119,29 @@ ConstantPoolEntry read_constant_pool_entry(std::ifstream &file) {
 
     file.read(reinterpret_cast<char *>(bytes), length);
 
-    info.utf8_info = ConstantUTF8Info{.length = length, .bytes = bytes};
+    info.utf8_info.length = length;
+    info.utf8_info.bytes = bytes;
 
     break;
   }
   case ConstantTag::CONSTANT_String: {
     u2 string_index = read_2bytes(file);
 
-    info.string_info = ConstantStringInfo{.string_index = string_index};
+    info.string_info.string_index = string_index;
 
     break;
   }
   case ConstantTag::CONSTANT_Integer: {
     u4 bytes = read_4bytes(file);
 
-    info.integer_info = ConstantIntegerInfo{.bytes = bytes};
+    info.integer_info.bytes = bytes;
 
     break;
   }
   case ConstantTag::CONSTANT_Float: {
     u4 bytes = read_4bytes(file);
 
-    info.float_info = ConstantFloatInfo{.bytes = bytes};
+    info.float_info.bytes = bytes;
 
     break;
   }
@@ -148,8 +149,8 @@ ConstantPoolEntry read_constant_pool_entry(std::ifstream &file) {
     u4 high_bytes = read_4bytes(file);
     u4 low_bytes = read_4bytes(file);
 
-    info.long_info =
-        ConstantLongInfo{.high_bytes = high_bytes, .low_bytes = low_bytes};
+    info.long_info.high_bytes = high_bytes;
+    info.long_info.low_bytes = low_bytes;
 
     break;
   }
@@ -157,8 +158,8 @@ ConstantPoolEntry read_constant_pool_entry(std::ifstream &file) {
     u4 high_bytes = read_4bytes(file);
     u4 low_bytes = read_4bytes(file);
 
-    info.double_info =
-        ConstantDoubleInfo{.high_bytes = high_bytes, .low_bytes = low_bytes};
+    info.double_info.high_bytes = high_bytes;
+    info.double_info.low_bytes = low_bytes;
 
     break;
   }
@@ -261,69 +262,76 @@ u2 read_field_count(std::ifstream &file, bool debug) {
   return index;
 }
 
-FieldInfo read_fields_info(std::ifstream &file, bool debug) {
-  FieldAccessFlag access_flag = static_cast<FieldAccessFlag>(read_2bytes(file));
-  u2 name_index = read_2bytes(file);
-  u2 descriptor_index = read_2bytes(file);
-  u2 attributes_count = read_2bytes(file);
-  std::vector<AttributeInfo> attributes =
-      read_attributes(file, attributes_count, debug);
+FieldInfo read_fields_info(std::ifstream &file, std::vector<ConstantPoolEntry>& cp, bool debug) {
+    FieldAccessFlag access_flag = static_cast<FieldAccessFlag>(read_2bytes(file));
+    u2 name_index = read_2bytes(file);
+    u2 descriptor_index = read_2bytes(file);
+    u2 attributes_count = read_2bytes(file);
 
-  return FieldInfo{.access_flags = access_flag,
-                   .name_index = name_index,
-                   .descriptor_index = descriptor_index,
-                   .attributes_count = attributes_count,
-                   .attributes = attributes};
+    std::vector<AttributeInfo> attributes = read_attributes(file, attributes_count, cp, debug);
+
+    FieldInfo field_info;
+    field_info.access_flags = access_flag;
+    field_info.name_index = name_index;
+    field_info.attributes = attributes;
+    return field_info;
 }
 
-std::vector<FieldInfo> read_fields(std::ifstream &file, u2 count, bool debug) {
-  std::vector<FieldInfo> fieldvector;
+std::vector<FieldInfo> read_fields(std::ifstream &file, u2 count, std::vector<ConstantPoolEntry>& cp, bool debug) {
+    std::vector<FieldInfo> fieldvector;
 
-  for (u2 i = 0; i < count; i++) {
-    FieldInfo entry = read_fields_info(file, debug);
-
-    if (debug) {
-      print_read_fields(i, entry);
+    for (u2 i = 0; i < count; i++) {
+        FieldInfo entry = read_fields_info(file, cp, debug);
+        fieldvector.push_back(entry);
     }
-
-    fieldvector.push_back(entry);
-  }
-
-  return fieldvector;
-}
-
-u2 read_attribute_count(std::ifstream &file, bool debug) {
-  u2 index = read_2bytes(file);
-
-  if (debug) {
-    print_attribute_count(index);
-  }
-
-  return index;
-}
-
-AttributeInfo read_attribute_Info(std::ifstream &file, bool debug) {
-  u2 attribute_name_index = read_2bytes(file);
-  u4 attribute_length = read_4bytes(file);
-  std::vector<u1> info;
-
-  for (u4 i = 0; i < attribute_length; i++) {
-    u1 entry = read_1byte(file);
-    info.push_back(entry);
-  }
-  return AttributeInfo{.attribute_name_index = attribute_name_index,
-                       .attribute_length = attribute_length,
-                       .info = info};
+    return fieldvector;
 }
 
 std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count,
+                                           std::vector<ConstantPoolEntry>& cp,
                                            bool debug) {
-  std::vector<AttributeInfo> attributesvector;
+    std::vector<AttributeInfo> attributes_vector;
 
-  for (u2 i = 0; i < count; i++) {
-    AttributeInfo entry = read_attribute_Info(file, debug);
-    attributesvector.push_back(entry);
-  }
+    for (u2 i = 0; i < count; i++) {
+        AttributeInfo entry;
 
-  return attributesvector;
+        entry.attribute_name_index = read_2bytes(file);
+        entry.attribute_length = read_4bytes(file);
+
+        entry.info.resize(entry.attribute_length);
+        file.read(reinterpret_cast<char*>(entry.info.data()), entry.attribute_length);
+
+        //  Usar 'cp' para descobrir o nome do atributo 
+
+        attributes_vector.push_back(entry);
+    }
+
+    return attributes_vector;
+}
+
+u2 read_methods_count(std::ifstream &file, bool debug = false) {
+    u2 count = read_2bytes(file);
+
+    if (debug) {
+        print_methods_count(count);
+    }
+
+    return count;
+}
+
+std::vector<MethodInfo> read_methods(std::ifstream &file, u2 count, std::vector<ConstantPoolEntry>& cp, bool debug) {
+    std::vector<MethodInfo> methods;
+    for (u2 i = 0; i < count; i++) {
+        MethodInfo method_info;
+
+        method_info.access_flags = static_cast<MethodAccessFlag>(read_2bytes(file));
+        method_info.name_index = read_2bytes(file);
+        method_info.descriptor_index = read_2bytes(file);
+        method_info.attributes_count = read_2bytes(file);
+        
+        method_info.attributes = read_attributes(file, method_info.attributes_count, cp, debug);
+
+        methods.push_back(method_info);
+    }
+    return methods;
 }

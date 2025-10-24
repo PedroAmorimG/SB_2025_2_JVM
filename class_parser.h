@@ -21,11 +21,12 @@ u2 read_super_class(std::ifstream &file, bool debug);
 u2 read_interface_count(std::ifstream &file, bool debug);
 std::vector<u2> read_interfaces(std::ifstream &file, u2 count, bool debug);
 u2 read_field_count(std::ifstream &file, bool debug);
-std::vector<FieldInfo> read_fields(std::ifstream &file, u2 count, bool debug);
-u2 read_method_count(std::ifstream &file, bool debug);
-std::vector<MethodInfo> read_methods(std::ifstream &file, u2 count, bool debug);
+FieldInfo read_fields_info(std::ifstream &file, std::vector<ConstantPoolEntry>& cp, bool debug);
+std::vector<FieldInfo> read_fields(std::ifstream &file, u2 count, std::vector<ConstantPoolEntry>& cp, bool debug);
+u2 read_methods_count(std::ifstream &file, bool debug);
+std::vector<MethodInfo> read_methods(std::ifstream &file, u2 count, std::vector<ConstantPoolEntry>& cp, bool debug);
 u2 read_attribute_count(std::ifstream &file, bool debug);
-std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count,
+std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count, std::vector<ConstantPoolEntry>& cp,
                                            bool debug);
 
 #endif // CLASS_PARSER_H
