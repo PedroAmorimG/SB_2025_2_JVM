@@ -69,10 +69,18 @@ int main(int argc, char *argv[]) {
   if (debug) {
       print_methods(class_file);
       
+      if (class_file.fields_count > 0) {
+        std::cout << "\n--- Fields (" << class_file.fields_count << ") ---" << std::endl;
+        for (u2 i = 0; i < class_file.fields_count; i++) {
+            // Imprime o "Field #" e depois chama a função que acabamos de corrigir
+            std::cout << "Field #" << i << ":" << std::endl; 
+            print_read_fields(i, class_file.fields[i], class_file);
+        }
+      }
+      
       if (class_file.attributes_count > 0) {
         std::cout << "\n--- Class Attributes (" << class_file.attributes_count << ") ---" << std::endl;
-        print_read_attributes(class_file.attributes_count, class_file.attributes);
-      }
+        print_read_attributes(class_file.attributes_count, class_file.attributes, class_file);      }
   }
 
   return 0;

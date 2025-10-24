@@ -288,12 +288,37 @@ std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count,
 
         entry.attribute_name_index = read_2bytes(file);
         entry.attribute_length = read_4bytes(file);
-
-        entry.info.resize(entry.attribute_length);
-        file.read(reinterpret_cast<char*>(entry.info.data()), entry.attribute_length);
-
         //  Usar 'cp' para descobrir o nome do atributo 
         entry.attribute_name = get_utf8_from_pool(cp, entry.attribute_name_index);
+
+        if (entry.attribute_name == "Code") {
+            //não precisamos mais do info
+            
+            // ler max_stack e max_locals
+            entry.data.code_info.max_stack = read_2bytes(file);
+            entry.data.code_info.max_locals = read_2bytes(file);
+
+            // lendo o bytecode
+            entry.data.code_info.code_length = read_4bytes(file);
+            entry.data.code_info.code.resize(entry.data.code_info.code_length);
+            file.read(reinterpret_cast<char*>(entry.data.code_info.code.data()), entry.data.code_info.code_length);
+
+            // PULAR A TABELA DE EXCEÇÕES POR ENQUANTO
+            u2 exception_table_length = read_2bytes(file);
+            file.seekg(exception_table_length * 8, std::ios_base::cur); // 8 bytes por entrada
+
+            // lendo os atributos ANINHADOS
+            entry.data.code_info.attributes_count = read_2bytes(file);
+            entry.data.code_info.attributes = read_attributes(file, entry.data.code_info.attributes_count, cp, debug);
+
+        } 
+        // continuar else ifs para sourcefile, constant value, etc...
+        else {
+            //atributo desconhecido 
+            entry.data.unknown_info.info.resize(entry.attribute_length);
+            file.read(reinterpret_cast<char*>(entry.data.unknown_info.info.data()), entry.attribute_length);
+        }
+
 
         attributes_vector.push_back(entry);
     }

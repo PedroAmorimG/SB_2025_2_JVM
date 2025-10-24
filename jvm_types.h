@@ -123,11 +123,42 @@ enum FieldAccessFlag : u2 {
 
 // AttributeInfo
 
+struct AttributeInfo; 
+
+struct CodeAttribute {
+    u2 max_stack;
+    u2 max_locals;
+    u4 code_length;
+    std::vector<u1> code; 
+    u2 exception_table_length;
+    // std::vector<ExceptionTableEntry> exception_table; 
+    u2 attributes_count;
+    std::vector<AttributeInfo> attributes; 
+};
+
+// implementar sourcefile attribute e unknown attribute
+struct SourceFileAttribute {
+    u2 sourcefile_index;
+};
+
+struct UnknownAttribute {
+    std::vector<u1> info; 
+};
+
+union AttributeData {
+    CodeAttribute code_info;
+    SourceFileAttribute sourcefile_info;
+    UnknownAttribute unknown_info;
+    AttributeData() {} 
+    ~AttributeData() {}
+};
+
 struct AttributeInfo {
   u2 attribute_name_index;
   std::string attribute_name;
   u4 attribute_length;
-  std::vector<u1> info;
+  // std::vector<u1> info; TROCADO PELO QUE ESTÁ EMBAIXO vvvv
+  AttributeData data;
 };
 
 struct FieldInfo {

@@ -187,7 +187,7 @@ void print_field_count(u2 index) {
   std::cout << "Field count index: #" << index << std::endl;
 }
 
-void print_read_fields(u2 index, const FieldInfo entry) {
+void print_read_fields(u2 index, const FieldInfo entry, const ClassFile& cf) {
 
   std::cout << "Access flags: 0x" << std::setfill('0') << std::setw(4)
             << std::hex << std::uppercase << entry.access_flags << std::dec
@@ -225,20 +225,82 @@ void print_read_fields(u2 index, const FieldInfo entry) {
   std::cout << "Attribute bytes count = " << entry.attributes_count << " "
             << std::endl;
   print_read_attributes(entry.attributes_count,
-                        entry.attributes); // Chamar no method também
+                        entry.attributes, cf);
 }
 
 void print_attribute_count(u2 count) {
   std::cout << "Class Attributes count: " << count << std::endl;
 }
 
-void print_read_attributes(u2 index, const std::vector<AttributeInfo> entry) {
+// (Note que ela precisa do pool, então você terá que passar o cf ou o pool adiante)
+void print_code_attribute(const CodeAttribute& code, const ClassFile& cf) {
+    std::cout << "\t\tCode:" << std::endl;
+    std::cout << "\t\t  stack=" << code.max_stack;
+    std::cout << ", locals=" << code.max_locals << std::endl;
+    
+    // --- Próximo passo (mais difícil): imprimir o bytecode ---
+    std::cout << "\t\t  bytecode (" << code.code_length << " bytes):" << std::endl;
+
+    for (u4 i = 0; i < code.code_length; /* não incremente aqui */) {
+    u1 opcode = code.code[i];
+    std::cout << "\t\t    " << i << ": ";
+
+    switch (opcode) {
+        case 178: // getstatic
+            u2 index = (code.code[i+1] << 8) | code.code[i+2];
+            std::cout << "getstatic #" << index;
+            // (Aqui você usaria o cf.constant_pool para imprimir o que é o #index)
+            i += 3; // Avança 3 bytes (opcode + 2 bytes de index)
+            break;
+        case 18: // ldc
+            u1 index_ldc = code.code[i+1];
+            std::cout << "ldc #" << (int)index_ldc;
+            i += 2; // Avança 2 bytes (opcode + 1 byte de index)
+            break;
+        case 182: // invokevirtual
+            u2 index_inv = (code.code[i+1] << 8) | code.code[i+2];
+            std::cout << "invokevirtual #" << index_inv;
+            i += 3;
+            break;
+        case 177: // return
+            std::cout << "return";
+            i += 1; // Avança 1 byte
+            break;
+        // ... (Adicione outros opcodes como aload_0 (42), invokespecial (183), etc.)
+        default:
+            std::cout << "opcode desconhecido: " << (int)opcode;
+            i += 1;
+            break;
+    }
+    std::cout << std::endl;
+}
+
+    // --- Imprimir atributos aninhados (RECURSÃO!) ---
+    if (code.attributes_count > 0) {
+        std::cout << "\t\t  Code Attributes (" << code.attributes_count << "):" << std::endl;
+        // Você precisará de uma versão de print_read_attributes que pegue o pool
+        print_read_attributes(code.attributes_count, code.attributes, cf);
+        // print_read_attributes(code.attributes_count, code.attributes, pool);
+    }
+}
+
+void print_read_attributes(u2 index, const std::vector<AttributeInfo>& entry, const ClassFile& cf) {
   for (u2 i = 0; i < index && i < entry.size(); i++) {
     const AttributeInfo &attribute = entry[i];
+
     std::cout << "\tAttribute name: \"" << attribute.attribute_name << "\"" 
               << " (index #" << attribute.attribute_name_index << ")" << std::endl;
     std::cout << "\tinfo length " << attribute.attribute_length << std::endl;
-    print_attribute_info_entry(attribute.attribute_length, attribute.info);
+
+    // --- Adicione este if/else ---
+    if (attribute.attribute_name == "Code") {
+        print_code_attribute(attribute.data.code_info, cf);
+    } 
+    // else if (attribute.attribute_name == "SourceFile") { ... }
+    else {
+        // Imprime os bytes brutos para atributos desconhecidos
+        print_attribute_info_entry(attribute.attribute_length, attribute.data.unknown_info.info);
+    }
   }
 }
 
@@ -281,7 +343,7 @@ void print_methods(const ClassFile &cf) {
         std::cout << "  Attributes Count: " << method.attributes_count << std::endl;
 
         if (method.attributes_count > 0) {
-            print_read_attributes(method.attributes_count, method.attributes);
+          print_read_attributes(method.attributes_count, method.attributes, cf);       
         }
     }
 }
