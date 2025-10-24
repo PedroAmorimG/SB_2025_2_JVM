@@ -235,8 +235,8 @@ void print_attribute_count(u2 count) {
 void print_read_attributes(u2 index, const std::vector<AttributeInfo> entry) {
   for (u2 i = 0; i < index && i < entry.size(); i++) {
     const AttributeInfo &attribute = entry[i];
-    std::cout << "\tAttribute name_index " << attribute.attribute_name_index
-              << " " << std::endl;
+    std::cout << "\tAttribute name: \"" << attribute.attribute_name << "\"" 
+              << " (index #" << attribute.attribute_name_index << ")" << std::endl;
     std::cout << "\tinfo length " << attribute.attribute_length << std::endl;
     print_attribute_info_entry(attribute.attribute_length, attribute.info);
   }

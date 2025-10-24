@@ -2,6 +2,9 @@
 #define CLASS_VIEWER_H
 
 #include "jvm_types.h"
+#include <string>
+#include <vector>
+
 
 void print_magic(u4 magic);
 void print_major_version(u2 major);
@@ -23,5 +26,8 @@ void print_attribute_info_entry(u4 index, const std::vector<u1> entry);
 struct ClassFile; 
 void print_methods_count(u2 count);
 void print_methods(const ClassFile &cf);
+
+//para conseguir imprimir o nome do atributo da constant pool
+std::string get_utf8_from_pool(const std::vector<ConstantPoolEntry>& pool, u2 index);
 
 #endif

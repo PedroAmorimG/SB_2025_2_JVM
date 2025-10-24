@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <utility>
 #include <vector>
+#include <string>
 
 // Tipos básicos
 using u1 = uint8_t;
@@ -124,6 +125,7 @@ enum FieldAccessFlag : u2 {
 
 struct AttributeInfo {
   u2 attribute_name_index;
+  std::string attribute_name;
   u4 attribute_length;
   std::vector<u1> info;
 };

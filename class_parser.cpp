@@ -293,6 +293,7 @@ std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count,
         file.read(reinterpret_cast<char*>(entry.info.data()), entry.attribute_length);
 
         //  Usar 'cp' para descobrir o nome do atributo 
+        entry.attribute_name = get_utf8_from_pool(cp, entry.attribute_name_index);
 
         attributes_vector.push_back(entry);
     }
