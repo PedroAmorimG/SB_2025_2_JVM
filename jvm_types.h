@@ -125,13 +125,20 @@ enum FieldAccessFlag : u2 {
 
 struct AttributeInfo; 
 
+struct ExceptionTableEntry {
+    u2 start_pc;
+    u2 end_pc;
+    u2 handler_pc;
+    u2 catch_type;
+};
+
 struct CodeAttribute {
     u2 max_stack;
     u2 max_locals;
     u4 code_length;
     std::vector<u1> code; 
     u2 exception_table_length;
-    // std::vector<ExceptionTableEntry> exception_table; 
+    std::vector<ExceptionTableEntry> exception_table; 
     u2 attributes_count;
     std::vector<AttributeInfo> attributes; 
 };
@@ -144,20 +151,18 @@ struct UnknownAttribute {
     std::vector<u1> info; 
 };
 
-// REMOVA A SUA UNION ATTRIBUTEDATA INTEIRA (ela não é mais necessária)
+struct ConstantValueAttribute {
+    u2 constantvalue_index; // indice para o pool de constantes
+};
 
 struct AttributeInfo {
   u2 attribute_name_index;
   std::string attribute_name;
   u4 attribute_length;
-  
-  // vvv SUBSTITUA A UNION POR ISSO vvv
-  // Colocamos todos os possíveis dados de atributo aqui.
-  // Apenas aquele que corresponde ao attribute_name será preenchido.
   CodeAttribute code_info;
   SourceFileAttribute sourcefile_info;
+  ConstantValueAttribute constantvalue_info;
   UnknownAttribute unknown_info;
-  // ^^^ SUBSTITUA A UNION POR ISSO ^^^
 };
 
 

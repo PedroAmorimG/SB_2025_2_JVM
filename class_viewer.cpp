@@ -243,7 +243,7 @@ void print_code_attribute(const CodeAttribute& code, const ClassFile& cf) {
     u1 opcode = code.code[i];
     std::cout << "\t\t    " << i << ": ";
 
-    switch (opcode) {
+      switch (opcode) {
         case 5: { // iconst_2
             std::cout << "iconst_2";
             i += 1;
@@ -477,10 +477,31 @@ void print_code_attribute(const CodeAttribute& code, const ClassFile& cf) {
             break;
         } 
     }
-    std::cout << std::endl;
-}
-
     
+    std::cout << std::endl;
+    }
+
+    std::cout << std::endl;
+    if (code.exception_table_length > 0) {
+        std::cout << "\t\t  Exception table:" << std::endl;
+        std::cout << "\t\t    from    to  target      type" << std::endl;
+        
+        for (const auto& ex : code.exception_table) {
+            std::cout << "\t\t    " 
+                      << std::setw(5) << ex.start_pc << " " 
+                      << std::setw(5) << ex.end_pc << " "
+                      << std::setw(5) << ex.handler_pc << "      ";
+            
+            if (ex.catch_type == 0) {
+                std::cout << "any (finally)" << std::endl;
+            } else {
+                // imprimir o nome da classe da exceção?? usar get_utf8_from_pool(cf.constant_pool, ex.catch_type)
+                std::cout << "Class #" << ex.catch_type << std::endl;
+            }
+        }
+        std::cout << std::endl;
+    }
+
     if (code.attributes_count > 0) {
         std::cout << "\t\t  Code Attributes (" << code.attributes_count << "):" << std::endl;
         print_read_attributes(code.attributes_count, code.attributes, cf);
@@ -497,7 +518,32 @@ void print_read_attributes(u2 index, const std::vector<AttributeInfo>& entry, co
 
     if (attribute.attribute_name == "Code") {
         print_code_attribute(attribute.code_info, cf);
-    } 
+    }
+    else if (attribute.attribute_name == "ConstantValue") {
+        u2 index = attribute.constantvalue_info.constantvalue_index;
+        std::cout << "\t\tConstantValue: index #" << index << " ";
+
+        // Bônus: Imprimir o valor real do pool de constantes
+        // (Isso requer que cf.constant_pool[index] exista)
+        if (index > 0 && index < cf.constant_pool.size()) {
+            const auto& entry = cf.constant_pool[index];
+            switch (entry.first) {
+                case ConstantTag::CONSTANT_Integer:
+                    std::cout << "(Integer: " << (int32_t)entry.second.integer_info.bytes << ")";
+                    break;
+                case ConstantTag::CONSTANT_Float:
+                    std::cout << "(Float: ...)"; // Você precisaria decodificar o float
+                    break;
+                case ConstantTag::CONSTANT_String:
+                    std::cout << "(String: " << get_utf8_from_pool(cf.constant_pool, entry.second.string_info.string_index) << ")";
+                    break;
+                // Adicione Long, Double, etc., se precisar
+                default:
+                    std::cout << "(Tipo de pool desconhecido)";
+            }
+        }
+        std::cout << std::endl;
+    }
     else {
         print_attribute_info_entry(attribute.attribute_length, attribute.unknown_info.info);
     }
