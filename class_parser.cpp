@@ -289,28 +289,25 @@ std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count, std::v
 
         entry.attribute_name_index = read_2bytes(file);
         entry.attribute_length = read_4bytes(file);
-        //  Usar 'cp' para descobrir o nome do atributo 
         entry.attribute_name = get_utf8_from_pool(cp, entry.attribute_name_index);
 
         if (entry.attribute_name == "Code") {
-            //não precisamos mais do info
             entry.code_info.max_stack = read_2bytes(file);
             entry.code_info.max_locals = read_2bytes(file);
             entry.code_info.code_length = read_4bytes(file);
             
-            std::cout << "[DEBUG]   Lido code_length = " << entry.code_info.code_length << std::flush;
             entry.code_info.code.resize(entry.code_info.code_length);
             file.read(reinterpret_cast<char*>(entry.code_info.code.data()), entry.code_info.code_length);
             // PULAR A TABELA DE EXCEÇÕES POR ENQUANTO
             u2 exception_table_length = read_2bytes(file);
-            //file.seekg(exception_table_length * 8, std::ios_base::cur); // 8 bytes por entrada
+            file.seekg(exception_table_length * 8, std::ios_base::cur); // 8 bytes por entrada
+            //tentativas de correção de erro, mas na vdd estava em outro lugar ...
             //std::vector<u1> exception_table_dummy(exception_table_length * 8);
             //file.read(reinterpret_cast<char*>(exception_table_dummy.data()), exception_table_dummy.size());
-            // Vamos ler e descartar os bytes da tabela de exceção, um por um.
-            u4 exception_table_bytes = exception_table_length * 8;
-            for (u4 j = 0; j < exception_table_bytes; j++) {
-                read_1byte(file); // Lê 1 byte e o descarta
-            }
+            //u4 exception_table_bytes = exception_table_length * 8;
+            //for (u4 j = 0; j < exception_table_bytes; j++) {
+            //    read_1byte(file); // Lê 1 byte e o descarta
+            //}
             entry.code_info.attributes_count = read_2bytes(file);
             entry.code_info.attributes = read_attributes(file, entry.code_info.attributes_count, cp, debug);
 
@@ -319,7 +316,6 @@ std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count, std::v
         // continuar else ifs para sourcefile, constant value, etc...
         else {
             //atributo desconhecido 
-            std::cout << "[DEBUG] Lendo atributo '" << entry.attribute_name << "' (" << entry.attribute_length << " bytes)." << std::flush;
             entry.unknown_info.info.resize(entry.attribute_length);
             file.read(reinterpret_cast<char*>(entry.unknown_info.info.data()), entry.attribute_length);
         }

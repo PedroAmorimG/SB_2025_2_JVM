@@ -1,8 +1,8 @@
 #include "class_viewer.h"
 #include "jvm_types.h"
 #include <cstring>
-#include <iomanip>
-#include <iostream>
+  #include <iomanip>
+  #include <iostream>
 #include <string>
 #include <vector>
 
@@ -244,18 +244,217 @@ void print_code_attribute(const CodeAttribute& code, const ClassFile& cf) {
     std::cout << "\t\t    " << i << ": ";
 
     switch (opcode) {
+        case 5: { // iconst_2
+            std::cout << "iconst_2";
+            i += 1;
+            break;
+        }
+
+        case 20: { // ldc2_w
+            u2 index = (code.code[i+1] << 8) | code.code[i+2];
+            std::cout << "ldc2_w #" << index;
+            i += 3;
+            break;
+        }
+
+        case 44: { // aload_2
+            std::cout << "aload_2";
+            i += 1;
+            break;
+        }
+
+        case 45: { // aload_3
+            std::cout << "aload_3";
+            i += 1;
+            break;
+        }
+
+        case 77: { // astore_2
+            std::cout << "astore_2";
+            i += 1;
+            break;
+        }
+
+        case 78: { // astore_3
+            std::cout << "astore_3";
+            i += 1;
+            break;
+        }
+
+        case 185: { // invokeinterface
+            u2 index = (code.code[i+1] << 8) | code.code[i+2];
+            u1 count = code.code[i+3];
+            std::cout << "invokeinterface #" << index << ", count " << (int)count;
+            i += 5;
+            break;
+        }
+
+        case 181: { // putfield
+            u2 index = (code.code[i+1] << 8) | code.code[i+2];
+            std::cout << "putfield #" << index;
+            i += 3;
+            break;
+        }
+
+        case 0: { // nop
+            std::cout << "nop";
+            i += 1;
+            break;
+        }
+
+        case 2: { // iconst_m1
+            std::cout << "iconst_m1";
+            i += 1;
+            break;
+        }
+
+        case 3: { // iconst_0
+            std::cout << "iconst_0";
+            i += 1;
+            break;
+        }
+
+        case 16: { // bipush
+            u1 byte = code.code[i+1];
+            std::cout << "bipush " << static_cast<int>(byte);
+            i += 2;
+            break;
+        }
+
+        case 13: { // lconst_0
+            std::cout << "lconst_0";
+            i += 1;
+            break;
+        }
+
+        case 61: { // istore_2
+            std::cout << "istore_2"; 
+            i += 1;
+            break;
+        }
+
+        case 28: { // iload_2
+            std::cout << "iload_2"; 
+            i += 1;
+            break;
+        }
+
+        case 162: { // if_icmpge
+            u2 index = (code.code[i+1] << 8) | code.code[i+2];
+            std::cout << "if_icmpge #" << index;
+            i += 3;
+            break;
+        }
+
+        case 26: { // iload_0
+            std::cout << "iload_0"; 
+            i += 1;
+            break;
+        }
+
+        case 180: { // getfield
+            u2 index = (code.code[i+1] << 8) | code.code[i+2];
+            std::cout << "getfield #" << index;
+            i += 3;
+            break;
+        }
+
+        case 4: { // iconst_1
+            std::cout << "iconst_1"; 
+            i += 1;
+            break;
+        }
+
+        case 83: { // aastore
+            std::cout << "aastore"; 
+            i += 1;
+            break;
+        }
+
+        case 132: { // iinc
+            u1 index_local = code.code[i+1];
+            u1 constante = code.code[i+2];
+            std::cout << "iinc (var #" << static_cast<int>(index_local) 
+                      << " by " << static_cast<int>(constante) << ")";
+            i += 3; 
+            break;
+        }
+
+        case 1: { // aconst_null
+            std::cout << "aconst_null"; 
+            i += 1;
+            break;
+        }
+
+        case 167: { // goto
+            u2 index = (code.code[i+1] << 8) | code.code[i+2];
+            std::cout << "goto #" << index;
+            i += 3;
+            break;
+        }
+
+        case 255: { // impdep2
+            std::cout << "impdep2 (reservado)"; 
+            i += 1;
+            break;
+        }
+
+        case 189: { // anewarray
+            u2 index = (code.code[i+1] << 8) | code.code[i+2];
+            std::cout << "anewarray #" << index;
+            i += 3;
+            break;
+        }
+
+        case 42: { // aload_0
+            std::cout << "aload_0";
+            i += 1;
+            break;
+        }
+
+        case 183: { // invokespecial
+            u2 index = (code.code[i+1] << 8) | code.code[i+2];
+            std::cout << "invokespecial #" << index;
+            i += 3; 
+            break;
+        }
+
+        case 187: { // new
+            u2 index = (code.code[i+1] << 8) | code.code[i+2];
+            std::cout << "new #" << index;
+            i += 3;
+            break;
+        }
+
+        case 89: { // dup
+            std::cout << "dup";
+            i += 1;
+            break;
+        }
+        
+        case 76: { // astore_1
+            std::cout << "astore_1";
+            i += 1;
+            break;
+        }
+
+        case 43: { // aload_1
+            std::cout << "aload_1";
+            i += 1;
+            break;
+        }
+
         case 178: { // getstatic   
             u2 index = (code.code[i+1] << 8) | code.code[i+2];
             std::cout << "getstatic #" << index;
-            // (Aqui você usaria o cf.constant_pool para imprimir o que é o #index)
-            i += 3; // Avança 3 bytes (opcode + 2 bytes de index)
+            i += 3; 
             break;
         } 
 
         case 18: { // ldc  
             u1 index_ldc = code.code[i+1];
             std::cout << "ldc #" << (int)index_ldc;
-            i += 2; // Avança 2 bytes (opcode + 1 byte de index)
+            i += 2; 
             break;
         } 
 
@@ -268,7 +467,7 @@ void print_code_attribute(const CodeAttribute& code, const ClassFile& cf) {
 
         case 177: { // return  
             std::cout << "return";
-            i += 1; // Avança 1 byte
+            i += 1; 
             break;
         } 
 
@@ -278,7 +477,6 @@ void print_code_attribute(const CodeAttribute& code, const ClassFile& cf) {
             break;
         } 
     }
-// ...
     std::cout << std::endl;
 }
 
