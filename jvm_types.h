@@ -155,13 +155,19 @@ struct ConstantValueAttribute {
     u2 constantvalue_index; // indice para o pool de constantes
 };
 
+struct SyntheticAttribute {
+    // não tem corpo, seu LEN é 0.
+};
+
 struct AttributeInfo {
   u2 attribute_name_index;
   std::string attribute_name;
   u4 attribute_length;
+
   CodeAttribute code_info;
   SourceFileAttribute sourcefile_info;
   ConstantValueAttribute constantvalue_info;
+  SyntheticAttribute synthetic_info;
   UnknownAttribute unknown_info;
 };
 

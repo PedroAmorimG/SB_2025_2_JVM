@@ -210,6 +210,8 @@ void print_read_fields(u2 index, const FieldInfo entry, const ClassFile& cf) {
     flags.push_back("ACC_TRANSIENT");
   if (entry.access_flags & 0x4000)
     flags.push_back("ACC_ENUM");
+  if (entry.access_flags & 0x1000)
+    flags.push_back("ACC_SYNTHETIC");
 
   for (u1 i = 0; i < flags.size(); ++i) {
     std::cout << flags[i];
@@ -544,6 +546,9 @@ void print_read_attributes(u2 index, const std::vector<AttributeInfo>& entry, co
         }
         std::cout << std::endl;
     }
+    else if (attribute.attribute_name == "Synthetic") {
+        std::cout << "\t\tSynthetic: true" << std::endl;
+    }
     else {
         print_attribute_info_entry(attribute.attribute_length, attribute.unknown_info.info);
     }
@@ -585,7 +590,24 @@ void print_methods(const ClassFile &cf) {
         std::cout << "Method #" << i << ": " << name << descriptor << std::endl;
         std::cout << "  Name Index:      #" << method.name_index << std::endl;
         std::cout << "  Descriptor Index: #" << method.descriptor_index << std::endl;
-        std::cout << "  Access Flags:    0x" << std::hex << method.access_flags << std::dec << std::endl;
+
+        std::cout << "  Access Flags:    0x" << std::hex << method.access_flags << std::dec << " [";
+        
+        std::vector<std::string> flags;
+        if (method.access_flags & 0x0001) flags.push_back("ACC_PUBLIC");
+        if (method.access_flags & 0x0002) flags.push_back("ACC_PRIVATE");
+        if (method.access_flags & 0x0004) flags.push_back("ACC_PROTECTED");
+        if (method.access_flags & 0x0008) flags.push_back("ACC_STATIC");
+        if (method.access_flags & 0x0010) flags.push_back("ACC_FINAL");
+        // O jvm_types.h define ACC_Synthetic_Method = 0x1000
+        if (method.access_flags & 0x1000) flags.push_back("ACC_SYNTHETIC"); 
+        
+        for (u2 j = 0; j < flags.size(); j++) {
+            std::cout << flags[j];
+            if (j < flags.size() - 1) std::cout << ", ";
+        }
+        std::cout << "]" << std::endl;
+
         std::cout << "  Attributes Count: " << method.attributes_count << std::endl;
 
         if (method.attributes_count > 0) {

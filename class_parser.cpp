@@ -328,6 +328,9 @@ std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count, std::v
         else if (entry.attribute_name == "ConstantValue") {
           entry.constantvalue_info.constantvalue_index = read_2bytes(file);
         }        
+        else if (entry.attribute_name == "Synthetic") {
+        //não faz nada
+        }
         // continuar else ifs para o restante dos atributos...
         else {
             //atributo desconhecido 
