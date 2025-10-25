@@ -244,39 +244,39 @@ void print_code_attribute(const CodeAttribute& code, const ClassFile& cf) {
     std::cout << "\t\t    " << i << ": ";
 
     switch (opcode) {
-        case 178: { // getstatic   <-- ADICIONE A CHAVE
+        case 178: { // getstatic   
             u2 index = (code.code[i+1] << 8) | code.code[i+2];
             std::cout << "getstatic #" << index;
             // (Aqui você usaria o cf.constant_pool para imprimir o que é o #index)
             i += 3; // Avança 3 bytes (opcode + 2 bytes de index)
             break;
-        } // <-- ADICIONE A CHAVE
+        } 
 
-        case 18: { // ldc   <-- ADICIONE A CHAVE
+        case 18: { // ldc  
             u1 index_ldc = code.code[i+1];
             std::cout << "ldc #" << (int)index_ldc;
             i += 2; // Avança 2 bytes (opcode + 1 byte de index)
             break;
-        } // <-- ADICIONE A CHAVE
+        } 
 
-        case 182: { // invokevirtual   <-- ADICIONE A CHAVE
+        case 182: { // invokevirtual   
             u2 index_inv = (code.code[i+1] << 8) | code.code[i+2];
             std::cout << "invokevirtual #" << index_inv;
             i += 3;
             break;
-        } // <-- ADICIONE A CHAVE
+        } 
 
-        case 177: { // return   <-- (Boa prática adicionar em todos)
+        case 177: { // return  
             std::cout << "return";
             i += 1; // Avança 1 byte
             break;
-        } // <-- ADICIONE A CHAVE
+        } 
 
-        default: { //   <-- (Boa prática adicionar em todos)
+        default: { 
             std::cout << "opcode desconhecido: " << (int)opcode;
             i += 1;
             break;
-        } // <-- ADICIONE A CHAVE
+        } 
     }
 // ...
     std::cout << std::endl;

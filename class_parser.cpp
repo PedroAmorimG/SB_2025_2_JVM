@@ -3,6 +3,9 @@
 #include "jvm_types.h"
 #include <utility>
 #include <vector>
+#include <iomanip>
+#include <iostream>
+
 
 u1 read_1byte(std::ifstream &file) {
   u1 byte;
@@ -66,7 +69,7 @@ u2 read_constant_pool_count(std::ifstream &file, bool debug = false) {
 
 ConstantPoolEntry read_constant_pool_entry(std::ifstream &file) {
   ConstantTag tag = static_cast<ConstantTag>(read_1byte(file));
-  ConstantInfo info;
+  ConstantInfo info{};
 
   switch (tag) {
   case ConstantTag::CONSTANT_Class: {
@@ -170,8 +173,7 @@ ConstantPoolEntry read_constant_pool_entry(std::ifstream &file) {
   return std::make_pair(tag, info);
 }
 
-std::vector<ConstantPoolEntry> read_constant_pool(std::ifstream &file, u2 count,
-                                                  bool debug = false) {
+std::vector<ConstantPoolEntry> read_constant_pool(std::ifstream &file, u2 count, bool debug = false) {
   std::vector<ConstantPoolEntry> pool;
   ConstantInfo empty_info;
   empty_info.empty = EmptyInfo{};
@@ -264,8 +266,9 @@ u2 read_field_count(std::ifstream &file, bool debug) {
 
 std::vector<FieldInfo> read_fields(std::ifstream &file, u2 count, std::vector<ConstantPoolEntry>& cp, bool debug) {
     std::vector<FieldInfo> fields_vector;
+    
     for (u2 i = 0; i < count; i++) {
-        FieldInfo entry; 
+        FieldInfo entry{}; 
 
         entry.access_flags = static_cast<FieldAccessFlag>(read_2bytes(file));
         entry.name_index = read_2bytes(file);
@@ -278,13 +281,11 @@ std::vector<FieldInfo> read_fields(std::ifstream &file, u2 count, std::vector<Co
     return fields_vector;
 }
 
-std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count,
-                                           std::vector<ConstantPoolEntry>& cp,
-                                           bool debug) {
+std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count, std::vector<ConstantPoolEntry>& cp, bool debug) {
     std::vector<AttributeInfo> attributes_vector;
 
     for (u2 i = 0; i < count; i++) {
-        AttributeInfo entry;
+        AttributeInfo entry{};
 
         entry.attribute_name_index = read_2bytes(file);
         entry.attribute_length = read_4bytes(file);
@@ -293,15 +294,23 @@ std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count,
 
         if (entry.attribute_name == "Code") {
             //não precisamos mais do info
+            entry.code_info.max_stack = read_2bytes(file);
             entry.code_info.max_locals = read_2bytes(file);
             entry.code_info.code_length = read_4bytes(file);
+            
+            std::cout << "[DEBUG]   Lido code_length = " << entry.code_info.code_length << std::flush;
             entry.code_info.code.resize(entry.code_info.code_length);
             file.read(reinterpret_cast<char*>(entry.code_info.code.data()), entry.code_info.code_length);
             // PULAR A TABELA DE EXCEÇÕES POR ENQUANTO
             u2 exception_table_length = read_2bytes(file);
             //file.seekg(exception_table_length * 8, std::ios_base::cur); // 8 bytes por entrada
-            std::vector<u1> exception_table_dummy(exception_table_length * 8);
-            file.read(reinterpret_cast<char*>(exception_table_dummy.data()), exception_table_dummy.size());
+            //std::vector<u1> exception_table_dummy(exception_table_length * 8);
+            //file.read(reinterpret_cast<char*>(exception_table_dummy.data()), exception_table_dummy.size());
+            // Vamos ler e descartar os bytes da tabela de exceção, um por um.
+            u4 exception_table_bytes = exception_table_length * 8;
+            for (u4 j = 0; j < exception_table_bytes; j++) {
+                read_1byte(file); // Lê 1 byte e o descarta
+            }
             entry.code_info.attributes_count = read_2bytes(file);
             entry.code_info.attributes = read_attributes(file, entry.code_info.attributes_count, cp, debug);
 
@@ -310,6 +319,7 @@ std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count,
         // continuar else ifs para sourcefile, constant value, etc...
         else {
             //atributo desconhecido 
+            std::cout << "[DEBUG] Lendo atributo '" << entry.attribute_name << "' (" << entry.attribute_length << " bytes)." << std::flush;
             entry.unknown_info.info.resize(entry.attribute_length);
             file.read(reinterpret_cast<char*>(entry.unknown_info.info.data()), entry.attribute_length);
         }
@@ -342,7 +352,7 @@ u2 read_methods_count(std::ifstream &file, bool debug = false) {
 std::vector<MethodInfo> read_methods(std::ifstream &file, u2 count, std::vector<ConstantPoolEntry>& cp, bool debug) {
     std::vector<MethodInfo> methods;
     for (u2 i = 0; i < count; i++) {
-        MethodInfo method_info;
+        MethodInfo method_info{};
 
         method_info.access_flags = static_cast<MethodAccessFlag>(read_2bytes(file));
         method_info.name_index = read_2bytes(file);
