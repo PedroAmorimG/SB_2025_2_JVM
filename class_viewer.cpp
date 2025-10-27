@@ -510,6 +510,23 @@ void print_code_attribute(const CodeAttribute& code, const ClassFile& cf) {
     }
 }
 
+// Helper para pegar nome de Classe (precisamos dele aqui)
+static std::string
+get_class_name_from_pool_viewer(const std::vector<ConstantPoolEntry> &pool,
+                                u2 index) {
+  try {
+    const auto &class_entry = pool.at(index);
+    if (class_entry.first != ConstantTag::CONSTANT_Class) {
+      return "[ERRO: Nao e Class]";
+    }
+    u2 name_index = class_entry.second.class_info.name_index;
+    return get_utf8_from_pool(pool, name_index); // Reutiliza o helper
+  } catch (const std::out_of_range &e) {
+    return "[ERRO: Indice invalido]";
+  }
+}
+
+
 void print_read_attributes(u2 index, const std::vector<AttributeInfo>& entry, const ClassFile& cf) {
   for (u2 i = 0; i < index && i < entry.size(); i++) {
     const AttributeInfo &attribute = entry[i];
@@ -525,8 +542,6 @@ void print_read_attributes(u2 index, const std::vector<AttributeInfo>& entry, co
         u2 index = attribute.constantvalue_info.constantvalue_index;
         std::cout << "\t\tConstantValue: index #" << index << " ";
 
-        // Bônus: Imprimir o valor real do pool de constantes
-        // (Isso requer que cf.constant_pool[index] exista)
         if (index > 0 && index < cf.constant_pool.size()) {
             const auto& entry = cf.constant_pool[index];
             switch (entry.first) {
@@ -534,12 +549,14 @@ void print_read_attributes(u2 index, const std::vector<AttributeInfo>& entry, co
                     std::cout << "(Integer: " << (int32_t)entry.second.integer_info.bytes << ")";
                     break;
                 case ConstantTag::CONSTANT_Float:
-                    std::cout << "(Float: ...)"; // Você precisaria decodificar o float
+                    std::cout << "(Float: ...)"; 
                     break;
                 case ConstantTag::CONSTANT_String:
-                    std::cout << "(String: " << get_utf8_from_pool(cf.constant_pool, entry.second.string_info.string_index) << ")";
+                    {
+                      u2 utf8_index = entry.second.string_info.string_index;
+                      std::cout << "(String: \"" << get_utf8_from_pool(cf.constant_pool, utf8_index) << "\")";
+                    }
                     break;
-                // Adicione Long, Double, etc., se precisar
                 default:
                     std::cout << "(Tipo de pool desconhecido)";
             }
@@ -549,6 +566,35 @@ void print_read_attributes(u2 index, const std::vector<AttributeInfo>& entry, co
     else if (attribute.attribute_name == "Synthetic") {
         std::cout << "\t\tSynthetic: true" << std::endl;
     }
+
+    else if (attribute.attribute_name == "Exceptions") {
+        const auto& ex_info = attribute.exceptions_info;
+        std::cout << "\t\tExceptions count: " << ex_info.number_of_exceptions << std::endl;
+        for (u2 j = 0; j < ex_info.number_of_exceptions; j++) {
+            u2 ex_index = ex_info.exception_index_table[j];
+            std::string class_name = get_class_name_from_pool_viewer(cf.constant_pool, ex_index);
+            std::cout << "\t\t  Exception #" << j << ": Class #" << ex_index 
+                      << " (\"" << class_name << "\")" << std::endl;
+        }
+    }
+    else if (attribute.attribute_name == "InnerClasses") {
+        const auto& ic_info = attribute.innerclasses_info;
+        std::cout << "\t\tInnerClasses count: " << ic_info.number_of_classes << std::endl;
+        for (u2 j = 0; j < ic_info.number_of_classes; j++) {
+            const auto& inner_class = ic_info.classes[j];
+            std::string inner_name = (inner_class.inner_name_index > 0)
+                                     ? get_utf8_from_pool(cf.constant_pool, inner_class.inner_name_index)
+                                     : "null";
+            
+            std::cout << "\t\t  InnerClass #" << j << ":" << std::endl;
+            std::cout << "\t\t    inner_class_info:  #" << inner_class.inner_class_info_index << std::endl;
+            std::cout << "\t\t    outer_class_info:  #" << inner_class.outer_class_info_index << std::endl;
+            std::cout << "\t\t    inner_name:        #" << inner_class.inner_name_index << " (\"" << inner_name << "\")" << std::endl;
+            std::cout << "\t\t    access_flags:      0x" << std::hex 
+                      << inner_class.inner_class_access_flags << std::dec << std::endl;
+        }
+    }
+
     else {
         print_attribute_info_entry(attribute.attribute_length, attribute.unknown_info.info);
     }
@@ -601,6 +647,8 @@ void print_methods(const ClassFile &cf) {
         if (method.access_flags & 0x0010) flags.push_back("ACC_FINAL");
         // O jvm_types.h define ACC_Synthetic_Method = 0x1000
         if (method.access_flags & 0x1000) flags.push_back("ACC_SYNTHETIC"); 
+        if (method.access_flags & 0x0040) flags.push_back("ACC_BRIDGE");
+        if (method.access_flags & 0x0400) flags.push_back("ACC_ABSTRACT");
         
         for (u2 j = 0; j < flags.size(); j++) {
             std::cout << flags[j];

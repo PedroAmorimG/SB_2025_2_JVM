@@ -159,6 +159,23 @@ struct SyntheticAttribute {
     // não tem corpo, seu LEN é 0.
 };
 
+struct ExceptionsAttribute {
+    u2 number_of_exceptions;
+    std::vector<u2> exception_index_table;
+};
+
+struct InnerClassInfo {
+    u2 inner_class_info_index;
+    u2 outer_class_info_index;
+    u2 inner_name_index;
+    u2 inner_class_access_flags;
+};
+
+struct InnerClassesAttribute {
+    u2 number_of_classes;
+    std::vector<InnerClassInfo> classes;
+};
+
 struct AttributeInfo {
   u2 attribute_name_index;
   std::string attribute_name;
@@ -169,6 +186,8 @@ struct AttributeInfo {
   ConstantValueAttribute constantvalue_info;
   SyntheticAttribute synthetic_info;
   UnknownAttribute unknown_info;
+  ExceptionsAttribute exceptions_info;
+  InnerClassesAttribute innerclasses_info;
 };
 
 

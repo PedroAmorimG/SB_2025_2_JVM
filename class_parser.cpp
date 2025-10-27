@@ -298,13 +298,10 @@ std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count, std::v
             
             entry.code_info.code.resize(entry.code_info.code_length);
             file.read(reinterpret_cast<char*>(entry.code_info.code.data()), entry.code_info.code_length);
-            // PULAR A TABELA DE EXCEÇÕES POR ENQUANTO
-            //u2 exception_table_length = read_2bytes(file);
-            //file.seekg(exception_table_length * 8, std::ios_base::cur); // 8 bytes por entrada
 
             entry.code_info.exception_table_length = read_2bytes(file);
             for (u2 j = 0; j < entry.code_info.exception_table_length; j++) {
-                ExceptionTableEntry exception_entry{}; // Zera a struct
+                ExceptionTableEntry exception_entry{}; 
                 
                 exception_entry.start_pc = read_2bytes(file);
                 exception_entry.end_pc = read_2bytes(file);
@@ -313,25 +310,34 @@ std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count, std::v
 
                 entry.code_info.exception_table.push_back(exception_entry);
             }
-            //tentativas de correção de erro, mas na vdd estava em outro lugar ...
-            //std::vector<u1> exception_table_dummy(exception_table_length * 8);
-            //file.read(reinterpret_cast<char*>(exception_table_dummy.data()), exception_table_dummy.size());
-            //u4 exception_table_bytes = exception_table_length * 8;
-            //for (u4 j = 0; j < exception_table_bytes; j++) {
-            //    read_1byte(file); // Lê 1 byte e o descarta
-            //}
+            
             entry.code_info.attributes_count = read_2bytes(file);
             entry.code_info.attributes = read_attributes(file, entry.code_info.attributes_count, cp, debug);
-
-
         }
         else if (entry.attribute_name == "ConstantValue") {
           entry.constantvalue_info.constantvalue_index = read_2bytes(file);
         }        
         else if (entry.attribute_name == "Synthetic") {
-        //não faz nada
+          //não faz nada, atributo tem 0 bytes
         }
-        // continuar else ifs para o restante dos atributos...
+        else if (entry.attribute_name == "Exceptions") {
+            entry.exceptions_info.number_of_exceptions = read_2bytes(file);
+            for(u2 j = 0; j < entry.exceptions_info.number_of_exceptions; j++) {
+                u2 exception_index = read_2bytes(file);
+                entry.exceptions_info.exception_index_table.push_back(exception_index);
+            }
+        }
+        else if (entry.attribute_name == "InnerClasses") {
+            entry.innerclasses_info.number_of_classes = read_2bytes(file);
+            for(u2 j = 0; j < entry.innerclasses_info.number_of_classes; j++) {
+                InnerClassInfo ic_info;
+                ic_info.inner_class_info_index = read_2bytes(file);
+                ic_info.outer_class_info_index = read_2bytes(file);
+                ic_info.inner_name_index = read_2bytes(file);
+                ic_info.inner_class_access_flags = read_2bytes(file);
+                entry.innerclasses_info.classes.push_back(ic_info);
+            }
+        }
         else {
             //atributo desconhecido 
             entry.unknown_info.info.resize(entry.attribute_length);
