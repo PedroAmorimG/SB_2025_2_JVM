@@ -1,11 +1,10 @@
 #include "class_parser.h"
 #include "class_viewer.h"
 #include "jvm_types.h"
-#include <utility>
-#include <vector>
 #include <iomanip>
 #include <iostream>
-
+#include <utility>
+#include <vector>
 
 u1 read_1byte(std::ifstream &file) {
   u1 byte;
@@ -173,7 +172,8 @@ ConstantPoolEntry read_constant_pool_entry(std::ifstream &file) {
   return std::make_pair(tag, info);
 }
 
-std::vector<ConstantPoolEntry> read_constant_pool(std::ifstream &file, u2 count, bool debug = false) {
+std::vector<ConstantPoolEntry> read_constant_pool(std::ifstream &file, u2 count,
+                                                  bool debug = false) {
   std::vector<ConstantPoolEntry> pool;
   ConstantInfo empty_info;
   empty_info.empty = EmptyInfo{};
@@ -182,10 +182,6 @@ std::vector<ConstantPoolEntry> read_constant_pool(std::ifstream &file, u2 count,
   for (u2 i = 1; i < count; i++) {
     ConstantPoolEntry entry = read_constant_pool_entry(file);
 
-    if (debug) {
-      print_constant_entry(i, entry);
-    }
-
     pool.push_back(entry);
 
     if (entry.first == ConstantTag::CONSTANT_Long ||
@@ -193,6 +189,11 @@ std::vector<ConstantPoolEntry> read_constant_pool(std::ifstream &file, u2 count,
       pool.push_back(ConstantPoolEntry(ConstantTag::None, empty_info));
       i++;
     }
+  }
+
+  if (debug) {
+    for (u2 i = 1; i < pool.size(); i++)
+      print_constant_entry(i, pool);
   }
 
   return pool;
@@ -264,91 +265,92 @@ u2 read_field_count(std::ifstream &file, bool debug) {
   return index;
 }
 
-std::vector<FieldInfo> read_fields(std::ifstream &file, u2 count, std::vector<ConstantPoolEntry>& cp, bool debug) {
-    std::vector<FieldInfo> fields_vector;
-    
-    for (u2 i = 0; i < count; i++) {
-        FieldInfo entry{}; 
+std::vector<FieldInfo> read_fields(std::ifstream &file, u2 count,
+                                   std::vector<ConstantPoolEntry> &cp,
+                                   bool debug) {
+  std::vector<FieldInfo> fields_vector;
 
-        entry.access_flags = static_cast<FieldAccessFlag>(read_2bytes(file));
-        entry.name_index = read_2bytes(file);
-        entry.descriptor_index = read_2bytes(file);
-        entry.attributes_count = read_2bytes(file);
-        entry.attributes = read_attributes(file, entry.attributes_count, cp, debug);
+  for (u2 i = 0; i < count; i++) {
+    FieldInfo entry{};
 
-        fields_vector.push_back(entry);
-    }
-    return fields_vector;
+    entry.access_flags = static_cast<FieldAccessFlag>(read_2bytes(file));
+    entry.name_index = read_2bytes(file);
+    entry.descriptor_index = read_2bytes(file);
+    entry.attributes_count = read_2bytes(file);
+    entry.attributes = read_attributes(file, entry.attributes_count, cp, debug);
+
+    fields_vector.push_back(entry);
+  }
+  return fields_vector;
 }
 
-std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count, std::vector<ConstantPoolEntry>& cp, bool debug) {
-    std::vector<AttributeInfo> attributes_vector;
+std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count,
+                                           std::vector<ConstantPoolEntry> &cp,
+                                           bool debug) {
+  std::vector<AttributeInfo> attributes_vector;
 
-    for (u2 i = 0; i < count; i++) {
-        AttributeInfo entry{};
+  for (u2 i = 0; i < count; i++) {
+    AttributeInfo entry{};
 
-        entry.attribute_name_index = read_2bytes(file);
-        entry.attribute_length = read_4bytes(file);
-        entry.attribute_name = get_utf8_from_pool(cp, entry.attribute_name_index);
+    entry.attribute_name_index = read_2bytes(file);
+    entry.attribute_length = read_4bytes(file);
+    entry.attribute_name = get_utf8_from_pool(cp, entry.attribute_name_index);
 
-        if (entry.attribute_name == "Code") {
-            entry.code_info.max_stack = read_2bytes(file);
-            entry.code_info.max_locals = read_2bytes(file);
-            entry.code_info.code_length = read_4bytes(file);
-            
-            entry.code_info.code.resize(entry.code_info.code_length);
-            file.read(reinterpret_cast<char*>(entry.code_info.code.data()), entry.code_info.code_length);
+    if (entry.attribute_name == "Code") {
+      entry.code_info.max_stack = read_2bytes(file);
+      entry.code_info.max_locals = read_2bytes(file);
+      entry.code_info.code_length = read_4bytes(file);
 
-            entry.code_info.exception_table_length = read_2bytes(file);
-            for (u2 j = 0; j < entry.code_info.exception_table_length; j++) {
-                ExceptionTableEntry exception_entry{}; 
-                
-                exception_entry.start_pc = read_2bytes(file);
-                exception_entry.end_pc = read_2bytes(file);
-                exception_entry.handler_pc = read_2bytes(file);
-                exception_entry.catch_type = read_2bytes(file);
+      entry.code_info.code.resize(entry.code_info.code_length);
+      file.read(reinterpret_cast<char *>(entry.code_info.code.data()),
+                entry.code_info.code_length);
 
-                entry.code_info.exception_table.push_back(exception_entry);
-            }
-            
-            entry.code_info.attributes_count = read_2bytes(file);
-            entry.code_info.attributes = read_attributes(file, entry.code_info.attributes_count, cp, debug);
-        }
-        else if (entry.attribute_name == "ConstantValue") {
-          entry.constantvalue_info.constantvalue_index = read_2bytes(file);
-        }        
-        else if (entry.attribute_name == "Synthetic") {
-          //não faz nada, atributo tem 0 bytes
-        }
-        else if (entry.attribute_name == "Exceptions") {
-            entry.exceptions_info.number_of_exceptions = read_2bytes(file);
-            for(u2 j = 0; j < entry.exceptions_info.number_of_exceptions; j++) {
-                u2 exception_index = read_2bytes(file);
-                entry.exceptions_info.exception_index_table.push_back(exception_index);
-            }
-        }
-        else if (entry.attribute_name == "InnerClasses") {
-            entry.innerclasses_info.number_of_classes = read_2bytes(file);
-            for(u2 j = 0; j < entry.innerclasses_info.number_of_classes; j++) {
-                InnerClassInfo ic_info;
-                ic_info.inner_class_info_index = read_2bytes(file);
-                ic_info.outer_class_info_index = read_2bytes(file);
-                ic_info.inner_name_index = read_2bytes(file);
-                ic_info.inner_class_access_flags = read_2bytes(file);
-                entry.innerclasses_info.classes.push_back(ic_info);
-            }
-        }
-        else {
-            //atributo desconhecido 
-            entry.unknown_info.info.resize(entry.attribute_length);
-            file.read(reinterpret_cast<char*>(entry.unknown_info.info.data()), entry.attribute_length);
-        }
+      entry.code_info.exception_table_length = read_2bytes(file);
+      for (u2 j = 0; j < entry.code_info.exception_table_length; j++) {
+        ExceptionTableEntry exception_entry{};
 
+        exception_entry.start_pc = read_2bytes(file);
+        exception_entry.end_pc = read_2bytes(file);
+        exception_entry.handler_pc = read_2bytes(file);
+        exception_entry.catch_type = read_2bytes(file);
 
-        attributes_vector.push_back(entry);
+        entry.code_info.exception_table.push_back(exception_entry);
+      }
+
+      entry.code_info.attributes_count = read_2bytes(file);
+      entry.code_info.attributes =
+          read_attributes(file, entry.code_info.attributes_count, cp, debug);
+    } else if (entry.attribute_name == "ConstantValue") {
+      entry.constantvalue_info.constantvalue_index = read_2bytes(file);
+    } else if (entry.attribute_name == "Synthetic") {
+      // não faz nada, atributo tem 0 bytes
+    } else if (entry.attribute_name == "Exceptions") {
+      entry.exceptions_info.number_of_exceptions = read_2bytes(file);
+      for (u2 j = 0; j < entry.exceptions_info.number_of_exceptions; j++) {
+        u2 exception_index = read_2bytes(file);
+        entry.exceptions_info.exception_index_table.push_back(exception_index);
+      }
+    } else if (entry.attribute_name == "InnerClasses") {
+      entry.innerclasses_info.number_of_classes = read_2bytes(file);
+      for (u2 j = 0; j < entry.innerclasses_info.number_of_classes; j++) {
+        InnerClassInfo ic_info;
+        ic_info.inner_class_info_index = read_2bytes(file);
+        ic_info.outer_class_info_index = read_2bytes(file);
+        ic_info.inner_name_index = read_2bytes(file);
+        ic_info.inner_class_access_flags = read_2bytes(file);
+        entry.innerclasses_info.classes.push_back(ic_info);
+      }
+    } else {
+      // atributo desconhecido
+      entry.unknown_info.info.resize(entry.attribute_length);
+      file.read(reinterpret_cast<char *>(entry.unknown_info.info.data()),
+                entry.attribute_length);
     }
 
-    return attributes_vector;
+    attributes_vector.push_back(entry);
+  }
+
+  return attributes_vector;
 }
 
 u2 read_attribute_count(std::ifstream &file, bool debug) {
@@ -360,28 +362,31 @@ u2 read_attribute_count(std::ifstream &file, bool debug) {
 }
 
 u2 read_methods_count(std::ifstream &file, bool debug = false) {
-    u2 count = read_2bytes(file);
+  u2 count = read_2bytes(file);
 
-    if (debug) {
-        print_methods_count(count);
-    }
+  if (debug) {
+    print_methods_count(count);
+  }
 
-    return count;
+  return count;
 }
 
-std::vector<MethodInfo> read_methods(std::ifstream &file, u2 count, std::vector<ConstantPoolEntry>& cp, bool debug) {
-    std::vector<MethodInfo> methods;
-    for (u2 i = 0; i < count; i++) {
-        MethodInfo method_info{};
+std::vector<MethodInfo> read_methods(std::ifstream &file, u2 count,
+                                     std::vector<ConstantPoolEntry> &cp,
+                                     bool debug) {
+  std::vector<MethodInfo> methods;
+  for (u2 i = 0; i < count; i++) {
+    MethodInfo method_info{};
 
-        method_info.access_flags = static_cast<MethodAccessFlag>(read_2bytes(file));
-        method_info.name_index = read_2bytes(file);
-        method_info.descriptor_index = read_2bytes(file);
-        method_info.attributes_count = read_2bytes(file);
-        
-        method_info.attributes = read_attributes(file, method_info.attributes_count, cp, debug);
+    method_info.access_flags = static_cast<MethodAccessFlag>(read_2bytes(file));
+    method_info.name_index = read_2bytes(file);
+    method_info.descriptor_index = read_2bytes(file);
+    method_info.attributes_count = read_2bytes(file);
 
-        methods.push_back(method_info);
-    }
-    return methods;
+    method_info.attributes =
+        read_attributes(file, method_info.attributes_count, cp, debug);
+
+    methods.push_back(method_info);
+  }
+  return methods;
 }
