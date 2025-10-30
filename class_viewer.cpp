@@ -20,6 +20,38 @@ void print_minor_version(u2 minor) {
   std::cout << "Minor version: " << minor << std::endl;
 }
 
+void print_java_version(u2 major) {
+  std::cout << "Java version: ";
+  switch (major) {
+  case 45:
+    std::cout << "1" << std::endl;
+    break;
+  case 46:
+    std::cout << "2" << std::endl;
+    break;
+  case 47:
+    std::cout << "3" << std::endl;
+    break;
+  case 48:
+    std::cout << "4" << std::endl;
+    break;
+  case 49:
+    std::cout << "5" << std::endl;
+    break;
+  case 50:
+    std::cout << "6" << std::endl;
+    break;
+  case 51:
+    std::cout << "7" << std::endl;
+    break;
+  case 52:
+    std::cout << "8" << std::endl;
+    break;
+  default:
+    break;
+  }
+}
+
 void print_constant_pool_count(u2 count) {
   std::cout << "Constant pool count: " << count << std::endl;
 }
@@ -30,7 +62,7 @@ static std::string resolve_utf8(u2 index,
     const auto &v = cp[index].second.utf8_info;
     return std::string(reinterpret_cast<const char *>(v.bytes), v.length);
   }
-  return "<?utf8 " + std::to_string(index) + ">";
+  return std::to_string(index);
 }
 
 static std::string resolve_class(u2 index,
@@ -39,7 +71,7 @@ static std::string resolve_class(u2 index,
     const auto &v = cp[index].second.class_info;
     return resolve_utf8(v.name_index, cp);
   }
-  return "<?class " + std::to_string(index) + ">";
+  return std::to_string(index);
 }
 
 static std::string
@@ -47,12 +79,11 @@ resolve_name_and_type(u2 index, const std::vector<ConstantPoolEntry> &cp) {
   if (index < cp.size() &&
       cp[index].first == ConstantTag::CONSTANT_NameAndType) {
     const auto &nt = cp[index].second.name_and_type_info;
-    return "name_index = " + std::to_string(nt.name_index) + " <" +
-           resolve_utf8(nt.name_index, cp) + ">, " +
-           "descriptor_index = " + std::to_string(nt.descriptor_index) + " <" +
-           resolve_utf8(nt.descriptor_index, cp) + ">";
+    return resolve_utf8(nt.name_index, cp) + " " +
+
+           resolve_utf8(nt.descriptor_index, cp);
   }
-  return "<?name_and_type " + std::to_string(index) + ">";
+  return std::to_string(index);
 }
 
 // Impressão
@@ -65,48 +96,49 @@ void print_constant_entry(u2 index, const std::vector<ConstantPoolEntry> &cp) {
   switch (tag) {
   case ConstantTag::CONSTANT_Class: {
     const auto &v = info.class_info;
-    std::cout << "Class\t\tname_index = " << v.name_index << " <"
-              << resolve_utf8(v.name_index, cp) << ">";
+    std::cout << "Class\t\tname_index = " << v.name_index << " "
+              << resolve_utf8(v.name_index, cp);
     break;
   }
 
   case ConstantTag::CONSTANT_Fieldref: {
     const auto &v = info.fieldref_info;
-    std::cout << "Fieldref\tclass_index = " << v.class_index << " <"
-              << resolve_class(v.class_index, cp) << ">, "
-              << "name_and_type_index = " << v.name_and_type_index << " <"
-              << resolve_name_and_type(v.name_and_type_index, cp) << ">";
+    std::cout << "Fieldref\t\tclass_index = " << v.class_index << " "
+              << resolve_class(v.class_index, cp) << " "
+              << "name_and_type_index = " << v.name_and_type_index << " "
+              << resolve_name_and_type(v.name_and_type_index, cp);
     break;
   }
 
   case ConstantTag::CONSTANT_Methodref: {
     const auto &v = info.methodref_info;
-    std::cout << "Methodref\tclass_index = " << v.class_index << " <"
-              << resolve_class(v.class_index, cp) << ">, "
-              << "name_and_type_index = " << v.name_and_type_index << " <"
-              << resolve_name_and_type(v.name_and_type_index, cp) << ">";
+    std::cout << "Methodref\t\tclass_index = " << v.class_index << " "
+              << resolve_class(v.class_index, cp) << " "
+              << "name_and_type_index = " << v.name_and_type_index << " "
+              << resolve_name_and_type(v.name_and_type_index, cp);
     break;
   }
 
   case ConstantTag::CONSTANT_InterfaceMethodref: {
     const auto &v = info.interface_methodref_info;
-    std::cout << "InterfaceMethodref\tclass_index = " << v.class_index << " <"
-              << resolve_class(v.class_index, cp) << ">, "
-              << "name_and_type_index = " << v.name_and_type_index << " <"
-              << resolve_name_and_type(v.name_and_type_index, cp) << ">";
+    std::cout << "InterfaceMethodref\tclass_index = " << v.class_index << " "
+              << resolve_class(v.class_index, cp) << " "
+              << "name_and_type_index = " << v.name_and_type_index << " "
+              << resolve_name_and_type(v.name_and_type_index, cp);
     break;
   }
 
   case ConstantTag::CONSTANT_String: {
     const auto &v = info.string_info;
-    std::cout << "String\t\tstring_index = " << v.string_index << " <"
-              << resolve_utf8(v.string_index, cp) << ">";
+    std::cout << "String\t\tstring_index = " << v.string_index << " "
+              << resolve_utf8(v.string_index, cp);
     break;
   }
 
   case ConstantTag::CONSTANT_Integer: {
     const auto &v = info.integer_info;
-    std::cout << "Integer\t\tbytes = 0x" << std::hex << v.bytes << std::dec;
+    std::cout << "Integer\t\tvalue = " << (int32_t)v.bytes << " "
+              << "(hex = 0x" << std::hex << v.bytes << std::dec << ")";
     break;
   }
 
@@ -114,15 +146,16 @@ void print_constant_entry(u2 index, const std::vector<ConstantPoolEntry> &cp) {
     const auto &v = info.float_info;
     float f;
     std::memcpy(&f, &v.bytes, sizeof(float));
-    std::cout << "Float\t\tvalue = " << f << " (bits = 0x" << std::hex
-              << v.bytes << std::dec << ")";
+    std::cout << "Float\t\tvalue = " << f << " (hex = 0x" << std::hex << v.bytes
+              << std::dec << ")";
     break;
   }
 
   case ConstantTag::CONSTANT_Long: {
     const auto &v = info.long_info;
     uint64_t value = (uint64_t(v.high_bytes) << 32) | v.low_bytes;
-    std::cout << "Long\t\tvalue = " << value;
+    std::cout << "Long\t\tvalue = " << value << " (hex = 0x" << std::hex
+              << value << std::dec << ")";
     break;
   }
 
@@ -131,16 +164,17 @@ void print_constant_entry(u2 index, const std::vector<ConstantPoolEntry> &cp) {
     uint64_t bits = (uint64_t(v.high_bytes) << 32) | v.low_bytes;
     double d;
     std::memcpy(&d, &bits, sizeof(double));
-    std::cout << "Double\t\tvalue = " << d;
+    std::cout << "Double\t\tvalue = " << d << " (hex = 0x" << std::hex << bits
+              << std::dec << ")";
     break;
   }
 
   case ConstantTag::CONSTANT_NameAndType: {
     const auto &v = info.name_and_type_info;
-    std::cout << "NameAndType\tname_index = " << v.name_index << " <"
-              << resolve_utf8(v.name_index, cp) << ">, "
-              << "descriptor_index = " << v.descriptor_index << " <"
-              << resolve_utf8(v.descriptor_index, cp) << ">";
+    std::cout << "NameAndType\tname_index = " << v.name_index << " "
+              << resolve_utf8(v.name_index, cp) << " "
+              << "descriptor_index = " << v.descriptor_index << " "
+              << resolve_utf8(v.descriptor_index, cp);
     break;
   }
 
@@ -206,12 +240,16 @@ void print_access_flags(u2 flag) {
   }
 }
 
-void print_this_class(u2 index) {
-  std::cout << "This class index: #" << index << std::endl;
+void print_this_class(u2 index,
+                      const std::vector<ConstantPoolEntry> &constant_pool) {
+  std::cout << "This class index: #" << index << " "
+            << resolve_class(index, constant_pool) << std::endl;
 }
 
-void print_super_class(u2 index) {
-  std::cout << "Super class index: #" << index << std::endl;
+void print_super_class(u2 index,
+                       const std::vector<ConstantPoolEntry> &constant_pool) {
+  std::cout << "Super class index: #" << index << " "
+            << resolve_class(index, constant_pool) << std::endl;
 }
 
 void print_interface_count(u2 index) {

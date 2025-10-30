@@ -41,6 +41,7 @@ u2 read_major_version(std::ifstream &file, bool debug = false) {
 
   if (debug) {
     print_major_version(major);
+    print_java_version(major);
   }
 
   return major;
@@ -209,21 +210,23 @@ u2 read_access_flags(std::ifstream &file, bool debug = false) {
   return flag;
 }
 
-u2 read_this_class(std::ifstream &file, bool debug = false) {
+u2 read_this_class(std::ifstream &file, std::vector<ConstantPoolEntry> &pool,
+                   bool debug = false) {
   u2 index = read_2bytes(file);
 
   if (debug) {
-    print_this_class(index);
+    print_this_class(index, pool);
   }
 
   return index;
 }
 
-u2 read_super_class(std::ifstream &file, bool debug = false) {
+u2 read_super_class(std::ifstream &file, std::vector<ConstantPoolEntry> &pool,
+                    bool debug = false) {
   u2 index = read_2bytes(file);
 
   if (debug) {
-    print_super_class(index);
+    print_super_class(index, pool);
   }
 
   return index;
