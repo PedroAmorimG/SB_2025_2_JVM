@@ -291,12 +291,14 @@ void ClassFileViewer::print_interfaces() {
 }
 
 void ClassFileViewer::print_field_count() {
-  std::cout << "Field count index: #" << cf.fields_count << std::endl;
+  std::cout << "Field count: " << cf.fields_count << std::endl;
 }
 
 void ClassFileViewer::print_fields() {
+  std::cout << "\n--- Fields: (" << cf.fields_count << ") ---" << std::endl;
   for (u2 i = 0; i < cf.fields_count; i++) {
     auto entry = cf.fields[i];
+    std::cout << "Field: #" << std::setw(3) << i + 1 << " ";
     std::cout << "Access flags: 0x" << std::setfill('0') << std::setw(4)
               << std::hex << std::uppercase << entry.access_flags << std::dec
               << " [";
@@ -329,12 +331,15 @@ void ClassFileViewer::print_fields() {
 
     std::cout << "]" << std::endl;
 
-    std::cout << "Name_index = " << entry.name_index << " " << std::endl;
-    std::cout << "Descriptor_index = " << entry.descriptor_index << " "
+    std::cout << "Name_index = #" << entry.name_index << " "
+              << resolve_utf8(entry.name_index, cf.constant_pool) << std::endl;
+    std::cout << "Descriptor_index = #" << entry.descriptor_index << " "
+              << resolve_utf8(entry.descriptor_index, cf.constant_pool)
               << std::endl;
     std::cout << "Attribute bytes count = " << entry.attributes_count << " "
               << std::endl;
     print_attributes(entry.attributes_count, entry.attributes);
+    std::cout << std::endl;
   }
 }
 
@@ -1739,8 +1744,10 @@ void ClassFileViewer::print_methods() {
         get_utf8_from_pool(cf.constant_pool, method.descriptor_index);
 
     std::cout << "Method #" << i << ": " << name << descriptor << std::endl;
-    std::cout << "  Name Index:      #" << method.name_index << std::endl;
-    std::cout << "  Descriptor Index: #" << method.descriptor_index
+    std::cout << "  Name Index:      #" << method.name_index << " "
+              << resolve_utf8(method.name_index, cf.constant_pool) << std::endl;
+    std::cout << "  Descriptor Index: #" << method.descriptor_index << " "
+              << resolve_utf8(method.descriptor_index, cf.constant_pool)
               << std::endl;
 
     std::cout << "  Access Flags:    0x" << std::hex << method.access_flags
