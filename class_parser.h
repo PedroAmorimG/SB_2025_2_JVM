@@ -1,40 +1,37 @@
-#ifndef CLASS_PARSER_H
-#define CLASS_PARSER_H
-
+#pragma once
 #include "jvm_types.h"
 #include <fstream>
+#include <string>
 #include <vector>
 
-u1 read_1byte(std::ifstream &file);
-u2 read_2bytes(std::ifstream &file);
-u4 read_4bytes(std::ifstream &file);
+class ClassParser {
+public:
+  explicit ClassParser(const std::string &filepath);
+  ClassFile parse();
 
-u4 read_magic(std::ifstream &file, bool debug);
-u2 read_major_version(std::ifstream &file, bool debug);
-u2 read_minor_version(std::ifstream &file, bool debug);
-u2 read_constant_pool_count(std::ifstream &file, bool debug);
-std::vector<ConstantPoolEntry> read_constant_pool(std::ifstream &file, u2 count,
-                                                  bool debug);
-u2 read_access_flags(std::ifstream &file, bool debug);
-u2 read_this_class(std::ifstream &file, std::vector<ConstantPoolEntry> &pool,
-                   bool debug);
-u2 read_super_class(std::ifstream &file, std::vector<ConstantPoolEntry> &pool,
-                    bool debug);
-u2 read_interface_count(std::ifstream &file, bool debug);
-std::vector<u2> read_interfaces(std::ifstream &file, u2 count, bool debug);
-u2 read_field_count(std::ifstream &file, bool debug);
-FieldInfo read_fields_info(std::ifstream &file,
-                           std::vector<ConstantPoolEntry> &cp, bool debug);
-std::vector<FieldInfo> read_fields(std::ifstream &file, u2 count,
-                                   std::vector<ConstantPoolEntry> &cp,
-                                   bool debug);
-u2 read_methods_count(std::ifstream &file, bool debug);
-std::vector<MethodInfo> read_methods(std::ifstream &file, u2 count,
-                                     std::vector<ConstantPoolEntry> &cp,
-                                     bool debug);
-u2 read_attribute_count(std::ifstream &file, bool debug);
-std::vector<AttributeInfo> read_attributes(std::ifstream &file, u2 count,
-                                           std::vector<ConstantPoolEntry> &cp,
-                                           bool debug);
+private:
+  std::ifstream file;
 
-#endif // CLASS_PARSER_H
+  u1 read_u1();
+  u2 read_u2();
+  u4 read_u4();
+
+  u4 readMagic();
+  u2 readMinorVersion();
+  u2 readMajorVersion();
+  u2 readConstantPoolCount();
+  std::vector<ConstantPoolEntry> readConstantPool(u2 count);
+  u2 readAccessFlags();
+  u2 readThisClass();
+  u2 readSuperClass();
+  u2 readInterfacesCount();
+  std::vector<u2> readInterfaces(u2 count);
+  u2 readFieldsCount();
+  std::vector<FieldInfo> readFields(u2 count);
+  u2 readMethodsCount();
+  std::vector<MethodInfo> readMethods(u2 count);
+  u2 readAttributesCount();
+  std::vector<AttributeInfo> readAttributes(u2 count);
+
+  ConstantPoolEntry readConstantPoolEntry();
+};

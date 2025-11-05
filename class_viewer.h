@@ -5,32 +5,37 @@
 #include <string>
 #include <vector>
 
-void print_magic(u4 magic);
-void print_major_version(u2 major);
-void print_java_version(u2 major);
-void print_minor_version(u2 minor);
-void print_constant_pool_count(u2 count);
-void print_constant_entry(u2 index, const std::vector<ConstantPoolEntry> &pool);
-void print_access_flags(u2 flag);
-void print_this_class(u2 index, const std::vector<ConstantPoolEntry> &pool);
-void print_super_class(u2 index, const std::vector<ConstantPoolEntry> &pool);
-void print_interface_count(u2 index);
-void print_read_interfaces(u2 index, const u2 entry);
-void print_field_count(u2 index);
-void print_read_fields(u2 index, const FieldInfo entry, const ClassFile &cf);
-void print_attribute_count(u2 index);
-void print_read_attributes(u2 index, const std::vector<AttributeInfo> &entry,
-                           const ClassFile &cf);
-void print_attribute_info_entry(u4 index, const std::vector<u1> entry);
-void print_code_attribute(const CodeAttribute &code, const ClassFile &cf);
-// void print_methods_count(u2 count);
+class ClassFileViewer {
+public:
+  explicit ClassFileViewer(ClassFile cf);
+  void show_class_file();
 
-struct ClassFile;
-void print_methods_count(u2 count);
-void print_methods(const ClassFile &cf);
+private:
+  ClassFile cf;
 
-// para conseguir imprimir o nome do atributo da constant pool
-std::string get_utf8_from_pool(const std::vector<ConstantPoolEntry> &pool,
-                               u2 index);
+  void print_magic();
+  void print_major_version();
+  void print_java_version();
+  void print_minor_version();
+  void print_constant_pool_count();
+  void print_constant_entry(u2 index);
+  void print_access_flags();
+  void print_this_class();
+  void print_super_class();
+  void print_interface_count();
+  void print_interfaces();
+  void print_field_count();
+  void print_fields();
+  void print_attribute_count();
+  void print_read_attributes(u2 index, const std::vector<AttributeInfo> &entry);
+  void print_attribute_info_entry(u4 index, const std::vector<u1> entry);
+  void print_code_attribute(const CodeAttribute &code);
+
+  void print_methods_count(u2 count);
+  void print_methods();
+
+  std::string get_utf8_from_pool(const std::vector<ConstantPoolEntry> &pool,
+                                 u2 index);
+};
 
 #endif

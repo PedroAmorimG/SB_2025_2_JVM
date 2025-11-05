@@ -1,5 +1,5 @@
 # COMPILAR
-g++ *.cpp -o "{nome do executável que tu quer}"
+g++ *.cpp -o -m32 "{nome do executável que tu quer}"
 
 # ARGUMENTOS
 
