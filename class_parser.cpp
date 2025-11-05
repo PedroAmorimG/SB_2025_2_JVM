@@ -39,6 +39,9 @@ u4 ClassParser::read_u4() {
 u4 ClassParser::readMagic() {
   u4 magic = read_u4();
 
+  if (magic != 0xCAFEBABE)
+    throw std::runtime_error("Invalid .class file");
+
   return magic;
 }
 
@@ -192,6 +195,7 @@ std::vector<FieldInfo> ClassParser::readFields(u2 count) {
     f.name_index = read_u2();
     f.descriptor_index = read_u2();
     f.attributes_count = read_u2();
+    f.attributes = readAttributes(f.attributes_count);
     fields.push_back(f);
   }
   return fields;
@@ -271,13 +275,21 @@ std::vector<AttributeInfo> ClassParser::readAttributes(u2 count) {
         u2 idx = read_u2();
         a.exceptions_info.exception_index_table.push_back(idx);
       }
+    } else if (a.attribute_name == "LineNumberTable") {
+      a.linenumbertable_info.line_number_table_length = read_u2();
+      for (u2 j = 0; j < a.linenumbertable_info.line_number_table_length; j++) {
+        LineNumberTableEntry entry{};
+        entry.start_pc = read_u2();
+        entry.line_number = read_u2();
+        a.linenumbertable_info.line_number_table.push_back(entry);
+      }
     }
 
     else if (a.attribute_name == "Synthetic") {
       // Não possui conteúdo
-    }
-
-    else if (a.attribute_name == "InnerClasses") {
+    } else if (a.attribute_name == "SourceFile") {
+      a.sourcefile_info.sourcefile_index = read_u2();
+    } else if (a.attribute_name == "InnerClasses") {
       a.innerclasses_info.number_of_classes = read_u2();
       for (u2 j = 0; j < a.innerclasses_info.number_of_classes; j++) {
         InnerClassInfo ic{};
@@ -287,9 +299,29 @@ std::vector<AttributeInfo> ClassParser::readAttributes(u2 count) {
         ic.inner_class_access_flags = read_u2();
         a.innerclasses_info.classes.push_back(ic);
       }
-    }
+    } else if (a.attribute_name == "StackMapTable") {
+      a.stackmaptable_info.number_of_entries = read_u2();
+      a.stackmaptable_info.entries.reserve(
+          a.stackmaptable_info.number_of_entries);
+      for (u2 i = 0; i < a.stackmaptable_info.number_of_entries; ++i) {
+        a.stackmaptable_info.entries.push_back(read_stack_map_frame());
+      }
+    } else if (a.attribute_name == "LocalVariableTable") {
+      a.localvariabletable_info.local_variable_table_length = read_u2();
+      auto &vec = a.localvariabletable_info.local_variable_table;
+      vec.reserve(a.localvariabletable_info.local_variable_table_length);
 
-    else {
+      for (u2 j = 0; j < a.localvariabletable_info.local_variable_table_length;
+           j++) {
+        LocalVariableTableEntry e{};
+        e.start_pc = read_u2();
+        e.length = read_u2();
+        e.name_index = read_u2();
+        e.descriptor_index = read_u2();
+        e.index = read_u2();
+        vec.push_back(e);
+      }
+    } else {
       // ----------------------------
       // Atributo desconhecido → fallback
       // ----------------------------
@@ -314,6 +346,75 @@ std::string ClassParser::getUtf8(u2 index) {
 
   const ConstantUTF8Info &utf = entry.second.utf8_info;
   return std::string(reinterpret_cast<const char *>(utf.bytes), utf.length);
+}
+
+VerificationTypeInfo ClassParser::read_verification_type_info() {
+  VerificationTypeInfo vti{};
+  u1 tag = read_u1();
+  vti.tag = static_cast<VTTag>(tag);
+
+  switch (vti.tag) {
+  case VTTag::Object:
+    vti.cpool_index = read_u2();
+    break;
+  case VTTag::Uninitialized:
+    vti.offset = read_u2();
+    break;
+  default:
+    break;
+  }
+  return vti;
+}
+
+StackMapFrame ClassParser::read_stack_map_frame() {
+  StackMapFrame f{};
+  u1 ft = read_u1();
+  f.frame_type = ft;
+
+  if (ft <= 63) {
+    f.kind = SMFKind::Same;
+    f.offset_delta = ft;
+  } else if (ft <= 127) {
+    f.kind = SMFKind::SameLocals1StackItem;
+    f.offset_delta = ft - 64;
+    f.stack_item = read_verification_type_info();
+  } else if (ft == 247) {
+    f.kind = SMFKind::SameLocals1StackItemExt;
+    f.offset_delta = read_u2();
+    f.stack_item = read_verification_type_info();
+  } else if (ft >= 248 && ft <= 250) {
+    f.kind = SMFKind::Chop;
+    f.offset_delta = read_u2();
+  } else if (ft == 251) {
+    f.kind = SMFKind::SameExt;
+    f.offset_delta = read_u2();
+  } else if (ft >= 252 && ft <= 254) {
+    f.kind = SMFKind::Append;
+    f.offset_delta = read_u2();
+    u1 k = ft - 251;
+    f.locals_appended.reserve(k);
+    for (u1 i = 0; i < k; ++i) {
+      f.locals_appended.push_back(read_verification_type_info());
+    }
+  } else if (ft == 255) {
+    f.kind = SMFKind::Full;
+    f.offset_delta = read_u2();
+
+    u2 number_of_locals = read_u2();
+    f.locals_full.reserve(number_of_locals);
+    for (u2 i = 0; i < number_of_locals; ++i)
+      f.locals_full.push_back(read_verification_type_info());
+
+    u2 number_of_stack_items = read_u2();
+    f.stack_full.reserve(number_of_stack_items);
+    for (u2 i = 0; i < number_of_stack_items; ++i)
+      f.stack_full.push_back(read_verification_type_info());
+  } else {
+
+    f.kind = SMFKind::Same;
+  }
+
+  return f;
 }
 
 // ----------------------

@@ -1697,9 +1697,128 @@ void ClassFileViewer::print_attributes(
                   << inner_class.inner_class_access_flags << std::dec
                   << std::endl;
       }
-    }
+    } else if (attribute.attribute_name == "LineNumberTable") {
+      const auto &ln_info = attribute.linenumbertable_info;
 
-    else {
+      std::cout << "\t\tLineNumberTable length: "
+                << ln_info.line_number_table_length << std::endl;
+
+      for (u2 j = 0; j < ln_info.line_number_table_length; j++) {
+        const auto &entry = ln_info.line_number_table[j];
+        std::cout << "\t\t  start_pc: " << entry.start_pc
+                  << " -> line: " << entry.line_number << std::endl;
+      }
+    } else if (attribute.attribute_name == "SourceFile") {
+      u2 index = attribute.sourcefile_info.sourcefile_index;
+      std::string source_name = get_utf8_from_pool(cf.constant_pool, index);
+
+      std::cout << "\t\tSourceFile: index #" << index << " (\"" << source_name
+                << "\")" << std::endl;
+    } else if (attribute.attribute_name == "StackMapTable") {
+      const auto &smt = attribute.stackmaptable_info;
+
+      std::cout << "\t\tStackMapTable entries: " << smt.number_of_entries
+                << "\n";
+
+      // Helper p/ exibir VerificationTypeInfo
+      auto vt_to_string = [&](const VerificationTypeInfo &v) -> std::string {
+        switch (v.tag) {
+        case VTTag::Top:
+          return "Top";
+        case VTTag::Integer:
+          return "Integer";
+        case VTTag::Float:
+          return "Float";
+        case VTTag::Double:
+          return "Double";
+        case VTTag::Long:
+          return "Long";
+        case VTTag::Null:
+          return "Null";
+        case VTTag::UninitializedThis:
+          return "UninitializedThis";
+        case VTTag::Object:
+          return "Object(cp#" + std::to_string(v.cpool_index) + ") " +
+                 resolve_class(v.cpool_index, cf.constant_pool) + "\n";
+        case VTTag::Uninitialized:
+          return "Uninitialized(offset=" + std::to_string(v.offset) + ")";
+        }
+        return "?";
+      };
+
+      auto kind_to_string = [&](SMFKind k) -> std::string {
+        switch (k) {
+        case SMFKind::Same:
+          return "SAME";
+        case SMFKind::SameLocals1StackItem:
+          return "SAME_LOCALS_1_STACK_ITEM";
+        case SMFKind::SameLocals1StackItemExt:
+          return "SAME_LOCALS_1_STACK_ITEM_EXT";
+        case SMFKind::Chop:
+          return "CHOP";
+        case SMFKind::SameExt:
+          return "SAME_EXT";
+        case SMFKind::Append:
+          return "APPEND";
+        case SMFKind::Full:
+          return "FULL_FRAME";
+        }
+        return "?";
+      };
+
+      // ✅ cálculo incremental de offset total
+      int current_offset = -1;
+
+      for (u2 i = 0; i < smt.entries.size(); ++i) {
+        const auto &f = smt.entries[i];
+        current_offset += (f.offset_delta + 1);
+
+        std::cout << "\t\t  " << kind_to_string(f.kind) << "("
+                  << (int)f.frame_type << "), "
+                  << "Offset: " << current_offset << " (+"
+                  << (int)f.offset_delta << ")"
+                  << "\n";
+
+        if (f.kind == SMFKind::SameLocals1StackItem ||
+            f.kind == SMFKind::SameLocals1StackItemExt) {
+          std::cout << "\t\t    Stack: " << vt_to_string(f.stack_item) << "\n";
+        } else if (f.kind == SMFKind::Append) {
+          std::cout << "\t\t    Locals(+" << (int)(f.frame_type - 251) << "):";
+          for (const auto &v : f.locals_appended)
+            std::cout << " " << vt_to_string(v);
+          std::cout << "\n";
+        } else if (f.kind == SMFKind::Full) {
+          std::cout << "\t\t    Locals(" << f.locals_full.size() << "):\n";
+          for (const auto &v : f.locals_full)
+            std::cout << "\t\t\t" << vt_to_string(v);
+          std::cout << "\n\t\t    Stack(" << f.stack_full.size() << "):";
+          for (const auto &v : f.stack_full)
+            std::cout << " " << vt_to_string(v);
+          std::cout << "\n";
+        }
+      }
+    } else if (attribute.attribute_name == "LocalVariableTable") {
+      const auto &lv = attribute.localvariabletable_info;
+
+      std::cout << "\t\tLocalVariableTable length: "
+                << lv.local_variable_table_length << "\n";
+
+      for (u2 j = 0; j < lv.local_variable_table_length; j++) {
+        const auto &e = lv.local_variable_table[j];
+
+        std::string name = get_utf8_from_pool(cf.constant_pool, e.name_index);
+        std::string desc =
+            get_utf8_from_pool(cf.constant_pool, e.descriptor_index);
+
+        std::cout << "\t\t  [" << j << "] "
+                  << "Index=" << e.index << ", Name=\"" << name << "\""
+                  << ", Descriptor=\"" << desc << "\"\n";
+
+        std::cout << "\t\t      start_pc=" << e.start_pc
+                  << ", length=" << e.length << "  (scope: PC " << e.start_pc
+                  << " to " << (e.start_pc + e.length) << ")\n";
+      }
+    } else {
       print_attribute_info_entry(attribute.attribute_length,
                                  attribute.unknown_info.info);
     }

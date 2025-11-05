@@ -2,9 +2,9 @@
 #define JVM_TYPES_H
 
 #include <stdint.h>
+#include <string>
 #include <utility>
 #include <vector>
-#include <string>
 
 // Tipos básicos
 using u1 = uint8_t;
@@ -123,57 +123,128 @@ enum FieldAccessFlag : u2 {
 
 // AttributeInfo
 
-struct AttributeInfo; 
+struct AttributeInfo;
 
 struct ExceptionTableEntry {
-    u2 start_pc;
-    u2 end_pc;
-    u2 handler_pc;
-    u2 catch_type;
+  u2 start_pc;
+  u2 end_pc;
+  u2 handler_pc;
+  u2 catch_type;
 };
 
 struct CodeAttribute {
-    u2 max_stack;
-    u2 max_locals;
-    u4 code_length;
-    std::vector<u1> code; 
-    u2 exception_table_length;
-    std::vector<ExceptionTableEntry> exception_table; 
-    u2 attributes_count;
-    std::vector<AttributeInfo> attributes; 
+  u2 max_stack;
+  u2 max_locals;
+  u4 code_length;
+  std::vector<u1> code;
+  u2 exception_table_length;
+  std::vector<ExceptionTableEntry> exception_table;
+  u2 attributes_count;
+  std::vector<AttributeInfo> attributes;
+};
+
+struct LineNumberTableEntry {
+  u2 start_pc;
+  u2 line_number;
+};
+
+struct LineNumberTableAttribute {
+  u2 attribute_name_index;
+  u4 attribute_length;
+  u2 line_number_table_length;
+  std::vector<LineNumberTableEntry> line_number_table;
 };
 
 struct SourceFileAttribute {
-    u2 sourcefile_index;
+  u2 sourcefile_index;
 };
 
 struct UnknownAttribute {
-    std::vector<u1> info; 
+  std::vector<u1> info;
 };
 
 struct ConstantValueAttribute {
-    u2 constantvalue_index; // indice para o pool de constantes
+  u2 constantvalue_index; // indice para o pool de constantes
 };
 
 struct SyntheticAttribute {
-    // não tem corpo, seu LEN é 0.
+  // não tem corpo, seu LEN é 0.
 };
 
 struct ExceptionsAttribute {
-    u2 number_of_exceptions;
-    std::vector<u2> exception_index_table;
+  u2 number_of_exceptions;
+  std::vector<u2> exception_index_table;
 };
 
 struct InnerClassInfo {
-    u2 inner_class_info_index;
-    u2 outer_class_info_index;
-    u2 inner_name_index;
-    u2 inner_class_access_flags;
+  u2 inner_class_info_index;
+  u2 outer_class_info_index;
+  u2 inner_name_index;
+  u2 inner_class_access_flags;
 };
 
 struct InnerClassesAttribute {
-    u2 number_of_classes;
-    std::vector<InnerClassInfo> classes;
+  u2 number_of_classes;
+  std::vector<InnerClassInfo> classes;
+};
+
+enum class VTTag : u1 {
+  Top = 0,
+  Integer = 1,
+  Float = 2,
+  Double = 3,
+  Long = 4,
+  Null = 5,
+  UninitializedThis = 6,
+  Object = 7,
+  Uninitialized = 8
+};
+
+struct VerificationTypeInfo {
+  VTTag tag;
+  u2 cpool_index = 0;
+  u2 offset = 0;
+};
+
+enum class SMFKind : u1 {
+  Same,
+  SameLocals1StackItem,
+  SameLocals1StackItemExt,
+  Chop,
+  SameExt,
+  Append,
+  Full
+};
+
+struct StackMapFrame {
+  SMFKind kind;
+  u1 frame_type;
+  u2 offset_delta = 0;
+
+  VerificationTypeInfo stack_item;
+
+  std::vector<VerificationTypeInfo> locals_appended;
+
+  std::vector<VerificationTypeInfo> locals_full;
+  std::vector<VerificationTypeInfo> stack_full;
+};
+
+struct StackMapTableInfo {
+  u2 number_of_entries = 0;
+  std::vector<StackMapFrame> entries;
+};
+
+struct LocalVariableTableEntry {
+  u2 start_pc;
+  u2 length;
+  u2 name_index;
+  u2 descriptor_index;
+  u2 index;
+};
+
+struct LocalVariableTableInfo {
+  u2 local_variable_table_length;
+  std::vector<LocalVariableTableEntry> local_variable_table;
 };
 
 struct AttributeInfo {
@@ -185,11 +256,13 @@ struct AttributeInfo {
   SourceFileAttribute sourcefile_info;
   ConstantValueAttribute constantvalue_info;
   SyntheticAttribute synthetic_info;
+  LineNumberTableAttribute linenumbertable_info;
+  StackMapTableInfo stackmaptable_info;
+  LocalVariableTableInfo localvariabletable_info;
   UnknownAttribute unknown_info;
   ExceptionsAttribute exceptions_info;
   InnerClassesAttribute innerclasses_info;
 };
-
 
 struct FieldInfo {
   FieldAccessFlag access_flags;

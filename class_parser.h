@@ -35,6 +35,8 @@ private:
   std::vector<AttributeInfo> readAttributes(u2 count);
 
   std::string getUtf8(u2 index);
+  VerificationTypeInfo read_verification_type_info();
+  StackMapFrame read_stack_map_frame();
 
   ConstantPoolEntry readConstantPoolEntry();
 };
