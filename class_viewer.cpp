@@ -13,6 +13,7 @@ void ClassFileViewer::show_class_file() {
   print_major_version();
   print_java_version();
   print_constant_pool_count();
+  print_constant_pool();
   print_access_flags();
   print_this_class();
   print_super_class();
@@ -20,6 +21,10 @@ void ClassFileViewer::show_class_file() {
   print_interfaces();
   print_field_count();
   print_fields();
+  print_methods_count();
+  print_methods();
+  print_attribute_count();
+  print_attributes(cf.attributes_count, cf.attributes);
 }
 
 void ClassFileViewer::print_magic() {
@@ -214,6 +219,12 @@ void ClassFileViewer::print_constant_entry(u2 index) {
   std::cout << "\n";
 }
 
+void ClassFileViewer::print_constant_pool() {
+  for (u2 i = 1; i < cf.constant_pool_count; i++) {
+    print_constant_entry(i);
+  }
+}
+
 void ClassFileViewer::print_access_flags() {
   std::cout << "Access flags: 0x" << std::hex << cf.access_flags << std::dec
             << " [";
@@ -323,7 +334,7 @@ void ClassFileViewer::print_fields() {
               << std::endl;
     std::cout << "Attribute bytes count = " << entry.attributes_count << " "
               << std::endl;
-    print_read_attributes(entry.attributes_count, entry.attributes);
+    print_attributes(entry.attributes_count, entry.attributes);
   }
 }
 
@@ -1585,7 +1596,7 @@ void ClassFileViewer::print_code_attribute(const CodeAttribute &code) {
   if (code.attributes_count > 0) {
     std::cout << "\t\t  Code Attributes (" << code.attributes_count
               << "):" << std::endl;
-    print_read_attributes(code.attributes_count, code.attributes);
+    print_attributes(code.attributes_count, code.attributes);
   }
 }
 
@@ -1605,7 +1616,7 @@ get_class_name_from_pool_viewer(const std::vector<ConstantPoolEntry> &pool,
   }
 }
 
-void ClassFileViewer::print_read_attributes(
+void ClassFileViewer::print_attributes(
     u2 index, const std::vector<AttributeInfo> &entry) {
   for (u2 i = 0; i < index && i < entry.size(); i++) {
     const AttributeInfo &attribute = entry[i];
@@ -1714,8 +1725,8 @@ ClassFileViewer::get_utf8_from_pool(const std::vector<ConstantPoolEntry> &pool,
   return "<invalid index>";
 }
 
-void ClassFileViewer::print_methods_count(u2 count) {
-  std::cout << "Methods count: " << count << std::endl;
+void ClassFileViewer::print_methods_count() {
+  std::cout << "Methods count: " << cf.methods_count << std::endl;
 }
 
 void ClassFileViewer::print_methods() {
@@ -1764,7 +1775,7 @@ void ClassFileViewer::print_methods() {
     std::cout << "  Attributes Count: " << method.attributes_count << std::endl;
 
     if (method.attributes_count > 0) {
-      print_read_attributes(method.attributes_count, method.attributes);
+      print_attributes(method.attributes_count, method.attributes);
     }
   }
 }
