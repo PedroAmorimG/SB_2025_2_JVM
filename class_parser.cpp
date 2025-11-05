@@ -211,7 +211,7 @@ std::vector<MethodInfo> ClassParser::readMethods(u2 count) {
     m.name_index = read_u2();
     m.descriptor_index = read_u2();
     m.attributes_count = read_u2();
-    m.attributes = {}; // Resolveremos depois
+    m.attributes = readAttributes(m.attributes_count);
     methods.push_back(m);
   }
   return methods;
@@ -225,19 +225,95 @@ u2 ClassParser::readAttributesCount() {
 
 std::vector<AttributeInfo> ClassParser::readAttributes(u2 count) {
   std::vector<AttributeInfo> attributes;
+
   for (u2 i = 0; i < count; i++) {
     AttributeInfo a{};
+
     a.attribute_name_index = read_u2();
     a.attribute_length = read_u4();
+    a.attribute_name =
+        getUtf8(a.attribute_name_index); // ✅ agora temos o nome do atributo
 
-    // Copiando como estava → resolver depois!
-    a.unknown_info.info.resize(a.attribute_length);
-    file.read(reinterpret_cast<char *>(a.unknown_info.info.data()),
-              a.attribute_length);
+    if (a.attribute_name == "Code") {
+      // ----------------------------
+      // Code attribute
+      // ----------------------------
+      a.code_info.max_stack = read_u2();
+      a.code_info.max_locals = read_u2();
+      a.code_info.code_length = read_u4();
+
+      a.code_info.code.resize(a.code_info.code_length);
+      file.read(reinterpret_cast<char *>(a.code_info.code.data()),
+                a.code_info.code_length);
+
+      // exception table
+      a.code_info.exception_table_length = read_u2();
+      for (u2 j = 0; j < a.code_info.exception_table_length; j++) {
+        ExceptionTableEntry e{};
+        e.start_pc = read_u2();
+        e.end_pc = read_u2();
+        e.handler_pc = read_u2();
+        e.catch_type = read_u2();
+        a.code_info.exception_table.push_back(e);
+      }
+
+      a.code_info.attributes_count = read_u2();
+      a.code_info.attributes = readAttributes(a.code_info.attributes_count);
+    }
+
+    else if (a.attribute_name == "ConstantValue") {
+      a.constantvalue_info.constantvalue_index = read_u2();
+    }
+
+    else if (a.attribute_name == "Exceptions") {
+      a.exceptions_info.number_of_exceptions = read_u2();
+      for (u2 j = 0; j < a.exceptions_info.number_of_exceptions; j++) {
+        u2 idx = read_u2();
+        a.exceptions_info.exception_index_table.push_back(idx);
+      }
+    }
+
+    else if (a.attribute_name == "Synthetic") {
+      // Não possui conteúdo
+    }
+
+    else if (a.attribute_name == "InnerClasses") {
+      a.innerclasses_info.number_of_classes = read_u2();
+      for (u2 j = 0; j < a.innerclasses_info.number_of_classes; j++) {
+        InnerClassInfo ic{};
+        ic.inner_class_info_index = read_u2();
+        ic.outer_class_info_index = read_u2();
+        ic.inner_name_index = read_u2();
+        ic.inner_class_access_flags = read_u2();
+        a.innerclasses_info.classes.push_back(ic);
+      }
+    }
+
+    else {
+      // ----------------------------
+      // Atributo desconhecido → fallback
+      // ----------------------------
+      a.unknown_info.info.resize(a.attribute_length);
+      file.read(reinterpret_cast<char *>(a.unknown_info.info.data()),
+                a.attribute_length);
+    }
 
     attributes.push_back(a);
   }
+
   return attributes;
+}
+
+std::string ClassParser::getUtf8(u2 index) {
+  if (index == 0 || index >= classfile.constant_pool.size())
+    return "";
+
+  const auto &entry = classfile.constant_pool[index];
+  if (entry.first != ConstantTag::CONSTANT_Utf8)
+    return "";
+
+  const ConstantUTF8Info &utf = entry.second.utf8_info;
+  return std::string(reinterpret_cast<const char *>(utf.bytes), utf.length);
 }
 
 // ----------------------
@@ -245,24 +321,23 @@ std::vector<AttributeInfo> ClassParser::readAttributes(u2 count) {
 // ----------------------
 
 ClassFile ClassParser::parse() {
-  ClassFile cf{};
 
-  cf.magic = readMagic();
-  cf.minor_version = readMinorVersion();
-  cf.major_version = readMajorVersion();
-  cf.constant_pool_count = readConstantPoolCount();
-  cf.constant_pool = readConstantPool(cf.constant_pool_count);
-  cf.access_flags = readAccessFlags();
-  cf.this_class = readThisClass();
-  cf.super_class = readSuperClass();
-  cf.interfaces_count = readInterfacesCount();
-  cf.interfaces = readInterfaces(cf.interfaces_count);
-  cf.fields_count = readFieldsCount();
-  cf.fields = readFields(cf.fields_count);
-  cf.methods_count = readMethodsCount();
-  cf.methods = readMethods(cf.methods_count);
-  cf.attributes_count = readAttributesCount();
-  cf.attributes = readAttributes(cf.attributes_count);
+  classfile.magic = readMagic();
+  classfile.minor_version = readMinorVersion();
+  classfile.major_version = readMajorVersion();
+  classfile.constant_pool_count = readConstantPoolCount();
+  classfile.constant_pool = readConstantPool(classfile.constant_pool_count);
+  classfile.access_flags = readAccessFlags();
+  classfile.this_class = readThisClass();
+  classfile.super_class = readSuperClass();
+  classfile.interfaces_count = readInterfacesCount();
+  classfile.interfaces = readInterfaces(classfile.interfaces_count);
+  classfile.fields_count = readFieldsCount();
+  classfile.fields = readFields(classfile.fields_count);
+  classfile.methods_count = readMethodsCount();
+  classfile.methods = readMethods(classfile.methods_count);
+  classfile.attributes_count = readAttributesCount();
+  classfile.attributes = readAttributes(classfile.attributes_count);
 
-  return cf;
+  return classfile;
 }

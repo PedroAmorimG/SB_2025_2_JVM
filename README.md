@@ -1,7 +1,8 @@
 # COMPILAR
-g++ *.cpp -o -m32 "{nome do executável que tu quer}"
+g++ *.cpp -o -m32 "{nome do executável}"
 
 # ARGUMENTOS
 
-filepath="path/para/o/arquivo"
---debug "usa isso se quiser ir acompanhando o que está sendo coletado do .class enquanto não tem um viewer completo"
+-f "path do arquivo"
+
+--help

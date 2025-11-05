@@ -11,6 +11,7 @@ public:
 
 private:
   std::ifstream file;
+  ClassFile classfile;
 
   u1 read_u1();
   u2 read_u2();
@@ -32,6 +33,8 @@ private:
   std::vector<MethodInfo> readMethods(u2 count);
   u2 readAttributesCount();
   std::vector<AttributeInfo> readAttributes(u2 count);
+
+  std::string getUtf8(u2 index);
 
   ConstantPoolEntry readConstantPoolEntry();
 };
