@@ -1,5 +1,5 @@
 #pragma once
-#include "jvm_types.h"
+#include "classfile_types.h"
 #include <fstream>
 #include <string>
 #include <vector>

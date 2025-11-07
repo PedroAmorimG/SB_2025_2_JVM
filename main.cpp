@@ -1,6 +1,6 @@
-#include "class_parser.h"
-#include "class_viewer.h"
-#include "jvm_types.h"
+#include "./classfile/class_parser.h"
+#include "./classfile/class_viewer.h"
+#include "./classfile/classfile_types.h"
 #include <cstring>
 #include <fstream>
 #include <iostream>

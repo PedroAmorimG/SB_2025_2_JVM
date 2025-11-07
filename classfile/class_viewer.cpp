@@ -1,5 +1,5 @@
 #include "class_viewer.h"
-#include "jvm_types.h"
+#include "classfile_types.h"
 #include <cstring>
 #include <iomanip>
 #include <iostream>
@@ -189,7 +189,6 @@ void ClassFileViewer::print_constant_entry(u2 index) {
               << std::dec << ")";
     break;
   }
-
   case ConstantTag::CONSTANT_NameAndType: {
     const auto &v = info.name_and_type_info;
     std::cout << "NameAndType\tname_index = " << v.name_index << " "
@@ -1647,6 +1646,20 @@ void ClassFileViewer::print_attributes(
         case ConstantTag::CONSTANT_Float:
           std::cout << "(Float: ...)";
           break;
+        case ConstantTag::CONSTANT_Double: {
+          u8 bits = ((uint64_t)entry.second.double_info.high_bytes << 32) |
+                    (uint64_t)entry.second.double_info.low_bytes;
+          double value;
+          std::memcpy(&value, &bits, sizeof(double));
+          std::cout << "(Double: " << value << ")";
+        } break;
+        case ConstantTag::CONSTANT_Long: {
+          u8 bits = ((uint64_t)entry.second.long_info.high_bytes << 32) |
+                    (uint64_t)entry.second.long_info.low_bytes;
+          int64_t value = (int64_t)bits;
+          std::cout << "(Long: " << value << ")";
+
+        } break;
         case ConstantTag::CONSTANT_String: {
           u2 utf8_index = entry.second.string_info.string_index;
           std::cout << "(String: \""

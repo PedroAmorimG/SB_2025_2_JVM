@@ -1,7 +1,6 @@
-#ifndef CLASS_VIEWER_H
-#define CLASS_VIEWER_H
+#pragma once
 
-#include "jvm_types.h"
+#include "classfile_types.h"
 #include <string>
 #include <vector>
 
@@ -38,5 +37,3 @@ private:
   std::string get_utf8_from_pool(const std::vector<ConstantPoolEntry> &pool,
                                  u2 index);
 };
-
-#endif

@@ -1,5 +1,7 @@
 # COMPILAR
-g++ *.cpp -o -m32 "{nome do executável}"
+```sh
+g++ *.cpp ./classfile/*.cpp -o -m32 "{nome do executável}"
+```
 
 # ARGUMENTOS
 

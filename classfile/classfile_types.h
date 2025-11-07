@@ -1,5 +1,4 @@
-#ifndef JVM_TYPES_H
-#define JVM_TYPES_H
+#pragma once
 
 #include <stdint.h>
 #include <string>
@@ -316,5 +315,3 @@ struct ClassFile {
   u2 attributes_count;
   std::vector<AttributeInfo> attributes;
 };
-
-#endif
