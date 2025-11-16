@@ -174,7 +174,7 @@ void ClassFileViewer::print_constant_entry(u2 index) {
 
   case ConstantTag::CONSTANT_Long: {
     const auto &v = info.long_info;
-    uint64_t value = (uint64_t(v.high_bytes) << 32) | v.low_bytes;
+    u8 value = (u8(v.high_bytes) << 32) | v.low_bytes;
     std::cout << "Long\t\tvalue = " << value << " (hex = 0x" << std::hex
               << value << std::dec << ")";
     break;
@@ -182,7 +182,7 @@ void ClassFileViewer::print_constant_entry(u2 index) {
 
   case ConstantTag::CONSTANT_Double: {
     const auto &v = info.double_info;
-    uint64_t bits = (uint64_t(v.high_bytes) << 32) | v.low_bytes;
+    u8 bits = (u8(v.high_bytes) << 32) | v.low_bytes;
     double d;
     std::memcpy(&d, &bits, sizeof(double));
     std::cout << "Double\t\tvalue = " << d << " (hex = 0x" << std::hex << bits
@@ -1647,15 +1647,15 @@ void ClassFileViewer::print_attributes(
           std::cout << "(Float: ...)";
           break;
         case ConstantTag::CONSTANT_Double: {
-          u8 bits = ((uint64_t)entry.second.double_info.high_bytes << 32) |
-                    (uint64_t)entry.second.double_info.low_bytes;
+          u8 bits = ((u8)entry.second.double_info.high_bytes << 32) |
+                    (u8)entry.second.double_info.low_bytes;
           double value;
           std::memcpy(&value, &bits, sizeof(double));
           std::cout << "(Double: " << value << ")";
         } break;
         case ConstantTag::CONSTANT_Long: {
-          u8 bits = ((uint64_t)entry.second.long_info.high_bytes << 32) |
-                    (uint64_t)entry.second.long_info.low_bytes;
+          u8 bits = ((u8)entry.second.long_info.high_bytes << 32) |
+                    (u8)entry.second.long_info.low_bytes;
           int64_t value = (int64_t)bits;
           std::cout << "(Long: " << value << ")";
 

@@ -8,11 +8,24 @@
 
 // Estruturas do runtime
 
-struct RuntimeClass;
-struct ClassLoader;
-struct RuntimeObject;
+class RuntimeClass;
+class ClassLoader;
+class RuntimeObject;
 
 // RuntimeField e RuntimeMethod
+
+static const std::unordered_map<char, u4> descriptor_table = {
+    {'B', 1}, // byte
+    {'Z', 1}, // boolean
+    {'C', 2}, // char
+    {'S', 2}, // short
+    {'I', 4}, // int
+    {'F', 4}, // float
+    {'L', 4}, // reference
+    {'[', 4}, // array reference
+    {'J', 8}, // long
+    {'D', 8}, // double
+};
 
 struct RuntimeField {
   std::string name;
@@ -28,26 +41,16 @@ struct RuntimeField {
 
   RuntimeField() : access_flags(0), is_static(false), offset(0) {}
 
-  // Retorna o tamanho (em bytes) do campo, baseado no descriptor
   u4 size_in_bytes() const {
-    switch (descriptor[0]) {
-    case 'B': // byte
-    case 'Z': // boolean
-      return 1;
-    case 'C': // char
-    case 'S': // short
-      return 2;
-    case 'I': // int
-    case 'F': // float
-    case 'L': // reference (4 bytes)
-    case '[': // array reference
+    if (descriptor.empty())
       return 4;
-    case 'J': // long
-    case 'D': // double
-      return 8;
-    default:
-      return 4; // fallback
+
+    auto it = descriptor_table.find(descriptor[0]);
+    if (it != descriptor_table.end()) {
+      return it->second;
     }
+
+    return 4;
   }
 };
 
@@ -64,28 +67,31 @@ struct RuntimeMethod {
 // 2. RuntimeClass
 // ------------------------------------------------------
 
-struct RuntimeClass {
+class RuntimeClass {
+public:
   std::string name;
   std::string super_name;
   u2 access_flags;
 
   RuntimeClass *super_class;
-  ClassFile *class_file;
-  ClassLoader *defining_loader;
-  bool initialized;
+  std::unique_ptr<ClassFile> class_file;
 
-  std::vector<RuntimeField> fields;
-  std::vector<RuntimeMethod> methods;
+  std::unordered_map<std::string, RuntimeField> fields;
+  std::unordered_map<std::string, RuntimeMethod> methods;
 
   RuntimeClass()
-      : access_flags(0), super_class(nullptr), class_file(nullptr),
-        defining_loader(nullptr), initialized(false) {}
+      : name(std::move(name)), super_name(std::move(super_name)),
+        access_flags(access_flags), super_class(nullptr),
+        class_file(std::move(class_file)), fields(), methods() {}
 
   // Busca de método/field
   RuntimeMethod *find_method(const std::string &name,
                              const std::string &descriptor);
   RuntimeField *find_field(const std::string &name,
                            const std::string &descriptor);
+
+  // Tamanho em bytes do data
+  u4 data_size();
 };
 
 // Objetos
@@ -94,24 +100,16 @@ struct RuntimeObject {
   RuntimeClass *klass;
   std::vector<u1> data; // bytes da instância
 
-  RuntimeObject(RuntimeClass *k) : klass(k) {
-    // calcula o tamanho total dos campos de instância
-    u4 total_size = 0;
-    for (auto &f : k->fields) {
-      if (!f.is_static)
-        total_size += f.size_in_bytes();
-    }
-    data.resize(total_size);
-  }
+  RuntimeObject(RuntimeClass *k) : klass(k) { data.resize(k->data_size()); }
 
-  // Leitura genérica
   template <typename T> T read_field(const RuntimeField &field) const {
-    return *(T *)&data[field.offset];
+    T value;
+    std::memcpy(&value, &data[field.offset], sizeof(T));
+    return value;
   }
 
-  // Escrita genérica
   template <typename T> void write_field(const RuntimeField &field, T value) {
-    *(T *)&data[field.offset] = value;
+    std::memcpy(&data[field.offset], &value, sizeof(T));
   }
 };
 
@@ -221,7 +219,8 @@ struct Frame {
   OperandStack operand_stack;
   u4 pc;
 
-  Frame() : method(nullptr), current_class(nullptr), pc(0) {}
+  Frame(RuntimeMethod *method, RuntimeClass *current_class)
+      : method(method), current_class(current_class), pc(0) {}
 
   void init(u4 max_locals, u4 max_stack) {
     local_vars.resize(max_locals);
@@ -230,15 +229,23 @@ struct Frame {
 };
 
 struct Thread {
-  std::vector<Frame> call_stack;
-  Frame &current_frame() { return call_stack.back(); }
+  std::vector<Frame *> call_stack;
+  Frame &current_frame() { return *call_stack.back(); }
+  Runtime *runtime;
+
+  Interpreter *interpreter;
+
+  Thread(Runtime *runtime) : runtime(runtime) {
+    interpreter = new Interpreter();
+  }
 };
 
 //  ClassLoader base
 
 class ClassLoader {
 public:
-  virtual RuntimeClass *load_class(const std::string &name) = 0;
+  virtual std::unique_ptr<RuntimeClass> load_class(const std::string &name) = 0;
+
   virtual ~ClassLoader() {}
 };
 
@@ -246,23 +253,52 @@ public:
 
 class BootstrapClassLoader : public ClassLoader {
 public:
-  explicit BootstrapClassLoader(const std::vector<std::string> &classpath)
-      : classpath_(classpath) {}
+  explicit BootstrapClassLoader(const std::vector<std::string> &classpath,
+                                Runtime *runtime)
+      : classpath_(classpath), runtime(runtime) {}
 
-  RuntimeClass *load_class(const std::string &name) override;
+  std::unique_ptr<RuntimeClass> load_class(const std::string &name) override;
 
 private:
   std::vector<std::string> classpath_;
   std::unordered_map<std::string, std::unique_ptr<RuntimeClass>> loaded_;
 
-  std::vector<u1> read_class_bytes(const std::string &name);
-  ClassFile parse_class_file(const std::vector<u1> &bytes);
-  std::unique_ptr<RuntimeClass> build_runtime_class(ClassFile *cf);
-  void link_class(RuntimeClass *klass);
+  std::unique_ptr<RuntimeClass>
+  build_runtime_class(std::unique_ptr<ClassFile> cf);
+
+  Runtime *runtime;
 };
 
 // Interpretador (esqueleto)
 
 struct Interpreter {
   void execute(Frame &frame);
+};
+
+// Method Area
+
+class MethodArea {
+private:
+  std::unordered_map<std::string, std::unique_ptr<RuntimeClass>> classes;
+
+public:
+  RuntimeClass *getClassRef(const std::string &name);
+  void storeClass(std::unique_ptr<RuntimeClass> klass);
+};
+
+// Runtime
+// Pensei mais como um classe para resolver o início do modo interpretador e
+// reunir os componentes para organizar melhor as classes
+class Runtime {
+public:
+  Thread *thread;
+  MethodArea *method_area;
+
+  ClassLoader *class_loader;
+
+  Runtime() {
+    thread = new Thread(this);
+    method_area = new MethodArea();
+    class_loader = new BootstrapClassLoader({}, this);
+  }
 };

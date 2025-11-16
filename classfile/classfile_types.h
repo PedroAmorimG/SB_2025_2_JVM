@@ -294,6 +294,15 @@ struct MethodInfo {
   u2 descriptor_index;
   u2 attributes_count;
   std::vector<AttributeInfo> attributes;
+
+  const CodeAttribute *find_code_attribute() const {
+    for (const auto &attr : attributes) {
+      if (attr.attribute_name == "Code") {
+        return &attr.code_info;
+      }
+    }
+    return nullptr;
+  }
 };
 
 // ClassFile
@@ -314,4 +323,33 @@ struct ClassFile {
   std::vector<MethodInfo> methods;
   u2 attributes_count;
   std::vector<AttributeInfo> attributes;
+
+  std::string resolve_utf8(u2 index) const {
+    if (index == 0 || index >= constant_pool.size())
+      return "";
+
+    const auto &entry = constant_pool[index];
+
+    switch (entry.first) {
+    case ConstantTag::CONSTANT_Class:
+      return resolve_utf8(entry.second.class_info.name_index);
+    case ConstantTag::CONSTANT_Fieldref:
+      return resolve_utf8(entry.second.fieldref_info.name_and_type_index);
+    case ConstantTag::CONSTANT_Methodref:
+      return resolve_utf8(entry.second.methodref_info.name_and_type_index);
+    case ConstantTag::CONSTANT_InterfaceMethodref:
+      return resolve_utf8(
+          entry.second.interface_methodref_info.name_and_type_index);
+    case ConstantTag::CONSTANT_NameAndType:
+      return resolve_utf8(entry.second.name_and_type_info.descriptor_index) +
+             " " + resolve_utf8(entry.second.name_and_type_info.name_index);
+    case ConstantTag::CONSTANT_Utf8:
+      const ConstantUTF8Info &utf = entry.second.utf8_info;
+      return std::string(reinterpret_cast<const char *>(utf.bytes), utf.length);
+    default:
+      return "";
+    }
+
+    return "";
+  }
 };
