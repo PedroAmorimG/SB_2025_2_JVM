@@ -1,6 +1,7 @@
 #include "../classfile/class_parser.h"
 #include "./runtime_class_types.h"
 
+#include <iostream>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -52,6 +53,7 @@ BootstrapClassLoader::load_class(const std::string &name) {
     klass_ptr->super_class = load_class(klass_ptr->super_name).release();
   }
 
+  std::cout << "Class loaded: " << klass_ptr->name << "\n";
   return klass;
 }
 
