@@ -343,9 +343,10 @@ struct ClassFile {
     case ConstantTag::CONSTANT_NameAndType:
       return resolve_utf8(entry.second.name_and_type_info.descriptor_index) +
              " " + resolve_utf8(entry.second.name_and_type_info.name_index);
-    case ConstantTag::CONSTANT_Utf8:
+    case ConstantTag::CONSTANT_Utf8: {
       const ConstantUTF8Info &utf = entry.second.utf8_info;
       return std::string(reinterpret_cast<const char *>(utf.bytes), utf.length);
+    }
     default:
       return "";
     }

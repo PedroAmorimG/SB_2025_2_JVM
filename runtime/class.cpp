@@ -1,8 +1,7 @@
-#pragma once
-
 #include "../classfile/class_parser.h"
 #include "./runtime_class_types.h"
 
+#include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -17,7 +16,7 @@ u4 RuntimeClass::data_size() {
 
 RuntimeMethod *RuntimeClass::find_method(const std::string &name,
                                          const std::string &descriptor) {
-  for (auto method : methods) {
+  for (auto &method : methods) {
     if (method.second.name == name && method.second.descriptor == descriptor)
       return &method.second;
   }
@@ -26,7 +25,7 @@ RuntimeMethod *RuntimeClass::find_method(const std::string &name,
 
 RuntimeField *RuntimeClass::find_field(const std::string &name,
                                        const std::string &descriptor) {
-  for (auto field : fields) {
+  for (auto &field : fields) {
     if (field.second.name == name && field.second.descriptor == descriptor)
       return &field.second;
   }
@@ -36,22 +35,22 @@ RuntimeField *RuntimeClass::find_field(const std::string &name,
 std::unique_ptr<RuntimeClass>
 BootstrapClassLoader::load_class(const std::string &name) {
   ClassParser parser(name);
-  std::unique_ptr<ClassFile> cf = std::make_unique<ClassFile>(parser.parse());
+  std::unique_ptr<ClassFile> cf(new ClassFile(parser.parse()));
 
   std::unique_ptr<RuntimeClass> klass = build_runtime_class(std::move(cf));
-
-  runtime->thread->call_stack.push_back(
-      new Frame(klass.get()->find_method("<clinit>", "()V"), klass.get()));
+  auto klass_ptr = klass.get();
 
   runtime->method_area->storeClass(std::move(klass));
 
-  auto super_class = runtime->method_area->getClassRef(klass.get()->super_name);
-
-  if (super_class == nullptr) { // Verifica se super_class já foi carregada
-    load_class(klass.get()->super_name);
+  if (klass_ptr->find_method("<clinit>", "()V")) {
+    runtime->thread->call_stack.push_back(
+        new Frame(klass_ptr->find_method("<clinit>", "()V"), klass_ptr));
   }
 
-  klass.get()->super_class = super_class;
+  if (!klass_ptr->super_name.empty() &&
+      runtime->method_area->getClassRef(klass_ptr->super_name) == nullptr) {
+    klass_ptr->super_class = load_class(klass_ptr->super_name).release();
+  }
 
   return klass;
 }
@@ -59,10 +58,6 @@ BootstrapClassLoader::load_class(const std::string &name) {
 std::unique_ptr<RuntimeClass>
 BootstrapClassLoader::build_runtime_class(std::unique_ptr<ClassFile> cf) {
   std::string name = cf->resolve_utf8(cf->this_class);
-  std::string super_name = cf->resolve_utf8(cf->super_class);
-  u2 access_flags = cf->access_flags;
-  RuntimeClass *super_class = nullptr;
-
   std::unordered_map<std::string, RuntimeField> fields;
   std::unordered_map<std::string, RuntimeMethod> methods;
 
@@ -102,8 +97,28 @@ BootstrapClassLoader::build_runtime_class(std::unique_ptr<ClassFile> cf) {
     methods.emplace(key, rm);
   }
 
-  std::unique_ptr<RuntimeClass> klass = std::make_unique<RuntimeClass>(
-      name, super_name, access_flags, super_class, cf, fields, methods);
+  std::unique_ptr<RuntimeClass> klass(new RuntimeClass());
+  klass->name = name;
+  if (cf->super_class != 0) {
+    klass->super_name = cf->resolve_utf8(cf->super_class);
+  }
+  klass->access_flags = cf->access_flags;
+  klass->class_file = std::move(cf);
+  klass->fields = std::move(fields);
+  klass->methods = std::move(methods);
+  klass->super_class = nullptr;
 
   return klass;
+}
+
+Thread::Thread(Runtime *rt) : runtime(rt) { interpreter = new Interpreter(); }
+Thread::~Thread() {
+  delete interpreter;
+  for (auto frame : call_stack)
+    delete frame;
+};
+Runtime::~Runtime() {
+  delete thread;
+  delete method_area;
+  delete class_loader;
 }

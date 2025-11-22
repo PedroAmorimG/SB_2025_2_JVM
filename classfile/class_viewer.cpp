@@ -6,6 +6,35 @@
 #include <string>
 #include <vector>
 
+static std::string escape_for_print(const std::string &s) {
+  std::string out;
+  out.reserve(s.size());
+
+  for (char c : s) {
+    switch (c) {
+    case '\n':
+      out += "\\n";
+      break;
+    case '\t':
+      out += "\\t";
+      break;
+    case '\r':
+      out += "\\r";
+      break;
+    case '\\':
+      out += "\\\\";
+      break;
+    case '\"':
+      out += "\\\"";
+      break;
+    default:
+      out += c;
+    }
+  }
+
+  return out;
+}
+
 ClassFileViewer::ClassFileViewer(ClassFile cf) : cf(cf) {}
 void ClassFileViewer::show_class_file() {
   print_magic();
@@ -201,7 +230,8 @@ void ClassFileViewer::print_constant_entry(u2 index) {
   case ConstantTag::CONSTANT_Utf8: {
     const auto &v = info.utf8_info;
     std::cout << "Utf8\t\t\""
-              << std::string(reinterpret_cast<const char *>(v.bytes), v.length)
+              << escape_for_print(std::string(
+                     reinterpret_cast<const char *>(v.bytes), v.length))
               << "\" (" << v.length << " bytes)";
     break;
   }

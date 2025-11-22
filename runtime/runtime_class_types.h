@@ -1,16 +1,19 @@
 #pragma once
 
-#include "classfile_types.h"
+#include "../classfile/classfile_types.h"
+#include <cstring>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 // Estruturas do runtime
-
 class RuntimeClass;
 class ClassLoader;
 class RuntimeObject;
+class Runtime;
+class Interpreter;
+class Thread;
 
 // RuntimeField e RuntimeMethod
 
@@ -232,16 +235,13 @@ struct Thread {
   std::vector<Frame *> call_stack;
   Frame &current_frame() { return *call_stack.back(); }
   Runtime *runtime;
-
   Interpreter *interpreter;
 
-  Thread(Runtime *runtime) : runtime(runtime) {
-    interpreter = new Interpreter();
-  }
+  Thread(Runtime *rt);
+  ~Thread();
 };
 
 //  ClassLoader base
-
 class ClassLoader {
 public:
   virtual std::unique_ptr<RuntimeClass> load_class(const std::string &name) = 0;
@@ -270,13 +270,11 @@ private:
 };
 
 // Interpretador (esqueleto)
-
 struct Interpreter {
   void execute(Frame &frame);
 };
 
 // Method Area
-
 class MethodArea {
 private:
   std::unordered_map<std::string, std::unique_ptr<RuntimeClass>> classes;
@@ -301,4 +299,7 @@ public:
     method_area = new MethodArea();
     class_loader = new BootstrapClassLoader({}, this);
   }
+
+  ~Runtime();
+  void start(std::string filepath);
 };

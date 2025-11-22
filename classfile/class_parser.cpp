@@ -3,10 +3,19 @@
 #include <algorithm>
 #include <iostream>
 
+static const std::string RUNTIME_CLASSPATH = ".\\runtime\\";
+
 ClassParser::ClassParser(const std::string &filepath) {
-  file.open(filepath, std::ios::binary);
+
+  std::string sys_filepath(filepath);
+
+  if (sys_filepath.find("java/lang") == 0) {
+    sys_filepath = RUNTIME_CLASSPATH + sys_filepath + ".class";
+  }
+
+  file.open(sys_filepath, std::ios::binary);
   if (!file) {
-    throw std::runtime_error("Could not open .class file: " + filepath);
+    throw std::runtime_error("Could not open .class file: " + sys_filepath);
   }
 }
 

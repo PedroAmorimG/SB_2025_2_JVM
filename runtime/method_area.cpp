@@ -1,8 +1,7 @@
-#pragma once
-
 #include "./runtime_class_types.h"
 
 #include <string>
+#include <utility>
 #include <vector>
 
 RuntimeClass *MethodArea::getClassRef(const std::string &name) {
