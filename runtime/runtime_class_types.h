@@ -271,6 +271,8 @@ private:
 
 // Interpretador (esqueleto)
 struct Interpreter {
+  using Opfunc = void(*)(Frame&);
+  std::unordered_map<uint8_t, Opfunc> opcode_table = {};
   void execute(Frame &frame);
 };
 
