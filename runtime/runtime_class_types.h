@@ -266,6 +266,15 @@ struct Thread
 
   Thread(Runtime *rt);
   ~Thread();
+
+  
+  void push_frame(Frame* f) { call_stack.push_back(f); }
+  void pop_frame() {
+    Frame* top = call_stack.back();
+    call_stack.pop_back();
+    delete top;
+  }
+  void return_frame() {}
 };
 
 //  ClassLoader base
@@ -301,9 +310,11 @@ private:
 // Interpretador (esqueleto)
 struct Interpreter
 {
-
+  Thread* thread;
   using Opfunc = void (*)(Frame &);
   std::unordered_map<uint8_t, Opfunc> opcode_table = {};
+  Interpreter(Thread* t) : thread(t) {}
+
   void execute(Frame &frame);
 };
 

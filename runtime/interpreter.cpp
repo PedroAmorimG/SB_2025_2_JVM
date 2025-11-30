@@ -18,7 +18,7 @@ void Interpreter::execute(Frame &frame) {
   }
 }
 
-Interpreter::Interpreter() {
+Interpreter::Interpreter(Thread* t) {
   opcode_table = {
     {0x00, exec_nop},
     {0x01, exec_aconst_null},
@@ -225,48 +225,48 @@ Interpreter::Interpreter() {
   };
 };
 
-void exec_nop(Frame& frame) {frame.pc += 1;}
-void exec_aconst_null(Frame& frame) {frame.operand_stack.push_ref(nullptr); frame.pc += 1;}
+void exec_nop(Thread* t, Frame& frame) {frame.pc += 1;}
+void exec_aconst_null(Thread* t, Frame& frame) {frame.operand_stack.push_ref(nullptr); frame.pc += 1;}
 
-void exec_aload_0(Frame& frame) {
+void exec_aload_0(Thread* t, Frame& frame) {
   Slot value = frame.local_vars[0];
   frame.operand_stack.stack.push_back(value);
   frame.pc += 1;
 }
 
 
-void exec_iconst_m1(Frame& frame) { frame.operand_stack.push_int(-1); frame.pc++; }
-void exec_iconst_0(Frame& frame)  { frame.operand_stack.push_int(0);  frame.pc++; }
-void exec_iconst_1(Frame& frame)  { frame.operand_stack.push_int(1);  frame.pc++; }
-void exec_iconst_2(Frame& frame)  { frame.operand_stack.push_int(2);  frame.pc++; }
-void exec_iconst_3(Frame& frame)  { frame.operand_stack.push_int(3);  frame.pc++; }
-void exec_iconst_4(Frame& frame)  { frame.operand_stack.push_int(4);  frame.pc++; }
-void exec_iconst_5(Frame& frame)  { frame.operand_stack.push_int(5);  frame.pc++; }
+void exec_iconst_m1(Thread* t, Frame& frame) { frame.operand_stack.push_int(-1); frame.pc++; }
+void exec_iconst_0(Thread* t, Frame& frame)  { frame.operand_stack.push_int(0);  frame.pc++; }
+void exec_iconst_1(Thread* t, Frame& frame)  { frame.operand_stack.push_int(1);  frame.pc++; }
+void exec_iconst_2(Thread* t, Frame& frame)  { frame.operand_stack.push_int(2);  frame.pc++; }
+void exec_iconst_3(Thread* t, Frame& frame)  { frame.operand_stack.push_int(3);  frame.pc++; }
+void exec_iconst_4(Thread* t, Frame& frame)  { frame.operand_stack.push_int(4);  frame.pc++; }
+void exec_iconst_5(Thread* t, Frame& frame)  { frame.operand_stack.push_int(5);  frame.pc++; }
 
-void exec_lconst_0(Frame& frame) { frame.operand_stack.push_long(0); frame.pc++; }
-void exec_lconst_1(Frame& frame) { frame.operand_stack.push_long(1); frame.pc++; }
+void exec_lconst_0(Thread* t, Frame& frame) { frame.operand_stack.push_long(0); frame.pc++; }
+void exec_lconst_1(Thread* t, Frame& frame) { frame.operand_stack.push_long(1); frame.pc++; }
 
-void exec_fconst_0(Frame& frame) { frame.operand_stack.push_float(0.0f); frame.pc++; }
-void exec_fconst_1(Frame& frame) { frame.operand_stack.push_float(1.0f); frame.pc++; }
-void exec_fconst_2(Frame& frame) { frame.operand_stack.push_float(2.0f); frame.pc++; }
+void exec_fconst_0(Thread* t, Frame& frame) { frame.operand_stack.push_float(0.0f); frame.pc++; }
+void exec_fconst_1(Thread* t, Frame& frame) { frame.operand_stack.push_float(1.0f); frame.pc++; }
+void exec_fconst_2(Thread* t, Frame& frame) { frame.operand_stack.push_float(2.0f); frame.pc++; }
 
-void exec_dconst_0(Frame& frame) { frame.operand_stack.push_double(0.0); frame.pc++; }
-void exec_dconst_1(Frame& frame) { frame.operand_stack.push_double(1.0); frame.pc++; }
+void exec_dconst_0(Thread* t, Frame& frame) { frame.operand_stack.push_double(0.0); frame.pc++; }
+void exec_dconst_1(Thread* t, Frame& frame) { frame.operand_stack.push_double(1.0); frame.pc++; }
 
-void exec_bipush(Frame& frame) {
+void exec_bipush(Thread* t, Frame& frame) {
   u1 val = (u1)frame.method->code->code[frame.pc+1];
   frame.operand_stack.push_int(val);
   frame.pc += 2;
 }
 
-void exec_sipush(Frame& frame) {
+void exec_sipush(Thread* t, Frame& frame) {
   const u1* code = frame.method->code->code.data();
   u2 val = (code[frame.pc+1] << 8) | code[frame.pc+2];
   frame.operand_stack.push_int(val);
   frame.pc += 3;
 }
 
-void exec_ldc(Frame& frame) {
+void exec_ldc(Thread* t, Frame& frame) {
   u1 index = frame.method->code->code[frame.pc++];
   auto &entry = frame.current_class->class_file->constant_pool[index];
     switch(entry.first) {
@@ -290,17 +290,17 @@ void exec_ldc(Frame& frame) {
     }
 }
 
-void exec_ldc_w(Frame& frame) {}
-void exec_ldc2_w(Frame& frame) {}
+void exec_ldc_w(Thread* t, Frame& frame) {}
+void exec_ldc2_w(Thread* t, Frame& frame) {}
 
-void exec_iload(Frame& frame) {
+void exec_iload(Thread* t, Frame& frame) {
   const u1* code = frame.method->code->code.data();
   u1 idx = code[frame.pc+1];
   frame.operand_stack.push_int(frame.local_vars[idx]);
   frame.pc += 2;
 }
 
-void exec_lload(Frame& frame) {
+void exec_lload(Thread* t, Frame& frame) {
   const u1* code = frame.method->code->code.data();
   u2 idx = code[frame.pc+1];
   u4 high = frame.local_vars[idx];
@@ -310,14 +310,14 @@ void exec_lload(Frame& frame) {
   frame.pc += 2;
 }
 
-void exec_fload(Frame& frame) {
+void exec_fload(Thread* t, Frame& frame) {
   const u1* code = frame.method->code->code.data();
   u1 idx = code[frame.pc+1];
   frame.operand_stack.push_float(frame.local_vars[idx]);
   frame.pc += 2;
 }
 
-void exec_dload(Frame& frame) {
+void exec_dload(Thread* t, Frame& frame) {
   const u1* code = frame.method->code->code.data();
   u2 idx = code[frame.pc+1];
   u4 high = frame.local_vars[idx];
@@ -329,25 +329,25 @@ void exec_dload(Frame& frame) {
   frame.pc += 2;
 }
 
-void exec_aload(Frame& frame) {
+void exec_aload(Thread* t, Frame& frame) {
     const u1* code = frame.method->code->code.data();
     u1 idx = code[frame.pc+1];
     frame.operand_stack.stack.push_back(frame.local_vars[idx]);
     frame.pc += 2;
 }
 
-void exec_iload_0(Frame& frame) { frame.operand_stack.push_int(frame.local_vars[0]); frame.pc++; }
-void exec_iload_1(Frame& frame) { frame.operand_stack.push_int(frame.local_vars[1]); frame.pc++; }
-void exec_iload_2(Frame& frame) { frame.operand_stack.push_int(frame.local_vars[2]); frame.pc++; }
-void exec_iload_3(Frame& frame) { frame.operand_stack.push_int(frame.local_vars[3]); frame.pc++; }
-void exec_lload_3(Frame& frame) { frame.operand_stack.push_long(frame.local_vars[0]); frame.pc++; }
-void exec_lload_3(Frame& frame) { frame.operand_stack.push_long(frame.local_vars[1]); frame.pc++; }
-void exec_aload_0(Frame& frame) { frame.operand_stack.stack.push_back(frame.local_vars[0]); frame.pc++; }
-void exec_aload_1(Frame& frame) { frame.operand_stack.stack.push_back(frame.local_vars[1]); frame.pc++; }
-void exec_aload_2(Frame& frame) { frame.operand_stack.stack.push_back(frame.local_vars[2]); frame.pc++; }
-void exec_aload_3(Frame& frame) { frame.operand_stack.stack.push_back(frame.local_vars[3]); frame.pc++; }
+void exec_iload_0(Thread* t, Frame& frame) { frame.operand_stack.push_int(frame.local_vars[0]); frame.pc++; }
+void exec_iload_1(Thread* t, Frame& frame) { frame.operand_stack.push_int(frame.local_vars[1]); frame.pc++; }
+void exec_iload_2(Thread* t, Frame& frame) { frame.operand_stack.push_int(frame.local_vars[2]); frame.pc++; }
+void exec_iload_3(Thread* t, Frame& frame) { frame.operand_stack.push_int(frame.local_vars[3]); frame.pc++; }
+void exec_lload_3(Thread* t, Frame& frame) { frame.operand_stack.push_long(frame.local_vars[0]); frame.pc++; }
+void exec_lload_3(Thread* t, Frame& frame) { frame.operand_stack.push_long(frame.local_vars[1]); frame.pc++; }
+void exec_aload_0(Thread* t, Frame& frame) { frame.operand_stack.stack.push_back(frame.local_vars[0]); frame.pc++; }
+void exec_aload_1(Thread* t, Frame& frame) { frame.operand_stack.stack.push_back(frame.local_vars[1]); frame.pc++; }
+void exec_aload_2(Thread* t, Frame& frame) { frame.operand_stack.stack.push_back(frame.local_vars[2]); frame.pc++; }
+void exec_aload_3(Thread* t, Frame& frame) { frame.operand_stack.stack.push_back(frame.local_vars[3]); frame.pc++; }
 
-void exec_iaload(Frame& frame) {
+void exec_iaload(Thread* t, Frame& frame) {
     int32_t index = frame.operand_stack.pop_int();
     RuntimeObject* array_ref = frame.operand_stack.pop_ref();
     if (!array_ref) throw std::runtime_error("iaload: null array reference");
@@ -357,7 +357,7 @@ void exec_iaload(Frame& frame) {
     frame.pc++;
 }
 
-void exec_laload(Frame& frame) {
+void exec_laload(Thread* t, Frame& frame) {
     int32_t index = frame.operand_stack.pop_int();
     RuntimeObject* array_ref = frame.operand_stack.pop_ref();
     if (!array_ref) throw std::runtime_error("laload: null array reference");
@@ -366,7 +366,7 @@ void exec_laload(Frame& frame) {
     frame.pc++;
 }
 
-void exec_faload(Frame& frame) {
+void exec_faload(Thread* t, Frame& frame) {
     int32_t index = frame.operand_stack.pop_int();
     RuntimeObject* array_ref = frame.operand_stack.pop_ref();
     if (!array_ref) throw std::runtime_error("faload: null array reference");
@@ -375,7 +375,7 @@ void exec_faload(Frame& frame) {
     frame.pc++;
 }
 
-void exec_daload(Frame& frame) {
+void exec_daload(Thread* t, Frame& frame) {
     int32_t index = frame.operand_stack.pop_int();
     RuntimeObject* array_ref = frame.operand_stack.pop_ref();
     if (!array_ref) throw std::runtime_error("daload: null array reference");
@@ -384,7 +384,7 @@ void exec_daload(Frame& frame) {
     frame.pc++;
 }
 
-void exec_aaload(Frame& frame) {
+void exec_aaload(Thread* t, Frame& frame) {
     int32_t index = frame.operand_stack.pop_int();
     RuntimeObject* array_ref = frame.operand_stack.pop_ref();
     if (!array_ref) throw std::runtime_error("aaload: null array reference");
@@ -393,7 +393,7 @@ void exec_aaload(Frame& frame) {
     frame.pc++;
 }
 
-void exec_baload(Frame& frame) {
+void exec_baload(Thread* t, Frame& frame) {
     int32_t index = frame.operand_stack.pop_int();
     RuntimeObject* array_ref = frame.operand_stack.pop_ref();
     if (!array_ref) throw std::runtime_error("baload: null array reference");
@@ -402,7 +402,7 @@ void exec_baload(Frame& frame) {
     frame.pc++;
 }
 
-void exec_caload(Frame& frame) {
+void exec_caload(Thread* t, Frame& frame) {
     int32_t index = frame.operand_stack.pop_int();
     RuntimeObject* array_ref = frame.operand_stack.pop_ref();
     if (!array_ref) throw std::runtime_error("caload: null array reference");
@@ -411,7 +411,7 @@ void exec_caload(Frame& frame) {
     frame.pc++;
 }
 
-void exec_saload(Frame& frame) {
+void exec_saload(Thread* t, Frame& frame) {
     int32_t index = frame.operand_stack.pop_int();
     RuntimeObject* array_ref = frame.operand_stack.pop_ref();
     if (!array_ref) throw std::runtime_error("saload: null array reference");
@@ -421,14 +421,14 @@ void exec_saload(Frame& frame) {
 }
 
 // STORES
-void exec_istore(Frame& frame) {
+void exec_istore(Thread* t, Frame& frame) {
     const u1* code = frame.method->code->code.data();
     u1 idx = code[frame.pc+1];
     frame.local_vars[idx] = frame.operand_stack.pop_int();
     frame.pc += 2;
 }
 
-void exec_astore(Frame& frame) {
+void exec_astore(Thread* t, Frame& frame) {
     const u1* code = frame.method->code->code.data();
     u1 idx = code[frame.pc+1];
     RuntimeObject* ref = frame.operand_stack.pop_ref();
@@ -436,17 +436,17 @@ void exec_astore(Frame& frame) {
     frame.pc += 2;
 }
 
-void exec_istore_0(Frame& frame){ 
+void exec_istore_0(Thread* t, Frame& frame){ 
   frame.local_vars[0] = frame.operand_stack.pop_int();
   frame.pc++; }
-void exec_lstore(Frame& frame) { 
+void exec_lstore(Thread* t, Frame& frame) { 
   const u1* code = frame.method->code->code.data();
   u1 idx = code[frame.pc+1];
   frame.local_vars[idx] = frame.operand_stack.pop_long(); 
   frame.pc++; 
 }
 
-void exec_fstore(Frame& frame) {
+void exec_fstore(Thread* t, Frame& frame) {
   const u1* code = frame.method->code->code.data();
   u1 index = frame.method->code->code[frame.pc + 1];
   float value = frame.operand_stack.pop_float();
@@ -454,7 +454,7 @@ void exec_fstore(Frame& frame) {
   frame.pc += 2;
 }
 
-void exec_dstore(Frame& frame) {
+void exec_dstore(Thread* t, Frame& frame) {
   const u1* code = frame.method->code->code.data();
   u1 index = frame.method->code->code[frame.pc + 1];
   double value = frame.operand_stack.pop_double();
@@ -462,7 +462,7 @@ void exec_dstore(Frame& frame) {
   frame.pc += 2;
 }
 
-void exec_astore(Frame& frame) {
+void exec_astore(Thread* t, Frame& frame) {
   const u1* code = frame.method->code->code.data();
   u1 index = frame.method->code->code[frame.pc + 1];
   u4 ref = frame.operand_stack.stack.back();
@@ -471,131 +471,131 @@ void exec_astore(Frame& frame) {
   frame.pc += 2;
 }
 
-void exec_istore_0(Frame& frame) {
+void exec_istore_0(Thread* t, Frame& frame) {
   frame.local_vars[0] = frame.operand_stack.pop_int();
   frame.pc++;
 }
 
-void exec_istore_1(Frame& frame) {
+void exec_istore_1(Thread* t, Frame& frame) {
   frame.local_vars[1] = frame.operand_stack.pop_int();
   frame.pc++;
 }
 
-void exec_istore_2(Frame& frame) {
+void exec_istore_2(Thread* t, Frame& frame) {
   frame.local_vars[2] = frame.operand_stack.pop_int();
   frame.pc++;
 }
 
-void exec_istore_3(Frame& frame) {
+void exec_istore_3(Thread* t, Frame& frame) {
   frame.local_vars[3] = frame.operand_stack.pop_int();
   frame.pc++;
 }
 
-void exec_lstore_0(Frame& frame) {
+void exec_lstore_0(Thread* t, Frame& frame) {
   frame.local_vars[0] = frame.operand_stack.pop_long();
   frame.pc++;
 }
 
-void exec_lstore_1(Frame& frame) {
+void exec_lstore_1(Thread* t, Frame& frame) {
   frame.local_vars[1] = frame.operand_stack.pop_long();
   frame.pc++;
 }
 
-void exec_lstore_2(Frame& frame) {
+void exec_lstore_2(Thread* t, Frame& frame) {
   frame.local_vars[2] = frame.operand_stack.pop_long();
   frame.pc++;
 }
 
-void exec_lstore_3(Frame& frame) {
+void exec_lstore_3(Thread* t, Frame& frame) {
   frame.local_vars[3] = frame.operand_stack.pop_long();
   frame.pc++;
 }
 
-void exec_fstore_0(Frame& frame) {
+void exec_fstore_0(Thread* t, Frame& frame) {
   frame.local_vars[0] = frame.operand_stack.pop_float();
   frame.pc++;
 }
 
-void exec_fstore_1(Frame& frame) {
+void exec_fstore_1(Thread* t, Frame& frame) {
   frame.local_vars[1] = frame.operand_stack.pop_float();
   frame.pc++;
 }
 
-void exec_fstore_2(Frame& frame) {
+void exec_fstore_2(Thread* t, Frame& frame) {
   frame.local_vars[2] = frame.operand_stack.pop_float();
   frame.pc++;
 }
 
-void exec_fstore_3(Frame& frame) {
+void exec_fstore_3(Thread* t, Frame& frame) {
   frame.local_vars[3] = frame.operand_stack.pop_float();
   frame.pc++;
 }
 
-void exec_dstore_0(Frame& frame) {
+void exec_dstore_0(Thread* t, Frame& frame) {
   frame.local_vars[0] = frame.operand_stack.pop_double();
   frame.pc++;
 }
 
-void exec_dstore_1(Frame& frame) {
+void exec_dstore_1(Thread* t, Frame& frame) {
   frame.local_vars[1] = frame.operand_stack.pop_double();
   frame.pc++;
 }
 
-void exec_dstore_2(Frame& frame) {
+void exec_dstore_2(Thread* t, Frame& frame) {
   frame.local_vars[2] = frame.operand_stack.pop_double();
   frame.pc++;
 }
 
-void exec_dstore_3(Frame& frame) {
+void exec_dstore_3(Thread* t, Frame& frame) {
   frame.local_vars[3] = frame.operand_stack.pop_double();
   frame.pc++;
 }
 
-void exec_astore_0(Frame& frame){
+void exec_astore_0(Thread* t, Frame& frame){
   RuntimeObject* ref = frame.operand_stack.pop_ref();
   frame.local_vars[0] = (Slot)(uintptr_t)ref; 
   frame.pc++;
 }
 
-void exec_astore_1(Frame& frame) {
+void exec_astore_1(Thread* t, Frame& frame) {
   RuntimeObject* ref = frame.operand_stack.pop_ref();
   frame.local_vars[1] = (Slot)(uintptr_t)ref; 
   frame.pc++;
 }
-void exec_astore_2(Frame& frame) {
+void exec_astore_2(Thread* t, Frame& frame) {
   RuntimeObject* ref = frame.operand_stack.pop_ref();
   frame.local_vars[2] = (Slot)(uintptr_t)ref; 
   frame.pc++;
 }
-void exec_astore_3(Frame& frame) {
+void exec_astore_3(Thread* t, Frame& frame) {
   RuntimeObject* ref = frame.operand_stack.pop_ref();
   frame.local_vars[3] = (Slot)(uintptr_t)ref; 
   frame.pc++;
 }
-void exec_iastore(Frame& frame) {}
-void exec_lastore(Frame& frame) {}
-void exec_fastore(Frame& frame) {}
-void exec_dastore(Frame& frame) {}
-void exec_aastore(Frame& frame) {}
-void exec_bastore(Frame& frame) {}
-void exec_castore(Frame& frame) {}
-void exec_sastore(Frame& frame) {}
+void exec_iastore(Thread* t, Frame& frame) {}
+void exec_lastore(Thread* t, Frame& frame) {}
+void exec_fastore(Thread* t, Frame& frame) {}
+void exec_dastore(Thread* t, Frame& frame) {}
+void exec_aastore(Thread* t, Frame& frame) {}
+void exec_bastore(Thread* t, Frame& frame) {}
+void exec_castore(Thread* t, Frame& frame) {}
+void exec_sastore(Thread* t, Frame& frame) {}
 
 // STACK OPS
-void exec_pop(Frame& frame)   { frame.operand_stack.stack.pop_back(); frame.pc++; }
-void exec_pop2(Frame& frame)  {
+void exec_pop(Thread* t, Frame& frame)   { frame.operand_stack.stack.pop_back(); frame.pc++; }
+void exec_pop2(Thread* t, Frame& frame)  {
   frame.operand_stack.stack.pop_back(); 
   frame.operand_stack.stack.pop_back(); 
   frame.pc++; 
 }
 
-void exec_dup(Frame& frame) {
+void exec_dup(Thread* t, Frame& frame) {
   Slot v = frame.operand_stack.stack.back();
   frame.operand_stack.stack.push_back(v);
   frame.pc++;
 }
 
-void exec_dup_x1 (Frame& frame) {
+void exec_dup_x1 (Thread* t, Frame& frame) {
   Slot v1 = frame.operand_stack.pop_int();
   Slot v2 = frame.operand_stack.pop_int();
   frame.operand_stack.push_int(v1);
@@ -603,7 +603,7 @@ void exec_dup_x1 (Frame& frame) {
   frame.operand_stack.push_int(v1);
   frame.pc++;
 }
-void exec_dup_x2 (Frame& frame) {
+void exec_dup_x2 (Thread* t, Frame& frame) {
   Slot v1 = frame.operand_stack.pop_int();
   Slot v2 = frame.operand_stack.pop_int();
   Slot v3 = frame.operand_stack.pop_int();
@@ -614,7 +614,7 @@ void exec_dup_x2 (Frame& frame) {
   frame.pc++;
 
 }
-void exec_dup2 (Frame& frame) {
+void exec_dup2 (Thread* t, Frame& frame) {
   Slot v1 = frame.operand_stack.pop_int();
   Slot v2 = frame.operand_stack.pop_int();
   frame.operand_stack.push_int(v2);
@@ -624,7 +624,7 @@ void exec_dup2 (Frame& frame) {
   frame.pc++;
 
 }
-void exec_dup2_x1 (Frame& frame) {
+void exec_dup2_x1 (Thread* t, Frame& frame) {
   Slot v1 = frame.operand_stack.pop_int();
   Slot v2 = frame.operand_stack.pop_int();
   Slot v3 = frame.operand_stack.pop_int();
@@ -635,7 +635,7 @@ void exec_dup2_x1 (Frame& frame) {
   frame.operand_stack.push_int(v1);
   frame.pc++;
 }
-void exec_dup2_x2 (Frame& frame) {
+void exec_dup2_x2 (Thread* t, Frame& frame) {
   Slot v1 = frame.operand_stack.pop_int();
   Slot v2 = frame.operand_stack.pop_int();
   Slot v3 = frame.operand_stack.pop_int();
@@ -649,7 +649,7 @@ void exec_dup2_x2 (Frame& frame) {
   frame.pc++;
 }
 
-void exec_swap(Frame& frame) {
+void exec_swap(Thread* t, Frame& frame) {
     u4 v1 = frame.operand_stack.pop_int();
     u4 v2 = frame.operand_stack.pop_int();
     frame.operand_stack.push_int(v1);
@@ -657,56 +657,56 @@ void exec_swap(Frame& frame) {
     frame.pc += 1;
 }
 
-void exec_iadd(Frame& frame) {
+void exec_iadd(Thread* t, Frame& frame) {
     int32_t b = frame.operand_stack.pop_int();
     int32_t a = frame.operand_stack.pop_int();
     frame.operand_stack.push_int(a + b);
     frame.pc++;
 }
 
-void exec_ladd(Frame& frame) {
+void exec_ladd(Thread* t, Frame& frame) {
     int64_t v2 = frame.operand_stack.pop_long();
     int64_t v1 = frame.operand_stack.pop_long();
     frame.operand_stack.push_long(v1 + v2);
     frame.pc++;
 }
 
-void exec_fadd(Frame& frame) {
+void exec_fadd(Thread* t, Frame& frame) {
     float v2 = frame.operand_stack.pop_float();
     float v1 = frame.operand_stack.pop_float();
     frame.operand_stack.push_float(v1 + v2);
     frame.pc++;
 }
 
-void exec_dadd(Frame& frame) {
+void exec_dadd(Thread* t, Frame& frame) {
     double v2 = frame.operand_stack.pop_double();
     double v1 = frame.operand_stack.pop_double();
     frame.operand_stack.push_double(v1 + v2);
     frame.pc++;
 }
 
-void exec_isub(Frame& frame) {
+void exec_isub(Thread* t, Frame& frame) {
     int32_t b = frame.operand_stack.pop_int();
     int32_t a = frame.operand_stack.pop_int();
     frame.operand_stack.push_int(a - b);
     frame.pc++;
 }
 
-void exec_lsub(Frame& frame) {
+void exec_lsub(Thread* t, Frame& frame) {
     int64_t v2 = frame.operand_stack.pop_long();
     int64_t v1 = frame.operand_stack.pop_long();
     frame.operand_stack.push_long(v1 - v2);
     frame.pc++;
 }
 
-void exec_fsub(Frame& frame) {
+void exec_fsub(Thread* t, Frame& frame) {
     float v2 = frame.operand_stack.pop_float();
     float v1 = frame.operand_stack.pop_float();
     frame.operand_stack.push_float(v1 - v2);
     frame.pc++;
 }
 
-void exec_dsub(Frame& frame) {
+void exec_dsub(Thread* t, Frame& frame) {
     double v2 = frame.operand_stack.pop_double();
     double v1 = frame.operand_stack.pop_double();
     frame.operand_stack.push_double(v1 - v2);
@@ -714,35 +714,35 @@ void exec_dsub(Frame& frame) {
 }
 
 
-void exec_imul(Frame& frame) {
+void exec_imul(Thread* t, Frame& frame) {
     int32_t b = frame.operand_stack.pop_int();
     int32_t a = frame.operand_stack.pop_int();
     frame.operand_stack.push_int(a * b);
     frame.pc++;
 }
 
-void exec_lmul(Frame& frame) {
+void exec_lmul(Thread* t, Frame& frame) {
     int64_t v2 = frame.operand_stack.pop_long();
     int64_t v1 = frame.operand_stack.pop_long();
     frame.operand_stack.push_long(v1 * v2);
     frame.pc++;
 }
 
-void exec_fmul(Frame& frame) {
+void exec_fmul(Thread* t, Frame& frame) {
     float v2 = frame.operand_stack.pop_float();
     float v1 = frame.operand_stack.pop_float();
     frame.operand_stack.push_float(v1 * v2);
     frame.pc++;
 }
 
-void exec_dmul(Frame& frame) {
+void exec_dmul(Thread* t, Frame& frame) {
     double v2 = frame.operand_stack.pop_double();
     double v1 = frame.operand_stack.pop_double();
     frame.operand_stack.push_double(v1 * v2);
     frame.pc++;
 }
 
-void exec_idiv(Frame& frame) {
+void exec_idiv(Thread* t, Frame& frame) {
     int32_t v2 = frame.operand_stack.pop_int();
     int32_t v1 = frame.operand_stack.pop_int();
     if (v2 == 0) throw std::runtime_error("ArithmeticException: / by zero");
@@ -750,7 +750,7 @@ void exec_idiv(Frame& frame) {
     frame.pc++;
 }
 
-void exec_ldiv(Frame& frame) {
+void exec_ldiv(Thread* t, Frame& frame) {
     int64_t v2 = frame.operand_stack.pop_long();
     int64_t v1 = frame.operand_stack.pop_long();
     if (v2 == 0) throw std::runtime_error("ArithmeticException: / by zero");
@@ -758,21 +758,21 @@ void exec_ldiv(Frame& frame) {
     frame.pc++;
 }
 
-void exec_fdiv(Frame& frame) {
+void exec_fdiv(Thread* t, Frame& frame) {
     float v2 = frame.operand_stack.pop_float();
     float v1 = frame.operand_stack.pop_float();
     frame.operand_stack.push_float(v1 / v2);
     frame.pc++;
 }
 
-void exec_ddiv(Frame& frame) {
+void exec_ddiv(Thread* t, Frame& frame) {
     double v2 = frame.operand_stack.pop_double();
     double v1 = frame.operand_stack.pop_double();
     frame.operand_stack.push_double(v1 / v2);
     frame.pc++;
 }
 
-void exec_irem(Frame& frame) {
+void exec_irem(Thread* t, Frame& frame) {
     int32_t v2 = frame.operand_stack.pop_int();
     int32_t v1 = frame.operand_stack.pop_int();
     if (v2 == 0) throw std::runtime_error("ArithmeticException: / by zero");
@@ -780,7 +780,7 @@ void exec_irem(Frame& frame) {
     frame.pc++;
 }
 
-void exec_lrem(Frame& frame) {
+void exec_lrem(Thread* t, Frame& frame) {
     int64_t v2 = frame.operand_stack.pop_long();
     int64_t v1 = frame.operand_stack.pop_long();
     if (v2 == 0) throw std::runtime_error("ArithmeticException: / by zero");
@@ -788,129 +788,129 @@ void exec_lrem(Frame& frame) {
     frame.pc++;
 }
 
-void exec_frem(Frame& frame) {
+void exec_frem(Thread* t, Frame& frame) {
     float v2 = frame.operand_stack.pop_float();
     float v1 = frame.operand_stack.pop_float();
     frame.operand_stack.push_float(std::fmod(v1, v2));
     frame.pc++;
 }
 
-void exec_drem(Frame& frame) {
+void exec_drem(Thread* t, Frame& frame) {
     double v2 = frame.operand_stack.pop_double();
     double v1 = frame.operand_stack.pop_double();
     frame.operand_stack.push_double(std::fmod(v1, v2));
     frame.pc++;
 }
 
-void exec_ineg(Frame& frame) {
+void exec_ineg(Thread* t, Frame& frame) {
     int32_t v = frame.operand_stack.pop_int();
     frame.operand_stack.push_int(-v);
     frame.pc++;
 }
 
-void exec_lneg(Frame& frame) {
+void exec_lneg(Thread* t, Frame& frame) {
     int64_t v = frame.operand_stack.pop_long();
     frame.operand_stack.push_long(-v);
     frame.pc++;
 }
 
-void exec_fneg(Frame& frame) {
+void exec_fneg(Thread* t, Frame& frame) {
     float v = frame.operand_stack.pop_float();
     frame.operand_stack.push_float(-v);
     frame.pc++;
 }
 
-void exec_dneg(Frame& frame) {
+void exec_dneg(Thread* t, Frame& frame) {
     double v = frame.operand_stack.pop_double();
     frame.operand_stack.push_double(-v);
     frame.pc++;
 }
 
-void exec_ishl(Frame& frame) {
+void exec_ishl(Thread* t, Frame& frame) {
     int32_t shift = frame.operand_stack.pop_int() & 0x1F;
     int32_t value = frame.operand_stack.pop_int();
     frame.operand_stack.push_int(value << shift);
     frame.pc++;
 }
 
-void exec_lshl(Frame& frame) {
+void exec_lshl(Thread* t, Frame& frame) {
     int32_t shift = frame.operand_stack.pop_int() & 0x3F;
     int64_t value = frame.operand_stack.pop_long();
     frame.operand_stack.push_long(value << shift);
     frame.pc++;
 }
 
-void exec_ishr(Frame& frame) {
+void exec_ishr(Thread* t, Frame& frame) {
     int32_t shift = frame.operand_stack.pop_int() & 0x1F;
     int32_t value = frame.operand_stack.pop_int();
     frame.operand_stack.push_int(value >> shift);
     frame.pc++;
 }
 
-void exec_lshr(Frame& frame) {
+void exec_lshr(Thread* t, Frame& frame) {
     int32_t shift = frame.operand_stack.pop_int() & 0x3F;
     int64_t value = frame.operand_stack.pop_long();
     frame.operand_stack.push_long(value >> shift);
     frame.pc++;
 }
 
-void exec_iushr(Frame& frame) {
+void exec_iushr(Thread* t, Frame& frame) {
     int32_t shift = frame.operand_stack.pop_int() & 0x1F;
     uint32_t value = static_cast<uint32_t>(frame.operand_stack.pop_int());
     frame.operand_stack.push_int(static_cast<int32_t>(value >> shift));
     frame.pc++;
 }
 
-void exec_lushr(Frame& frame) {
+void exec_lushr(Thread* t, Frame& frame) {
     int32_t shift = frame.operand_stack.pop_int() & 0x3F;
     uint64_t value = static_cast<uint64_t>(frame.operand_stack.pop_long());
     frame.operand_stack.push_long(static_cast<int64_t>(value >> shift));
     frame.pc++;
 }
 
-void exec_iand(Frame& frame) {
+void exec_iand(Thread* t, Frame& frame) {
     int32_t v2 = frame.operand_stack.pop_int();
     int32_t v1 = frame.operand_stack.pop_int();
     frame.operand_stack.push_int(v1 & v2);
     frame.pc++;
 }
 
-void exec_land(Frame& frame) {
+void exec_land(Thread* t, Frame& frame) {
     int64_t v2 = frame.operand_stack.pop_long();
     int64_t v1 = frame.operand_stack.pop_long();
     frame.operand_stack.push_long(v1 & v2);
     frame.pc++;
 }
 
-void exec_ior(Frame& frame) {
+void exec_ior(Thread* t, Frame& frame) {
     int32_t v2 = frame.operand_stack.pop_int();
     int32_t v1 = frame.operand_stack.pop_int();
     frame.operand_stack.push_int(v1 | v2);
     frame.pc++;
 }
 
-void exec_lor(Frame& frame) {
+void exec_lor(Thread* t, Frame& frame) {
     int64_t v2 = frame.operand_stack.pop_long();
     int64_t v1 = frame.operand_stack.pop_long();
     frame.operand_stack.push_long(v1 | v2);
     frame.pc++;
 }
 
-void exec_ixor(Frame& frame) {
+void exec_ixor(Thread* t, Frame& frame) {
     int32_t v2 = frame.operand_stack.pop_int();
     int32_t v1 = frame.operand_stack.pop_int();
     frame.operand_stack.push_int(v1 ^ v2);
     frame.pc++;
 }
 
-void exec_lxor(Frame& frame) {
+void exec_lxor(Thread* t, Frame& frame) {
     int64_t v2 = frame.operand_stack.pop_long();
     int64_t v1 = frame.operand_stack.pop_long();
     frame.operand_stack.push_long(v1 ^ v2);
     frame.pc++;
 }
 
-void exec_iinc(Frame& frame) {
+void exec_iinc(Thread* t, Frame& frame) {
     const u1* code = frame.method->code->code.data();
     u1 index = code[frame.pc + 1];
     int8_t constant = static_cast<int8_t>(code[frame.pc + 2]);
@@ -922,100 +922,100 @@ void exec_iinc(Frame& frame) {
     frame.pc += 3;
 }
 
-void exec_i2l(Frame& frame) {
+void exec_i2l(Thread* t, Frame& frame) {
     int32_t v = frame.operand_stack.pop_int();
     frame.operand_stack.push_long(static_cast<int64_t>(v));
     frame.pc++;
 }
 
-void exec_i2f(Frame& frame) {
+void exec_i2f(Thread* t, Frame& frame) {
     int32_t v = frame.operand_stack.pop_int();
     frame.operand_stack.push_float(static_cast<float>(v));
     frame.pc++;
 }
 
-void exec_i2d(Frame& frame) {
+void exec_i2d(Thread* t, Frame& frame) {
     int32_t v = frame.operand_stack.pop_int();
     frame.operand_stack.push_double(static_cast<double>(v));
     frame.pc++;
 }
 
-void exec_l2i(Frame& frame) {
+void exec_l2i(Thread* t, Frame& frame) {
     int64_t v = frame.operand_stack.pop_long();
     frame.operand_stack.push_int(static_cast<int32_t>(v));
     frame.pc++;
 }
 
-void exec_l2f(Frame& frame) {
+void exec_l2f(Thread* t, Frame& frame) {
     int64_t v = frame.operand_stack.pop_long();
     frame.operand_stack.push_float(static_cast<float>(v));
     frame.pc++;
 }
 
-void exec_l2d(Frame& frame) {
+void exec_l2d(Thread* t, Frame& frame) {
     int64_t v = frame.operand_stack.pop_long();
     frame.operand_stack.push_double(static_cast<double>(v));
     frame.pc++;
 }
 
-void exec_f2i(Frame& frame) {
+void exec_f2i(Thread* t, Frame& frame) {
     float v = frame.operand_stack.pop_float();
     frame.operand_stack.push_int(static_cast<int32_t>(v));
     frame.pc++;
 }
 
-void exec_f2l(Frame& frame) {
+void exec_f2l(Thread* t, Frame& frame) {
     float v = frame.operand_stack.pop_float();
     frame.operand_stack.push_long(static_cast<int64_t>(v));
     frame.pc++;
 }
 
-void exec_f2d(Frame& frame) {
+void exec_f2d(Thread* t, Frame& frame) {
     float v = frame.operand_stack.pop_float();
     frame.operand_stack.push_double(static_cast<double>(v));
     frame.pc++;
 }
 
-void exec_d2i(Frame& frame) {
+void exec_d2i(Thread* t, Frame& frame) {
     double v = frame.operand_stack.pop_double();
     frame.operand_stack.push_int(static_cast<int32_t>(v));
     frame.pc++;
 }
 
-void exec_d2l(Frame& frame) {
+void exec_d2l(Thread* t, Frame& frame) {
     double v = frame.operand_stack.pop_double();
     frame.operand_stack.push_long(static_cast<int64_t>(v));
     frame.pc++;
 }
 
-void exec_d2f(Frame& frame) {
+void exec_d2f(Thread* t, Frame& frame) {
     double v = frame.operand_stack.pop_double();
     frame.operand_stack.push_float((float)v);
     frame.pc += 1;
 }
 
-void exec_i2b(Frame& frame) {
+void exec_i2b(Thread* t, Frame& frame) {
     int32_t v = frame.operand_stack.pop_int();
     int8_t r = (int8_t)v;  
     frame.operand_stack.push_int((int32_t)r);
     frame.pc += 1;
 }
 
-void exec_i2c(Frame& frame) {
+void exec_i2c(Thread* t, Frame& frame) {
     int32_t v = frame.operand_stack.pop_int();
     uint16_t r = (uint16_t)v;
     frame.operand_stack.push_int((int32_t)r);
     frame.pc += 1;
 }
 
-void exec_i2s(Frame& frame) {
+void exec_i2s(Thread* t, Frame& frame) {
     int32_t v = frame.operand_stack.pop_int();
     int16_t r = (int16_t)v;
     frame.operand_stack.push_int((int32_t)r);
     frame.pc += 1;
 }
 
-void exec_lcmp(Frame& frame) {
+void exec_lcmp(Thread* t, Frame& frame) {
     int64_t b = frame.operand_stack.pop_long();
     int64_t a = frame.operand_stack.pop_long();
     int32_t r = (a == b ? 0 : (a > b ? 1 : -1));
@@ -1023,7 +1023,7 @@ void exec_lcmp(Frame& frame) {
     frame.pc += 1;
 }
 
-void exec_fcmpl(Frame& frame) {
+void exec_fcmpl(Thread* t, Frame& frame) {
     float b = frame.operand_stack.pop_float();
     float a = frame.operand_stack.pop_float();
     int32_t r;
@@ -1035,7 +1035,7 @@ void exec_fcmpl(Frame& frame) {
     frame.pc += 1;
 }
 
-void exec_fcmpg(Frame& frame) {
+void exec_fcmpg(Thread* t, Frame& frame) {
     float b = frame.operand_stack.pop_float();
     float a = frame.operand_stack.pop_float();
     int32_t r;
@@ -1045,7 +1045,7 @@ void exec_fcmpg(Frame& frame) {
     frame.pc += 1;
 }
 
-void exec_dcmpl(Frame& frame) {
+void exec_dcmpl(Thread* t, Frame& frame) {
     double b = frame.operand_stack.pop_double();
     double a = frame.operand_stack.pop_double();
     int32_t r;
@@ -1055,7 +1055,7 @@ void exec_dcmpl(Frame& frame) {
     frame.pc += 1;
 }
 
-void exec_dcmpg(Frame& frame) {
+void exec_dcmpg(Thread* t, Frame& frame) {
     double b = frame.operand_stack.pop_double();
     double a = frame.operand_stack.pop_double();
     int32_t r;
@@ -1074,79 +1074,79 @@ static inline int16_t read_s16(Frame& frame) {
     return (int16_t)((b1 << 8) | b2);
 }
 
-void exec_ifeq(Frame& frame) {
+void exec_ifeq(Thread* t, Frame& frame) {
     int32_t v = frame.operand_stack.pop_int();
     int16_t off = read_s16(frame);
     frame.pc += (v == 0 ? off : 3);
 }
 
-void exec_ifne(Frame& frame) {
+void exec_ifne(Thread* t, Frame& frame) {
     int32_t v = frame.operand_stack.pop_int();
     int16_t off = read_s16(frame);
     frame.pc += (v != 0 ? off : 3);
 }
 
-void exec_iflt(Frame& frame) {
+void exec_iflt(Thread* t, Frame& frame) {
     int32_t v = frame.operand_stack.pop_int();
     int16_t off = read_s16(frame);
     frame.pc += (v < 0 ? off : 3);
 }
 
-void exec_ifge(Frame& frame) {
+void exec_ifge(Thread* t, Frame& frame) {
     int32_t v = frame.operand_stack.pop_int();
     int16_t off = read_s16(frame);
     frame.pc += (v >= 0 ? off : 3);
 }
 
-void exec_ifgt(Frame& frame) {
+void exec_ifgt(Thread* t, Frame& frame) {
     int32_t v = frame.operand_stack.pop_int();
     int16_t off = read_s16(frame);
     frame.pc += (v > 0 ? off : 3);
 }
 
-void exec_ifle(Frame& frame) {
+void exec_ifle(Thread* t, Frame& frame) {
     int32_t v = frame.operand_stack.pop_int();
     int16_t off = read_s16(frame);
     frame.pc += (v <= 0 ? off : 3);
 }
 
 
-void exec_if_icmpeq(Frame& frame) {
+void exec_if_icmpeq(Thread* t, Frame& frame) {
     int32_t v2 = frame.operand_stack.pop_int();
     int32_t v1 = frame.operand_stack.pop_int();
     int16_t off = read_s16(frame);
     frame.pc += (v1 == v2 ? off : 3);
 }
 
-void exec_if_icmpne(Frame& frame) {
+void exec_if_icmpne(Thread* t, Frame& frame) {
     int32_t v2 = frame.operand_stack.pop_int();
     int32_t v1 = frame.operand_stack.pop_int();
     int16_t off = read_s16(frame);
     frame.pc += (v1 != v2 ? off : 3);
 }
 
-void exec_if_icmplt(Frame& frame) {
+void exec_if_icmplt(Thread* t, Frame& frame) {
     int32_t v2 = frame.operand_stack.pop_int();
     int32_t v1 = frame.operand_stack.pop_int();
     int16_t off = read_s16(frame);
     frame.pc += (v1 < v2 ? off : 3);
 }
 
-void exec_if_icmpge(Frame& frame) {
+void exec_if_icmpge(Thread* t, Frame& frame) {
     int32_t v2 = frame.operand_stack.pop_int();
     int32_t v1 = frame.operand_stack.pop_int();
     int16_t off = read_s16(frame);
     frame.pc += (v1 >= v2 ? off : 3);
 }
 
-void exec_if_icmpgt(Frame& frame) {
+void exec_if_icmpgt(Thread* t, Frame& frame) {
     int32_t v2 = frame.operand_stack.pop_int();
     int32_t v1 = frame.operand_stack.pop_int();
     int16_t off = read_s16(frame);
     frame.pc += (v1 > v2 ? off : 3);
 }
 
-void exec_if_icmple(Frame& frame) {
+void exec_if_icmple(Thread* t, Frame& frame) {
     int32_t v2 = frame.operand_stack.pop_int();
     int32_t v1 = frame.operand_stack.pop_int();
     int16_t off = read_s16(frame);
@@ -1154,42 +1154,42 @@ void exec_if_icmple(Frame& frame) {
 }
 
 
-void exec_if_acmpeq(Frame& frame) {
+void exec_if_acmpeq(Thread* t, Frame& frame) {
     u4 ref2 = (u4)frame.operand_stack.pop_ref();
     u4 ref1 = (u4)frame.operand_stack.pop_ref();
     int16_t off = read_s16(frame);
     frame.pc += (ref1 == ref2 ? off : 3);
 }
 
-void exec_if_acmpne(Frame& frame) {
+void exec_if_acmpne(Thread* t, Frame& frame) {
     u4 ref2 = (u4)frame.operand_stack.pop_ref();
     u4 ref1 = (u4)frame.operand_stack.pop_ref();
     int16_t off = read_s16(frame);
     frame.pc += (ref1 != ref2 ? off : 3);
 }
 
-void exec_goto(Frame& frame) {
+void exec_goto(Thread* t, Frame& frame) {
     int16_t off = read_s16(frame);
     frame.pc += off;  // sempre pula
 }
 
 // JSR empilha o endereço de retorno (pc + 3)
 // e então salta para offset
-void exec_jsr(Frame& frame) {
+void exec_jsr(Thread* t, Frame& frame) {
     int16_t off = read_s16(frame);
     int32_t return_addr = frame.pc + 3;
     frame.operand_stack.push_int(return_addr);
     frame.pc += off;
 }
 
-void exec_ret(Frame& frame) {
+void exec_ret(Thread* t, Frame& frame) {
     u1 index = frame.method->code->code[frame.pc + 1];
     int32_t addr = frame.local_vars[index];
     frame.pc = addr;
 }
 
 
-void exec_tableswitch(Frame& frame) {
+void exec_tableswitch(Thread* t, Frame& frame) {
     const u1* code = frame.method->code->code.data();
 
     // Alinhar para múltiplo de 4 após o opcode
@@ -1222,7 +1222,7 @@ void exec_tableswitch(Frame& frame) {
     frame.pc += static_cast<int32_t>(jump_offset);
 }
 
-void exec_lookupswitch(Frame& frame) {
+void exec_lookupswitch(Thread* t, Frame& frame) {
     const u1* code = frame.method->code->code.data();
 
     u4 base = frame.pc + 1;
@@ -1255,52 +1255,51 @@ void exec_lookupswitch(Frame& frame) {
     frame.pc += static_cast<int32_t>(default_offset);
 }
 
-void exec_ireturn(Frame& frame) {
-    int32_t value = frame.operand_stack.pop_int();
-    frame.return_value = Slot(value);
-    frame.finished = true;
-    
+void exec_ireturn(Thread* thread) {
+    Frame& current = thread->current_frame();
+    int32_t value = current.operand_stack.pop_int();
+    thread->pop_frame();
+    Frame& caller = thread->current_frame();
+    caller.operand_stack.push_int(value);
 }
 
-void exec_lreturn(Frame& frame) {
-    int64_t value = frame.operand_stack.pop_long();
-    frame.return_value_high = static_cast<u4>((value >> 32) & 0xFFFFFFFF);
-    frame.return_value_low  = static_cast<u4>(value & 0xFFFFFFFF);
-    frame.finished = true;
+void exec_lreturn(Thread* thread) {
+    Frame& current = thread->current_frame();
+    int64_t value = current.operand_stack.pop_long();
+    thread->pop_frame();
+    Frame& caller = thread->current_frame();
+    caller.operand_stack.push_long(value);
 }
 
-void exec_freturn(Frame& frame) {
-    float value = frame.operand_stack.pop_float();
-    union { float f; u4 u; } conv;
-    conv.f = value;
-    frame.return_value = conv.u;
-    frame.finished = true;
+void exec_freturn(Thread* thread) {
+    Frame& current = thread->current_frame();
+    float value = current.operand_stack.pop_float();
+    thread->pop_frame();
+    Frame& caller = thread->current_frame();
+    caller.operand_stack.push_float(value);
 }
 
-void exec_dreturn(Frame& frame) {
-    double value = frame.operand_stack.pop_double();
-    union { double d; u8 u; } conv;
-    conv.d = value;
-    u8 raw = conv.u;
-    frame.return_value_high = static_cast<u4>((raw >> 32) & 0xFFFFFFFF);
-    frame.return_value_low  = static_cast<u4>(raw & 0xFFFFFFFF);
-    frame.finished = true;
+void exec_dreturn(Thread* thread) {
+    Frame& current = thread->current_frame();
+    double value = current.operand_stack.pop_double();
+    thread->pop_frame();
+    Frame& caller = thread->current_frame();
+    caller.operand_stack.push_double(value);
 }
 
-void exec_areturn(Frame& frame) {
-    RuntimeObject* ref = frame.operand_stack.pop_ref();
-    frame.return_ref = ref;
-    frame.finished = true;
+void exec_areturn(Thread* thread) {
+    Frame& current = thread->current_frame();
+    RuntimeObject* ref = current.operand_stack.pop_ref();
+    thread->pop_frame();
+    Frame& caller = thread->current_frame();
+    caller.operand_stack.push_ref(ref);
 }
 
-void exec_return(Frame& frame) {
-    frame.finished = true;
+void exec_return(Thread* thread) {
+    thread->pop_frame();
 }
 
-// ================================================================
-// 0xB2 GETSTATIC
-// ================================================================
-void exec_getstatic(Frame& frame) {
+void exec_getstatic(Thread* t, Frame& frame) {
     u1 op1 = frame.method->code->code[frame.pc + 1];
     u1 op2 = frame.method->code->code[frame.pc + 2];
     u2 index = (op1 << 8) | op2;
@@ -1320,10 +1319,7 @@ void exec_getstatic(Frame& frame) {
     frame.pc += 3;
 }
 
-// ================================================================
-// 0xB3 PUTSTATIC
-// ================================================================
-void exec_putstatic(Frame& frame) {
+void exec_putstatic(Thread* t, Frame& frame) {
     u1 op1 = frame.method->code->code[frame.pc + 1];
     u1 op2 = frame.method->code->code[frame.pc + 2];
     u2 index = (op1 << 8) | op2;
@@ -1342,10 +1338,7 @@ void exec_putstatic(Frame& frame) {
     frame.pc += 3;
 }
 
-// ================================================================
-// 0xB4 GETFIELD
-// ================================================================
-void exec_getfield(Frame& frame) {
+void exec_getfield(Thread* t, Frame& frame) {
     u2 index = (frame.method->code->code[frame.pc+1] << 8) |
                 frame.method->code->code[frame.pc+2];
 
@@ -1364,10 +1357,7 @@ void exec_getfield(Frame& frame) {
     frame.pc += 3;
 }
 
-// ================================================================
-// 0xB5 PUTFIELD
-// ================================================================
-void exec_putfield(Frame& frame) {
+void exec_putfield(Thread* t, Frame& frame) {
     u2 index = (frame.method->code->code[frame.pc+1] << 8) |
                 frame.method->code->code[frame.pc+2];
 
@@ -1388,9 +1378,6 @@ void exec_putfield(Frame& frame) {
     frame.pc += 3;
 }
 
-// ================================================================
-// Helper genérico pra invokes
-// ================================================================
 Frame* invoke_method(RuntimeMethod* method, std::vector<Slot> args) {
     Frame* new_frame = new Frame();
     new_frame->method = method;
@@ -1403,33 +1390,7 @@ Frame* invoke_method(RuntimeMethod* method, std::vector<Slot> args) {
     return new_frame;
 }
 
-// ================================================================
-// 0xB6 INVOKEVIRTUAL
-// ================================================================
-void exec_invokevirtual(Frame& frame) {
-    u2 index = (frame.method->code->code[frame.pc+1] << 8) |
-                frame.method->code->code[frame.pc+2];
-
-    RuntimeMethod* method = resolve_method_virtual(frame.current_class, index);
-
- // número de argumentos (inclui "this")
-    int arg_count = method->arg_slots;
-    std::vector<Slot> args(arg_count);
-
-    for (int i = arg_count - 1; i >= 0; --i)
-        args[i] = frame.operand_stack.stack.back(),
-        frame.operand_stack.stack.pop_back();
-
-    Frame* new_frame = invoke_method(method, args);
-    push_new_frame(new_frame);
-
-    frame.pc += 3;
-}
-
-// ================================================================
-// 0xB7 INVOKESPECIAL  (super, <init>, private)
-// ================================================================
-void exec_invokespecial(Frame& frame) {
+void exec_invokespecial(Thread* t, Frame& frame) {
     u2 index = (frame.code()[frame.pc+1] << 8) | frame.code()[frame.pc+2];
 
     RuntimeMethod* method = resolve_method_special(frame.current_class, index);
@@ -1448,10 +1409,7 @@ void exec_invokespecial(Frame& frame) {
     frame.pc += 3;
 }
 
-// ================================================================
-// 0xB8 INVOKESTATIC
-// ================================================================
-void exec_invokestatic(Frame& frame) {
+void exec_invokestatic(Thread* t, Frame& frame) {
     u2 index = (frame.code()[frame.pc+1] << 8) | frame.code()[frame.pc+2];
 
     RuntimeMethod* method = resolve_method_static(frame.current_class, index);
@@ -1470,41 +1428,11 @@ void exec_invokestatic(Frame& frame) {
     frame.pc += 3;
 }
 
-// ================================================================
-// 0xB9 INVOKEINTERFACE
-// ================================================================
-void exec_invokeinterface(Frame& frame) {
-    u2 index = (frame.code()[frame.pc+1] << 8) | frame.code()[frame.pc+2];
-    u1 count = frame.code()[frame.pc+3]; // ignorado na JVM moderna
-
-    RuntimeMethod* method = resolve_method_interface(frame.current_class, index);
-
-    int arg_slots = method->arg_slots;
-    std::vector<Slot> args(arg_slots);
-
-    for (int i = arg_slots - 1; i >= 0; --i) {
-        args[i] = frame.operand_stack.stack.back();
-        frame.operand_stack.stack.pop_back();
-    }
-
-    Frame* new_frame = new Frame(method);
-    new_frame->local_vars = args;
-    push_new_frame(new_frame);
-
-    frame.pc += 4;
-}
-
-// ================================================================
-// 0xBA INVOKEDYNAMIC   (implementação mínima)
-// ================================================================
-void exec_invokedynamic(Frame& frame) {
+void exec_invokedynamic(Thread* t, Frame& frame) {
     throw std::runtime_error("invokedynamic: not implemented in this JVM");
 }
 
-// ================================================================
-// 0xBB NEW
-// ================================================================
-void exec_new(Frame& frame) {
+void exec_new(Thread* t, Frame& frame) {
     u2 index = (frame.code()[frame.pc+1] << 8) | frame.code()[frame.pc+2];
 
     RuntimeClass* klass = resolve_class(frame.current_class, index);
@@ -1514,10 +1442,7 @@ void exec_new(Frame& frame) {
     frame.pc += 3;
 }
 
-// ================================================================
-// 0xBC NEWARRAY
-// ================================================================
-void exec_newarray(Frame& frame) {
+void exec_newarray(Thread* t, Frame& frame) {
     u1 atype = frame.code()[frame.pc+1];
     int32_t count = frame.operand_stack.pop_int();
 
@@ -1529,10 +1454,7 @@ void exec_newarray(Frame& frame) {
     frame.pc += 2;
 }
 
-// ================================================================
-// 0xBD ANEWARRAY (array de referências)
-// ================================================================
-void exec_anewarray(Frame& frame) {
+void exec_anewarray(Thread* t, Frame& frame) {
     u2 index = (frame.code()[frame.pc+1] << 8) | frame.code()[frame.pc+2];
     int32_t count = frame.operand_stack.pop_int();
 
@@ -1545,10 +1467,7 @@ void exec_anewarray(Frame& frame) {
     frame.pc += 3;
 }
 
-// ================================================================
-// 0xBE ARRAYLENGTH
-// ================================================================
-void exec_arraylength(Frame& frame) {
+void exec_arraylength(Thread* t, Frame& frame) {
     RuntimeObject* ref = frame.operand_stack.pop_ref();
     if (!ref) throw std::runtime_error("arraylength: null");
 
@@ -1558,22 +1477,16 @@ void exec_arraylength(Frame& frame) {
     frame.pc += 1;
 }
 
-// ================================================================
-// 0xBF ATHROW
-// ================================================================
-void exec_athrow(Frame& frame) {
+void exec_athrow(Thread* t, Frame& frame) {
     RuntimeObject* exception = frame.operand_stack.pop_ref();
     if (!exception) throw std::runtime_error("athrow: null");
 
-    throw_java_exception(exception);  // depende da sua VM
+    throw_java_exception(exception);
 
     // nunca volta
 }
 
-// ================================================================
-// 0xC0 CHECKCAST
-// ================================================================
-void exec_checkcast(Frame& frame) {
+void exec_checkcast(Thread* t, Frame& frame) {
     u2 index = (frame.code()[frame.pc+1] << 8) | frame.code()[frame.pc+2];
     RuntimeClass* target = resolve_class(frame.current_class, index);
 
@@ -1586,10 +1499,7 @@ void exec_checkcast(Frame& frame) {
     frame.pc += 3;
 }
 
-// ================================================================
-// 0xC1 INSTANCEOF
-// ================================================================
-void exec_instanceof(Frame& frame) {
+void exec_instanceof(Thread* t, Frame& frame) {
     u2 index = (frame.code()[frame.pc+1] << 8) | frame.code()[frame.pc+2];
     RuntimeClass* target = resolve_class(frame.current_class, index);
 
@@ -1600,35 +1510,7 @@ void exec_instanceof(Frame& frame) {
     frame.pc += 3;
 }
 
-// ================================================================
-// 0xC2 MONITORENTER
-// ================================================================
-void exec_monitorenter(Frame& frame) {
-    RuntimeObject* ref = frame.operand_stack.pop_ref();
-    if (!ref) throw std::runtime_error("monitorenter: null");
-
-    // implementação mínima: ignore (single-thread VM)
-    // se quiser lock real, adiciono depois.
-
-    frame.pc += 1;
-}
-
-// ================================================================
-// 0xC3 MONITOREXIT
-// ================================================================
-void exec_monitorexit(Frame& frame) {
-    RuntimeObject* ref = frame.operand_stack.pop_ref();
-    if (!ref) throw std::runtime_error("monitorexit: null");
-
-    // implementação mínima: ignore
-
-    frame.pc += 1;
-}
-
-// ================================================================
-// 0xC4 WIDE
-// ================================================================
-void exec_wide(Frame& frame) {
+void exec_wide(Thread* t, Frame& frame) {
     u1 opcode = frame.code()[frame.pc+1];
 
     if (opcode == 0x84) {
@@ -1650,7 +1532,7 @@ void exec_wide(Frame& frame) {
 // ================================================================
 // 0xC5 MULTIANEWARRAY
 // ================================================================
-void exec_multianewarray(Frame& frame) {
+void exec_multianewarray(Thread* t, Frame& frame) {
     u2 index = (frame.code()[frame.pc+1] << 8) | frame.code()[frame.pc+2];
     u1 dims  = frame.code()[frame.pc+3];
 
@@ -1668,7 +1550,7 @@ void exec_multianewarray(Frame& frame) {
 // ================================================================
 // 0xC6 IFNULL
 // ================================================================
-void exec_ifnull(Frame& frame) {
+void exec_ifnull(Thread* t, Frame& frame) {
     int16_t offset = (frame.code()[frame.pc+1] << 8) | frame.code()[frame.pc+2];
 
     RuntimeObject* ref = frame.operand_stack.pop_ref();
@@ -1681,7 +1563,7 @@ void exec_ifnull(Frame& frame) {
 // ================================================================
 // 0xC7 IFNONNULL
 // ================================================================
-void exec_ifnonnull(Frame& frame) {
+void exec_ifnonnull(Thread* t, Frame& frame) {
     int16_t offset = (frame.code()[frame.pc+1] << 8) | frame.code()[frame.pc+2];
 
     RuntimeObject* ref = frame.operand_stack.pop_ref();
@@ -1694,7 +1576,7 @@ void exec_ifnonnull(Frame& frame) {
 // ================================================================
 // 0xC8 GOTO_W
 // ================================================================
-void exec_goto_w(Frame& frame) {
+void exec_goto_w(Thread* t, Frame& frame) {
     int32_t offset =
         (frame.code()[frame.pc+1] << 24) |
         (frame.code()[frame.pc+2] << 16) |
@@ -1707,7 +1589,7 @@ void exec_goto_w(Frame& frame) {
 // ================================================================
 // 0xC9 JSR_W
 // ================================================================
-void exec_jsr_w(Frame& frame) {
+void exec_jsr_w(Thread* t, Frame& frame) {
     int32_t offset =
         (frame.code()[frame.pc+1] << 24) |
         (frame.code()[frame.pc+2] << 16) |
