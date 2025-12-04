@@ -1,204 +1,206 @@
 #pragma once
 
-void exec_nop(Frame&);                     // 0x00
-void exec_aconst_null(Frame&);             // 0x01
-void exec_iconst_m1(Frame&);               // 0x02
-void exec_iconst_0(Frame&);                // 0x03
-void exec_iconst_1(Frame&);                // 0x04
-void exec_iconst_2(Frame&);                // 0x05
-void exec_iconst_3(Frame&);                // 0x06
-void exec_iconst_4(Frame&);                // 0x07
-void exec_iconst_5(Frame&);                // 0x08
-void exec_lconst_0(Frame&);                // 0x09
-void exec_lconst_1(Frame&);                // 0x0A
-void exec_fconst_0(Frame&);                // 0x0B
-void exec_fconst_1(Frame&);                // 0x0C
-void exec_fconst_2(Frame&);                // 0x0D
-void exec_dconst_0(Frame&);                // 0x0E
-void exec_dconst_1(Frame&);                // 0x0F
-void exec_bipush(Frame&);                  // 0x10
-void exec_sipush(Frame&);                  // 0x11
-void exec_ldc(Frame&);                     // 0x12
-void exec_ldc_w(Frame&);                   // 0x13
-void exec_ldc2_w(Frame&);                  // 0x14
-void exec_iload(Frame&);                   // 0x15
-void exec_lload(Frame&);                   // 0x16
-void exec_fload(Frame&);                   // 0x17
-void exec_dload(Frame&);                   // 0x18
-void exec_aload(Frame&);                   // 0x19
-void exec_iload_0(Frame&);                 // 0x1A
-void exec_iload_1(Frame&);                 // 0x1B
-void exec_iload_2(Frame&);                 // 0x1C
-void exec_iload_3(Frame&);                 // 0x1D
-void exec_lload_0(Frame&);                 // 0x1E
-void exec_lload_1(Frame&);                 // 0x1F
-void exec_lload_2(Frame&);                 // 0x20
-void exec_lload_3(Frame&);                 // 0x21
-void exec_fload_0(Frame&);                 // 0x22
-void exec_fload_1(Frame&);                 // 0x23
-void exec_fload_2(Frame&);                 // 0x24
-void exec_fload_3(Frame&);                 // 0x25
-void exec_dload_0(Frame&);                 // 0x26
-void exec_dload_1(Frame&);                 // 0x27
-void exec_dload_2(Frame&);                 // 0x28
-void exec_dload_3(Frame&);                 // 0x29
-void exec_aload_0(Frame&);                 // 0x2A
-void exec_aload_1(Frame&);                 // 0x2B
-void exec_aload_2(Frame&);                 // 0x2C
-void exec_aload_3(Frame&);                 // 0x2D
-void exec_iaload(Frame&);                  // 0x2E
-void exec_laload(Frame&);                  // 0x2F
-void exec_faload(Frame&);                  // 0x30
-void exec_daload(Frame&);                  // 0x31
-void exec_aaload(Frame&);                  // 0x32
-void exec_baload(Frame&);                  // 0x33
-void exec_caload(Frame&);                  // 0x34
-void exec_saload(Frame&);                  // 0x35
-void exec_istore(Frame&);                  // 0x36
-void exec_lstore(Frame&);                  // 0x37
-void exec_fstore(Frame&);                  // 0x38
-void exec_dstore(Frame&);                  // 0x39
-void exec_astore(Frame&);                  // 0x3A
-void exec_istore_0(Frame&);                // 0x3B
-void exec_istore_1(Frame&);                // 0x3C
-void exec_istore_2(Frame&);                // 0x3D
-void exec_istore_3(Frame&);                // 0x3E
-void exec_lstore_0(Frame&);                // 0x3F
-void exec_lstore_1(Frame&);                // 0x40
-void exec_lstore_2(Frame&);                // 0x41
-void exec_lstore_3(Frame&);                // 0x42
-void exec_fstore_0(Frame&);                // 0x43
-void exec_fstore_1(Frame&);                // 0x44
-void exec_fstore_2(Frame&);                // 0x45
-void exec_fstore_3(Frame&);                // 0x46
-void exec_dstore_0(Frame&);                // 0x47
-void exec_dstore_1(Frame&);                // 0x48
-void exec_dstore_2(Frame&);                // 0x49
-void exec_dstore_3(Frame&);                // 0x4A
-void exec_astore_0(Frame&);                // 0x4B
-void exec_astore_1(Frame&);                // 0x4C
-void exec_astore_2(Frame&);                // 0x4D
-void exec_astore_3(Frame&);                // 0x4E
-void exec_iastore(Frame&);                 // 0x4F
-void exec_lastore(Frame&);                 // 0x50
-void exec_fastore(Frame&);                 // 0x51
-void exec_dastore(Frame&);                 // 0x52
-void exec_aastore(Frame&);                 // 0x53
-void exec_bastore(Frame&);                 // 0x54
-void exec_castore(Frame&);                 // 0x55
-void exec_sastore(Frame&);                 // 0x56
-void exec_pop(Frame&);                     // 0x57
-void exec_pop2(Frame&);                    // 0x58
-void exec_dup(Frame&);                     // 0x59
-void exec_dup_x1(Frame&);                  // 0x5A
-void exec_dup_x2(Frame&);                  // 0x5B
-void exec_dup2(Frame&);                    // 0x5C
-void exec_dup2_x1(Frame&);                 // 0x5D
-void exec_dup2_x2(Frame&);                 // 0x5E
-void exec_swap(Frame&);                    // 0x5F
-void exec_iadd(Frame&);                    // 0x60
-void exec_ladd(Frame&);                    // 0x61
-void exec_fadd(Frame&);                    // 0x62
-void exec_dadd(Frame&);                    // 0x63
-void exec_isub(Frame&);                    // 0x64
-void exec_lsub(Frame&);                    // 0x65
-void exec_fsub(Frame&);                    // 0x66
-void exec_dsub(Frame&);                    // 0x67
-void exec_imul(Frame&);                    // 0x68
-void exec_lmul(Frame&);                    // 0x69
-void exec_fmul(Frame&);                    // 0x6A
-void exec_dmul(Frame&);                    // 0x6B
-void exec_idiv(Frame&);                    // 0x6C
-void exec_ldiv(Frame&);                    // 0x6D
-void exec_fdiv(Frame&);                    // 0x6E
-void exec_ddiv(Frame&);                    // 0x6F
-void exec_irem(Frame&);                    // 0x70
-void exec_lrem(Frame&);                    // 0x71
-void exec_frem(Frame&);                    // 0x72
-void exec_drem(Frame&);                    // 0x73
-void exec_ineg(Frame&);                    // 0x74
-void exec_lneg(Frame&);                    // 0x75
-void exec_fneg(Frame&);                    // 0x76
-void exec_dneg(Frame&);                    // 0x77
-void exec_ishl(Frame&);                    // 0x78
-void exec_lshl(Frame&);                    // 0x79
-void exec_ishr(Frame&);                    // 0x7A
-void exec_lshr(Frame&);                    // 0x7B
-void exec_iushr(Frame&);                   // 0x7C
-void exec_lushr(Frame&);                   // 0x7D
-void exec_iand(Frame&);                    // 0x7E
-void exec_land(Frame&);                    // 0x7F
-void exec_ior(Frame&);                     // 0x80
-void exec_lor(Frame&);                     // 0x81
-void exec_ixor(Frame&);                    // 0x82
-void exec_lxor(Frame&);                    // 0x83
-void exec_iinc(Frame&);                    // 0x84
-void exec_i2l(Frame&);                     // 0x85
-void exec_i2f(Frame&);                     // 0x86
-void exec_i2d(Frame&);                     // 0x87
-void exec_l2i(Frame&);                     // 0x88
-void exec_l2f(Frame&);                     // 0x89
-void exec_l2d(Frame&);                     // 0x8A
-void exec_f2i(Frame&);                     // 0x8B
-void exec_f2l(Frame&);                     // 0x8C
-void exec_f2d(Frame&);                     // 0x8D
-void exec_d2i(Frame&);                     // 0x8E
-void exec_d2l(Frame&);                     // 0x8F
-void exec_d2f(Frame&);                     // 0x90
-void exec_i2b(Frame&);                     // 0x91
-void exec_i2c(Frame&);                     // 0x92
-void exec_i2s(Frame&);                     // 0x93
-void exec_lcmp(Frame&);                    // 0x94
-void exec_fcmpl(Frame&);                   // 0x95
-void exec_fcmpg(Frame&);                   // 0x96
-void exec_dcmpl(Frame&);                   // 0x97
-void exec_dcmpg(Frame&);                   // 0x98
-void exec_ifeq(Frame&);                    // 0x99
-void exec_ifne(Frame&);                    // 0x9A
-void exec_iflt(Frame&);                    // 0x9B
-void exec_ifge(Frame&);                    // 0x9C
-void exec_ifgt(Frame&);                    // 0x9D
-void exec_ifle(Frame&);                    // 0x9E
-void exec_if_icmpeq(Frame&);               // 0x9F
-void exec_if_icmpne(Frame&);               // 0xA0
-void exec_if_icmplt(Frame&);               // 0xA1
-void exec_if_icmpge(Frame&);               // 0xA2
-void exec_if_icmpgt(Frame&);               // 0xA3
-void exec_if_icmple(Frame&);               // 0xA4
-void exec_if_acmpeq(Frame&);               // 0xA5
-void exec_if_acmpne(Frame&);               // 0xA6
-void exec_goto(Frame&);                    // 0xA7
-void exec_jsr(Frame&);                     // 0xA8
-void exec_ret(Frame&);                     // 0xA9
-void exec_tableswitch(Frame&);             // 0xAA
-void exec_lookupswitch(Frame&);            // 0xAB
-void exec_ireturn(Frame&);                 // 0xAC
-void exec_lreturn(Frame&);                 // 0xAD
-void exec_freturn(Frame&);                 // 0xAE
-void exec_dreturn(Frame&);                 // 0xAF
-void exec_areturn(Frame&);                 // 0xB0
-void exec_return(Frame&);                  // 0xB1
-void exec_getstatic(Frame&);               // 0xB2
-void exec_putstatic(Frame&);               // 0xB3
-void exec_getfield(Frame&);                // 0xB4
-void exec_putfield(Frame&);                // 0xB5
-void exec_invokevirtual(Frame&);           // 0xB6
-void exec_invokespecial(Frame&);           // 0xB7
-void exec_invokestatic(Frame&);            // 0xB8
-void exec_invokeinterface(Frame&);         // 0xB9
-void exec_invokedynamic(Frame&);           // 0xBA
-void exec_new(Frame&);                     // 0xBB
-void exec_newarray(Frame&);                // 0xBC
-void exec_anewarray(Frame&);               // 0xBD
-void exec_arraylength(Frame&);             // 0xBE
-void exec_athrow(Frame&);                  // 0xBF
-void exec_checkcast(Frame&);               // 0xC0
-void exec_instanceof(Frame&);              // 0xC1
-void exec_monitorenter(Frame&);            // 0xC2
-void exec_monitorexit(Frame&);             // 0xC3
-void exec_wide(Frame&);                    // 0xC4
-void exec_multianewarray(Frame&);          // 0xC5
-void exec_ifnull(Frame&);                  // 0xC6
-void exec_ifnonnull(Frame&);               // 0xC7
-void exec_goto_w(Frame&);                  // 0xC8
-void exec_jsr_w(Frame&);                   // 0xC9
+#include "./runtime_class_types.h"
+
+void exec_nop(Thread *, Frame &);                  // 0x00
+void exec_aconst_null(Thread *, Frame &);          // 0x01
+void exec_iconst_m1(Thread *, Frame &);            // 0x02
+void exec_iconst_0(Thread *, Frame &);             // 0x03
+void exec_iconst_1(Thread *, Frame &);             // 0x04
+void exec_iconst_2(Thread *, Frame &);             // 0x05
+void exec_iconst_3(Thread *, Frame &);             // 0x06
+void exec_iconst_4(Thread *, Frame &);             // 0x07
+void exec_iconst_5(Thread *, Frame &);             // 0x08
+void exec_lconst_0(Thread *, Frame &);             // 0x09
+void exec_lconst_1(Thread *, Frame &);             // 0x0A
+void exec_fconst_0(Thread *, Frame &);             // 0x0B
+void exec_fconst_1(Thread *, Frame &);             // 0x0C
+void exec_fconst_2(Thread *, Frame &);             // 0x0D
+void exec_dconst_0(Thread *, Frame &);             // 0x0E
+void exec_dconst_1(Thread *, Frame &);             // 0x0F
+void exec_bipush(Thread *, Frame &);               // 0x10
+void exec_sipush(Thread *, Frame &);               // 0x11
+void exec_ldc(Thread *, Frame &);                  // 0x12
+void exec_ldc_w(Thread *, Frame &);                // 0x13
+void exec_ldc2_w(Thread *, Frame &);               // 0x14
+void exec_iload(Thread *, Frame &);                // 0x15
+void exec_lload(Thread *, Frame &);                // 0x16
+void exec_fload(Thread *, Frame &);                // 0x17
+void exec_dload(Thread *, Frame &);                // 0x18
+void exec_aload(Thread *, Frame &);                // 0x19
+void exec_iload_0(Thread *, Frame &);              // 0x1A
+void exec_iload_1(Thread *, Frame &);              // 0x1B
+void exec_iload_2(Thread *, Frame &);              // 0x1C
+void exec_iload_3(Thread *, Frame &);              // 0x1D
+void exec_lload_0(Thread *, Frame &);              // 0x1E
+void exec_lload_1(Thread *, Frame &);              // 0x1F
+void exec_lload_2(Thread *, Frame &);              // 0x20
+void exec_lload_3(Thread *, Frame &);              // 0x21
+void exec_fload_0(Thread *, Frame &);              // 0x22
+void exec_fload_1(Thread *, Frame &);              // 0x23
+void exec_fload_2(Thread *, Frame &);              // 0x24
+void exec_fload_3(Thread *, Frame &);              // 0x25
+void exec_dload_0(Thread *, Frame &);              // 0x26
+void exec_dload_1(Thread *, Frame &);              // 0x27
+void exec_dload_2(Thread *, Frame &);              // 0x28
+void exec_dload_3(Thread *, Frame &);              // 0x29
+void exec_aload_0(Thread *, Frame &);              // 0x2A
+void exec_aload_1(Thread *, Frame &);              // 0x2B
+void exec_aload_2(Thread *, Frame &);              // 0x2C
+void exec_aload_3(Thread *, Frame &);              // 0x2D
+void exec_iaload(Thread *, Frame &);               // 0x2E
+void exec_laload(Thread *, Frame &);               // 0x2F
+void exec_faload(Thread *, Frame &);               // 0x30
+void exec_daload(Thread *, Frame &);               // 0x31
+void exec_aaload(Thread *, Frame &);               // 0x32
+void exec_baload(Thread *, Frame &);               // 0x33
+void exec_caload(Thread *, Frame &);               // 0x34
+void exec_saload(Thread *, Frame &);               // 0x35
+void exec_istore(Thread *, Frame &);               // 0x36
+void exec_lstore(Thread *, Frame &);               // 0x37
+void exec_fstore(Thread *, Frame &);               // 0x38
+void exec_dstore(Thread *, Frame &);               // 0x39
+void exec_astore(Thread *, Frame &);               // 0x3A
+void exec_istore_0(Thread *, Frame &);             // 0x3B
+void exec_istore_1(Thread *, Frame &);             // 0x3C
+void exec_istore_2(Thread *, Frame &);             // 0x3D
+void exec_istore_3(Thread *, Frame &);             // 0x3E
+void exec_lstore_0(Thread *, Frame &);             // 0x3F
+void exec_lstore_1(Thread *, Frame &);             // 0x40
+void exec_lstore_2(Thread *, Frame &);             // 0x41
+void exec_lstore_3(Thread *, Frame &);             // 0x42
+void exec_fstore_0(Thread *, Frame &);             // 0x43
+void exec_fstore_1(Thread *, Frame &);             // 0x44
+void exec_fstore_2(Thread *, Frame &);             // 0x45
+void exec_fstore_3(Thread *, Frame &);             // 0x46
+void exec_dstore_0(Thread *, Frame &);             // 0x47
+void exec_dstore_1(Thread *, Frame &);             // 0x48
+void exec_dstore_2(Thread *, Frame &);             // 0x49
+void exec_dstore_3(Thread *, Frame &);             // 0x4A
+void exec_astore_0(Thread *, Frame &);             // 0x4B
+void exec_astore_1(Thread *, Frame &);             // 0x4C
+void exec_astore_2(Thread *, Frame &);             // 0x4D
+void exec_astore_3(Thread *, Frame &);             // 0x4E
+void exec_iastore(Thread *, Frame &);              // 0x4F
+void exec_lastore(Thread *, Frame &);              // 0x50
+void exec_fastore(Thread *, Frame &);              // 0x51
+void exec_dastore(Thread *, Frame &);              // 0x52
+void exec_aastore(Thread *, Frame &);              // 0x53
+void exec_bastore(Thread *, Frame &);              // 0x54
+void exec_castore(Thread *, Frame &);              // 0x55
+void exec_sastore(Thread *, Frame &);              // 0x56
+void exec_pop(Thread *, Frame &);                  // 0x57
+void exec_pop2(Thread *, Frame &);                 // 0x58
+void exec_dup(Thread *, Frame &);                  // 0x59
+void exec_dup_x1(Thread *, Frame &);               // 0x5A
+void exec_dup_x2(Thread *, Frame &);               // 0x5B
+void exec_dup2(Thread *, Frame &);                 // 0x5C
+void exec_dup2_x1(Thread *, Frame &);              // 0x5D
+void exec_dup2_x2(Thread *, Frame &);              // 0x5E
+void exec_swap(Thread *, Frame &);                 // 0x5F
+void exec_iadd(Thread *, Frame &);                 // 0x60
+void exec_ladd(Thread *, Frame &);                 // 0x61
+void exec_fadd(Thread *, Frame &);                 // 0x62
+void exec_dadd(Thread *, Frame &);                 // 0x63
+void exec_isub(Thread *, Frame &);                 // 0x64
+void exec_lsub(Thread *, Frame &);                 // 0x65
+void exec_fsub(Thread *, Frame &);                 // 0x66
+void exec_dsub(Thread *, Frame &);                 // 0x67
+void exec_imul(Thread *, Frame &);                 // 0x68
+void exec_lmul(Thread *, Frame &);                 // 0x69
+void exec_fmul(Thread *, Frame &);                 // 0x6A
+void exec_dmul(Thread *, Frame &);                 // 0x6B
+void exec_idiv(Thread *, Frame &);                 // 0x6C
+void exec_ldiv(Thread *, Frame &);                 // 0x6D
+void exec_fdiv(Thread *, Frame &);                 // 0x6E
+void exec_ddiv(Thread *, Frame &);                 // 0x6F
+void exec_irem(Thread *, Frame &);                 // 0x70
+void exec_lrem(Thread *, Frame &);                 // 0x71
+void exec_frem(Thread *, Frame &);                 // 0x72
+void exec_drem(Thread *, Frame &);                 // 0x73
+void exec_ineg(Thread *, Frame &);                 // 0x74
+void exec_lneg(Thread *, Frame &);                 // 0x75
+void exec_fneg(Thread *, Frame &);                 // 0x76
+void exec_dneg(Thread *, Frame &);                 // 0x77
+void exec_ishl(Thread *, Frame &);                 // 0x78
+void exec_lshl(Thread *, Frame &);                 // 0x79
+void exec_ishr(Thread *, Frame &);                 // 0x7A
+void exec_lshr(Thread *, Frame &);                 // 0x7B
+void exec_iushr(Thread *, Frame &);                // 0x7C
+void exec_lushr(Thread *, Frame &);                // 0x7D
+void exec_iand(Thread *, Frame &);                 // 0x7E
+void exec_land(Thread *, Frame &);                 // 0x7F
+void exec_ior(Thread *, Frame &);                  // 0x80
+void exec_lor(Thread *, Frame &);                  // 0x81
+void exec_ixor(Thread *, Frame &);                 // 0x82
+void exec_lxor(Thread *, Frame &);                 // 0x83
+void exec_iinc(Thread *, Frame &);                 // 0x84
+void exec_i2l(Thread *, Frame &);                  // 0x85
+void exec_i2f(Thread *, Frame &);                  // 0x86
+void exec_i2d(Thread *, Frame &);                  // 0x87
+void exec_l2i(Thread *, Frame &);                  // 0x88
+void exec_l2f(Thread *, Frame &);                  // 0x89
+void exec_l2d(Thread *, Frame &);                  // 0x8A
+void exec_f2i(Thread *, Frame &);                  // 0x8B
+void exec_f2l(Thread *, Frame &);                  // 0x8C
+void exec_f2d(Thread *, Frame &);                  // 0x8D
+void exec_d2i(Thread *, Frame &);                  // 0x8E
+void exec_d2l(Thread *, Frame &);                  // 0x8F
+void exec_d2f(Thread *, Frame &);                  // 0x90
+void exec_i2b(Thread *, Frame &);                  // 0x91
+void exec_i2c(Thread *, Frame &);                  // 0x92
+void exec_i2s(Thread *, Frame &);                  // 0x93
+void exec_lcmp(Thread *, Frame &);                 // 0x94
+void exec_fcmpl(Thread *, Frame &);                // 0x95
+void exec_fcmpg(Thread *, Frame &);                // 0x96
+void exec_dcmpl(Thread *, Frame &);                // 0x97
+void exec_dcmpg(Thread *, Frame &);                // 0x98
+void exec_ifeq(Thread *, Frame &);                 // 0x99
+void exec_ifne(Thread *, Frame &);                 // 0x9A
+void exec_iflt(Thread *, Frame &);                 // 0x9B
+void exec_ifge(Thread *, Frame &);                 // 0x9C
+void exec_ifgt(Thread *, Frame &);                 // 0x9D
+void exec_ifle(Thread *, Frame &);                 // 0x9E
+void exec_if_icmpeq(Thread *, Frame &);            // 0x9F
+void exec_if_icmpne(Thread *, Frame &);            // 0xA0
+void exec_if_icmplt(Thread *, Frame &);            // 0xA1
+void exec_if_icmpge(Thread *, Frame &);            // 0xA2
+void exec_if_icmpgt(Thread *, Frame &);            // 0xA3
+void exec_if_icmple(Thread *, Frame &);            // 0xA4
+void exec_if_acmpeq(Thread *, Frame &);            // 0xA5
+void exec_if_acmpne(Thread *, Frame &);            // 0xA6
+void exec_goto(Thread *, Frame &);                 // 0xA7
+void exec_jsr(Thread *, Frame &);                  // 0xA8
+void exec_ret(Thread *, Frame &);                  // 0xA9
+void exec_tableswitch(Thread *, Frame &);          // 0xAA
+void exec_lookupswitch(Thread *, Frame &);         // 0xAB
+void exec_ireturn(Thread *, Frame &);              // 0xAC
+void exec_lreturn(Thread *, Frame &);              // 0xAD
+void exec_freturn(Thread *, Frame &);              // 0xAE
+void exec_dreturn(Thread *, Frame &);              // 0xAF
+void exec_areturn(Thread *, Frame &);              // 0xB0
+void exec_return(Thread *, Frame &);               // 0xB1
+void exec_getstatic(Thread *, Frame &);            // 0xB2
+void exec_putstatic(Thread *, Frame &);            // 0xB3
+void exec_getfield(Thread *, Frame &);             // 0xB4
+void exec_putfield(Thread *, Frame &);             // 0xB5
+void exec_invokevirtual(Thread *, Frame &);        // 0xB6
+void exec_invokespecial(Thread *, Frame &);        // 0xB7
+void exec_invokestatic(Thread *, Frame &);         // 0xB8
+void exec_invokeinterface(Thread *, Frame &);      // 0xB9
+void exec_invokedynamic(Thread *, Frame &);        // 0xBA
+void exec_new(Thread *, Frame &);                  // 0xBB
+void exec_newarray(Thread *, Frame &);             // 0xBC
+void exec_anewarray(Thread *, Frame &);            // 0xBD
+void exec_arraylength(Thread *, Frame &);          // 0xBE
+void exec_athrow(Thread *, Frame &);               // 0xBF
+void exec_checkcast(Thread *, Frame &);            // 0xC0
+void exec_instanceof(Thread *, Frame &);           // 0xC1
+void exec_monitorenter(Thread *, Frame &);         // 0xC2
+void exec_monitorexit(Thread *, Frame &);          // 0xC3
+void exec_wide(Thread *, Frame &);                 // 0xC4
+void exec_multianewarray(Thread *, Frame &);       // 0xC5
+void exec_ifnull(Thread *, Frame &);               // 0xC6
+void exec_ifnonnull(Thread *, Frame &);            // 0xC7
+void exec_goto_w(Thread *, Frame &);               // 0xC8
+void exec_jsr_w(Thread *, Frame &);                // 0xC9

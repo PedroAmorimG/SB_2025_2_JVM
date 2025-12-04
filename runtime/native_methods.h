@@ -1,9 +1,9 @@
 #pragma once
 
-#include <unordered_map>
-#include <string>
-#include "runtime_class_types.h"
 #include "array.h"
+#include "runtime_class_types.h"
+#include <string>
+#include <unordered_map>
 
 using NativeMethod = void (*)(Frame &frame);
 

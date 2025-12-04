@@ -24,8 +24,7 @@ static const std::string STRING_GET_BYTES_KEY =
     "()[B java/lang/String.getBytes";
 
 // Helpers para manipular o campo value da String.
-static RuntimeArray *get_string_value(RuntimeObject *str_obj)
-{
+static RuntimeArray *get_string_value(RuntimeObject *str_obj) {
   if (str_obj == nullptr || str_obj->klass == nullptr)
     return nullptr;
 
@@ -37,8 +36,7 @@ static RuntimeArray *get_string_value(RuntimeObject *str_obj)
   return reinterpret_cast<RuntimeArray *>(static_cast<uintptr_t>(ref_bits));
 }
 
-static std::string string_from_value(RuntimeObject *str_obj)
-{
+static std::string string_from_value(RuntimeObject *str_obj) {
   auto arr = get_string_value(str_obj);
   if (!arr || arr->length == 0 || arr->is_reference)
     return "";
@@ -49,27 +47,22 @@ static std::string string_from_value(RuntimeObject *str_obj)
 
 void print_ln(Frame &frame) { std::cout << std::endl; }
 
-void print_str_ln(Frame &frame)
-{
+void print_str_ln(Frame &frame) {
   auto ref_bits = frame.local_vars.size() > 1 ? frame.local_vars[1] : 0;
   auto str_obj =
       reinterpret_cast<RuntimeObject *>(static_cast<uintptr_t>(ref_bits));
   std::cout << string_from_value(str_obj) << std::endl;
 }
 
-void print_int_ln(Frame &frame)
-{
-  int32_t value =
-      static_cast<int32_t>(frame.local_vars.size() > 1 ? frame.local_vars[1]
-                                                       : 0);
+void print_int_ln(Frame &frame) {
+  int32_t value = static_cast<int32_t>(
+      frame.local_vars.size() > 1 ? frame.local_vars[1] : 0);
   std::cout << value << std::endl;
 }
 
-void print_lg_ln(Frame &frame)
-{
+void print_lg_ln(Frame &frame) {
   int64_t value = 0;
-  if (frame.local_vars.size() > 2)
-  {
+  if (frame.local_vars.size() > 2) {
     u4 high = frame.local_vars[1];
     u4 low = frame.local_vars[2];
     value = (static_cast<int64_t>(high) << 32) | low;
@@ -77,30 +70,24 @@ void print_lg_ln(Frame &frame)
   std::cout << value << std::endl;
 }
 
-void print_bl_ln(Frame &frame)
-{
-  int32_t value =
-      static_cast<int32_t>(frame.local_vars.size() > 1 ? frame.local_vars[1]
-                                                       : 0);
+void print_bl_ln(Frame &frame) {
+  int32_t value = static_cast<int32_t>(
+      frame.local_vars.size() > 1 ? frame.local_vars[1] : 0);
   std::cout << (value != 0 ? "true" : "false") << std::endl;
 }
 
-void print_fl_ln(Frame &frame)
-{
+void print_fl_ln(Frame &frame) {
   float value = 0.0f;
-  if (frame.local_vars.size() > 1)
-  {
+  if (frame.local_vars.size() > 1) {
     u4 bits = frame.local_vars[1];
     std::memcpy(&value, &bits, sizeof(float));
   }
   std::cout << value << std::endl;
 }
 
-void print_db_ln(Frame &frame)
-{
+void print_db_ln(Frame &frame) {
   double value = 0.0;
-  if (frame.local_vars.size() > 2)
-  {
+  if (frame.local_vars.size() > 2) {
     u4 high = frame.local_vars[1];
     u4 low = frame.local_vars[2];
     uint64_t bits = (static_cast<uint64_t>(high) << 32) | low;
@@ -109,8 +96,7 @@ void print_db_ln(Frame &frame)
   std::cout << value << std::endl;
 }
 
-void str_len(Frame &frame)
-{
+void str_len(Frame &frame) {
   auto self_bits = frame.local_vars.size() > 0 ? frame.local_vars[0] : 0;
   auto str_obj =
       reinterpret_cast<RuntimeObject *>(static_cast<uintptr_t>(self_bits));
@@ -119,8 +105,7 @@ void str_len(Frame &frame)
   frame.operand_stack.push_int(len);
 }
 
-void str_char_at(Frame &frame)
-{
+void str_char_at(Frame &frame) {
   auto self_bits = frame.local_vars.size() > 0 ? frame.local_vars[0] : 0;
   auto str_obj =
       reinterpret_cast<RuntimeObject *>(static_cast<uintptr_t>(self_bits));
@@ -137,8 +122,7 @@ void str_char_at(Frame &frame)
   frame.operand_stack.push_int(ch); // char promovido para int
 }
 
-void str_eq(Frame &frame)
-{
+void str_eq(Frame &frame) {
   auto self_bits = frame.local_vars.size() > 0 ? frame.local_vars[0] : 0;
   auto other_bits = frame.local_vars.size() > 1 ? frame.local_vars[1] : 0;
   auto self_obj =
@@ -146,17 +130,15 @@ void str_eq(Frame &frame)
   auto other_obj =
       reinterpret_cast<RuntimeObject *>(static_cast<uintptr_t>(other_bits));
 
-  if (self_obj == other_obj)
-  {
+  if (self_obj == other_obj) {
     frame.operand_stack.push_int(1);
     return;
   }
 
   auto self_arr = get_string_value(self_obj);
   auto other_arr = get_string_value(other_obj);
-  if (!self_arr || !other_arr || self_arr->is_reference || other_arr->is_reference ||
-      self_arr->length != other_arr->length)
-  {
+  if (!self_arr || !other_arr || self_arr->is_reference ||
+      other_arr->is_reference || self_arr->length != other_arr->length) {
     frame.operand_stack.push_int(0);
     return;
   }
@@ -166,8 +148,7 @@ void str_eq(Frame &frame)
   frame.operand_stack.push_int(eq ? 1 : 0);
 }
 
-void str_get_bytes(Frame &frame)
-{
+void str_get_bytes(Frame &frame) {
   auto self_bits = frame.local_vars.size() > 0 ? frame.local_vars[0] : 0;
   auto str_obj =
       reinterpret_cast<RuntimeObject *>(static_cast<uintptr_t>(self_bits));
@@ -175,8 +156,7 @@ void str_get_bytes(Frame &frame)
   frame.operand_stack.push_ref(reinterpret_cast<RuntimeObject *>(arr));
 }
 
-void load_map(std::unordered_map<std::string, NativeMethod> *native_methods)
-{
+void load_map(std::unordered_map<std::string, NativeMethod> *native_methods) {
   if (!native_methods)
     return;
 

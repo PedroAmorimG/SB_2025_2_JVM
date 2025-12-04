@@ -10,10 +10,13 @@
 // Estruturas do runtime
 class RuntimeClass;
 class ClassLoader;
-class RuntimeObject;
 class Runtime;
 class Interpreter;
 class Thread;
+class RuntimeObject;
+// Avisa para o compilador que ao chamar essa função, o controle não irá
+// retornar para a função chamadora
+[[noreturn]] void throw_java_exception(RuntimeObject *exception_obj);
 
 // RuntimeField e RuntimeMethod
 
@@ -30,12 +33,14 @@ static const std::unordered_map<char, u4> descriptor_table = {
     {'D', 8}, // double
 };
 
-struct RuntimeField
-{
+struct RuntimeField {
   std::string name;
   std::string descriptor;
   u2 access_flags;
   bool is_static;
+  bool is_64bit;
+  u4 static_offset;
+  class RuntimeClass *owner;
 
   // Offset em bytes ou slots (dependendo do modelo)
   u4 offset;
@@ -43,16 +48,16 @@ struct RuntimeField
   // Valor estático armazenado como bytes
   std::vector<u1> static_data;
 
-  RuntimeField() : access_flags(0), is_static(false), offset(0) {}
+  RuntimeField()
+      : access_flags(0), is_static(false), is_64bit(false), static_offset(0),
+        owner(nullptr), offset(0) {}
 
-  u4 size_in_bytes() const
-  {
+  u4 size_in_bytes() const {
     if (descriptor.empty())
       return 4;
 
     auto it = descriptor_table.find(descriptor[0]);
-    if (it != descriptor_table.end())
-    {
+    if (it != descriptor_table.end()) {
       return it->second;
     }
 
@@ -60,26 +65,28 @@ struct RuntimeField
   }
 };
 
-struct RuntimeMethod
-{
+struct RuntimeMethod {
   std::string name;
   std::string descriptor;
   u2 access_flags;
   const CodeAttribute *code; // aponta diretamente para o atributo do ClassFile
+  int arg_slots;
+  RuntimeClass *owner;
 
-  RuntimeMethod() : access_flags(0), code(nullptr) {}
+  RuntimeMethod()
+      : access_flags(0), code(nullptr), arg_slots(0), owner(nullptr) {}
 };
 
 // ------------------------------------------------------
 // 2. RuntimeClass
 // ------------------------------------------------------
 
-class RuntimeClass
-{
+class RuntimeClass {
 public:
   std::string name;
   std::string super_name;
   u2 access_flags;
+  std::vector<u1> static_data;
 
   RuntimeClass *super_class;
   std::unique_ptr<ClassFile> class_file;
@@ -104,24 +111,19 @@ public:
 
 // Objetos
 
-struct RuntimeObject
-{
+struct RuntimeObject {
   RuntimeClass *klass;
   std::vector<u1> data; // bytes da instância
 
   RuntimeObject(RuntimeClass *k) : klass(k) { data.resize(k->data_size()); }
 
-  template <typename T>
-  T read_field(const RuntimeField &field) const
-  {
+  template <typename T> T read_field(const RuntimeField &field) const {
     T value;
     std::memcpy(&value, &data[field.offset], sizeof(T));
     return value;
   }
 
-  template <typename T>
-  void write_field(const RuntimeField &field, T value)
-  {
+  template <typename T> void write_field(const RuntimeField &field, T value) {
     std::memcpy(&data[field.offset], &value, sizeof(T));
   }
 };
@@ -130,16 +132,14 @@ struct RuntimeObject
 
 using Slot = u4;
 
-struct OperandStack
-{
+struct OperandStack {
   std::vector<Slot> stack;
 
   // --- Push de 32 bits ---
   void push_int(int32_t v) { stack.push_back(static_cast<u4>(v)); }
 
   // --- Push de 64 bits (2 slots) ---
-  void push_long(int64_t v)
-  {
+  void push_long(int64_t v) {
     u4 high = static_cast<u4>((v >> 32) & 0xFFFFFFFF);
     u4 low = static_cast<u4>(v & 0xFFFFFFFF);
     stack.push_back(high);
@@ -147,8 +147,7 @@ struct OperandStack
   }
 
   // --- Pop de 32 bits ---
-  int32_t pop_int()
-  {
+  int32_t pop_int() {
     if (stack.empty())
       throw std::runtime_error("Operand stack underflow");
     int32_t v = static_cast<int32_t>(stack.back());
@@ -157,8 +156,7 @@ struct OperandStack
   }
 
   // --- Pop de 64 bits ---
-  int64_t pop_long()
-  {
+  int64_t pop_long() {
     if (stack.size() < 2)
       throw std::runtime_error("Operand stack underflow");
     u4 low = stack.back();
@@ -169,14 +167,12 @@ struct OperandStack
   }
 
   // --- Referências ---
-  void push_ref(RuntimeObject *ref)
-  {
+  void push_ref(RuntimeObject *ref) {
     // armazenar ponteiro como índice ou endereço truncado (32-bit)
     stack.push_back(static_cast<u4>(reinterpret_cast<uintptr_t>(ref)));
   }
 
-  RuntimeObject *pop_ref()
-  {
+  RuntimeObject *pop_ref() {
     if (stack.empty())
       throw std::runtime_error("Operand stack underflow");
     u4 bits = stack.back();
@@ -185,10 +181,8 @@ struct OperandStack
   }
 
   // --- Float / Double helpers ---
-  void push_float(float v)
-  {
-    union
-    {
+  void push_float(float v) {
+    union {
       float f;
       u4 u;
     } conv;
@@ -196,12 +190,10 @@ struct OperandStack
     stack.push_back(conv.u);
   }
 
-  float pop_float()
-  {
+  float pop_float() {
     if (stack.empty())
       throw std::runtime_error("Operand stack underflow");
-    union
-    {
+    union {
       float f;
       u4 u;
     } conv;
@@ -210,10 +202,8 @@ struct OperandStack
     return conv.f;
   }
 
-  void push_double(double v)
-  {
-    union
-    {
+  void push_double(double v) {
+    union {
       double d;
       u8 u;
     } conv;
@@ -221,10 +211,8 @@ struct OperandStack
     push_long(static_cast<int64_t>(conv.u));
   }
 
-  double pop_double()
-  {
-    union
-    {
+  double pop_double() {
+    union {
       double d;
       u8 u;
     } conv;
@@ -239,8 +227,7 @@ struct OperandStack
 // =====================================================
 // Frame: contexto de execução de um método
 // =====================================================
-struct Frame
-{
+struct Frame {
   RuntimeMethod *method;
   RuntimeClass *current_class;
   std::vector<Slot> local_vars;
@@ -250,15 +237,13 @@ struct Frame
   Frame(RuntimeMethod *method, RuntimeClass *current_class)
       : method(method), current_class(current_class), pc(0) {}
 
-  void init(u4 max_locals, u4 max_stack)
-  {
+  void init(u4 max_locals, u4 max_stack) {
     local_vars.resize(max_locals);
     operand_stack.stack.reserve(max_stack);
   }
 };
 
-struct Thread
-{
+struct Thread {
   std::vector<Frame *> call_stack;
   Frame &current_frame() { return *call_stack.back(); }
   Runtime *runtime;
@@ -267,19 +252,19 @@ struct Thread
   Thread(Runtime *rt);
   ~Thread();
 
-  
-  void push_frame(Frame* f) { call_stack.push_back(f); }
+  void push_frame(Frame *f) { call_stack.push_back(f); }
   void pop_frame() {
-    Frame* top = call_stack.back();
+    Frame *top = call_stack.back();
     call_stack.pop_back();
     delete top;
   }
   void return_frame() {}
+
+  void execute_stack();
 };
 
 //  ClassLoader base
-class ClassLoader
-{
+class ClassLoader {
 public:
   virtual RuntimeClass *load_class(const std::string &name) = 0;
 
@@ -288,17 +273,15 @@ public:
 
 //  BootstrapClassLoader
 
-class BootstrapClassLoader : public ClassLoader
-{
+class BootstrapClassLoader : public ClassLoader {
 public:
-  explicit BootstrapClassLoader(const std::vector<std::string> &classpath,
-                                Runtime *runtime)
+  explicit BootstrapClassLoader(const std::string classpath, Runtime *runtime)
       : classpath_(classpath), runtime(runtime) {}
 
   RuntimeClass *load_class(const std::string &name) override;
 
 private:
-  std::vector<std::string> classpath_;
+  std::string classpath_;
   std::unordered_map<std::string, std::unique_ptr<RuntimeClass>> loaded_;
 
   std::unique_ptr<RuntimeClass>
@@ -308,19 +291,17 @@ private:
 };
 
 // Interpretador (esqueleto)
-struct Interpreter
-{
-  Thread* thread;
-  using Opfunc = void (*)(Frame &);
+struct Interpreter {
+  Thread *thread;
+  using Opfunc = void (*)(Thread *, Frame &);
   std::unordered_map<uint8_t, Opfunc> opcode_table = {};
-  Interpreter(Thread* t) : thread(t) {}
+  Interpreter(Thread *t);
 
   void execute(Frame &frame);
 };
 
 // Method Area
-class MethodArea
-{
+class MethodArea {
 private:
   std::unordered_map<std::string, std::unique_ptr<RuntimeClass>> classes;
 
@@ -332,21 +313,19 @@ public:
 // Runtime
 // Pensei mais como um classe para resolver o início do modo interpretador e
 // reunir os componentes para organizar melhor as classes
-class Runtime
-{
+class Runtime {
 public:
   Thread *thread;
   MethodArea *method_area;
 
   ClassLoader *class_loader;
 
-  Runtime()
-  {
+  Runtime() {
     thread = new Thread(this);
     method_area = new MethodArea();
     class_loader = new BootstrapClassLoader({}, this);
   }
 
   ~Runtime();
-  void start(std::string filepath);
+  void start(std::string filepath, const std::vector<std::string> &args);
 };

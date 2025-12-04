@@ -5,8 +5,7 @@
 #include <stdexcept>
 #include <vector>
 
-class RuntimeArray
-{
+class RuntimeArray {
 public:
   RuntimeClass *component_class;
   bool is_reference;
@@ -20,11 +19,11 @@ public:
   std::vector<RuntimeObject *> refs;
 
   RuntimeArray()
-      : component_class(nullptr), is_reference(false), length(0), elem_size(0) {}
+      : component_class(nullptr), is_reference(false), length(0), elem_size(0) {
+  }
 
   static RuntimeArray *create_primitive(RuntimeClass *component, size_t len,
-                                        size_t elem_sz)
-  {
+                                        size_t elem_sz) {
     auto *arr = new RuntimeArray();
     arr->component_class = component;
     arr->is_reference = false;
@@ -34,8 +33,7 @@ public:
     return arr;
   }
 
-  static RuntimeArray *create_reference(RuntimeClass *component, size_t len)
-  {
+  static RuntimeArray *create_reference(RuntimeClass *component, size_t len) {
     auto *arr = new RuntimeArray();
     arr->component_class = component;
     arr->is_reference = true;
@@ -45,17 +43,13 @@ public:
     return arr;
   }
 
-  void check_index(size_t idx) const
-  {
-    if (idx >= length)
-    {
+  void check_index(size_t idx) const {
+    if (idx >= length) {
       throw std::runtime_error("Array index out of bounds");
     }
   }
 
-  template <typename T>
-  T read_primitive(size_t idx) const
-  {
+  template <typename T> T read_primitive(size_t idx) const {
     check_index(idx);
     if (is_reference)
       throw std::runtime_error("Attempt to read primitive from ref array");
@@ -64,25 +58,21 @@ public:
     return value;
   }
 
-  template <typename T>
-  void write_primitive(size_t idx, T value)
-  {
+  template <typename T> void write_primitive(size_t idx, T value) {
     check_index(idx);
     if (is_reference)
       throw std::runtime_error("Attempt to write primitive to ref array");
     std::memcpy(&raw[idx * elem_size], &value, sizeof(T));
   }
 
-  RuntimeObject *read_ref(size_t idx) const
-  {
+  RuntimeObject *read_ref(size_t idx) const {
     check_index(idx);
     if (!is_reference)
       throw std::runtime_error("Attempt to read ref from primitive array");
     return refs[idx];
   }
 
-  void write_ref(size_t idx, RuntimeObject *ref)
-  {
+  void write_ref(size_t idx, RuntimeObject *ref) {
     check_index(idx);
     if (!is_reference)
       throw std::runtime_error("Attempt to write ref to primitive array");
