@@ -202,7 +202,7 @@ Interpreter::Interpreter(Thread *t) : thread(t) {
       {0xB3, exec_putstatic},
       {0xB4, exec_getfield},
       {0xB5, exec_putfield},
-      {0xB6, exec_invokevirtual}, // ve se realmente vai fazer
+      {0xB6, exec_invokevirtual},
       {0xB7, exec_invokespecial},
       {0xB8, exec_invokestatic},
       {0xB9, exec_invokeinterface},
@@ -488,7 +488,7 @@ void exec_iaload(Thread *t, Frame &frame) {
     throw std::runtime_error("iaload: null array reference");
   int32_t value;
   std::memcpy(&value, &array_ref->data[index * sizeof(int32_t)],
-              sizeof(int32_t)); // olhar dps
+              sizeof(int32_t));
   frame.operand_stack.push_int(value);
   frame.pc++;
 }
@@ -1847,9 +1847,13 @@ void exec_anewarray(Thread *t, Frame &frame) {
 }
 
 void exec_arraylength(Thread *t, Frame &frame) {
-  (void)t;
-  (void)frame;
-  throw std::runtime_error("arraylength not implemented");
+  int ref = frame.operand_stack.pop_int();
+  RuntimeArray *arr = (RuntimeArray*)(ref);
+
+  if (!arr)
+      throw std::runtime_error("arraylength: null pointer");
+  frame.operand_stack.push_int(arr->length);
+  frame.pc++;
 }
 
 void exec_athrow(Thread *t, Frame &frame) {
@@ -1892,47 +1896,48 @@ void exec_wide(Thread *t, Frame &frame) {
   throw std::runtime_error("wide not implemented");
 }
 
-// ================================================================
-// 0xC5 MULTIANEWARRAY
-// ================================================================
 void exec_multianewarray(Thread *t, Frame &frame) {
   (void)t;
   (void)frame;
   throw std::runtime_error("multianewarray not implemented");
 }
 
-// ================================================================
-// 0xC6 IFNULL
-// ================================================================
 void exec_ifnull(Thread *t, Frame &frame) {
-  (void)t;
-  (void)frame;
-  throw std::runtime_error("ifnull not implemented");
+  const u1 *code = frame.method->code->code.data();
+  int16_t offset = read_s16(frame);
+  RuntimeObject *ref = frame.operand_stack.pop_ref();
+  // Não verifica caso seja array
+  if (ref == nullptr) {
+        frame.pc = frame.pc + offset;
+        return;
+    }
+    frame.pc += 3;
 }
 
-// ================================================================
-// 0xC7 IFNONNULL
-// ================================================================
 void exec_ifnonnull(Thread *t, Frame &frame) {
-  (void)t;
-  (void)frame;
-  throw std::runtime_error("ifnonnull not implemented");
+  const u1 *code = frame.method->code->code.data();
+  int16_t offset = read_s16(frame);
+  RuntimeObject *ref = frame.operand_stack.pop_ref();
+  // Não verifica caso seja array
+  if (ref != nullptr) {
+        frame.pc = frame.pc + offset;
+        return;
+    }
+    frame.pc += 3;
 }
 
-// ================================================================
-// 0xC8 GOTO_W
-// ================================================================
 void exec_goto_w(Thread *t, Frame &frame) {
-  (void)t;
-  (void)frame;
-  throw std::runtime_error("gotow not implemented");
+  const u1 *code = frame.method->code->code.data();
+  int32_t offset = (code[frame.pc] << 24 | code[frame.pc + 1] << 16 |
+  code[frame.pc + 2] | code[frame.pc + 3]);
+  frame.pc = frame.pc + offset;
 }
 
-// ================================================================
-// 0xC9 JSR_W
-// ================================================================
 void exec_jsr_w(Thread *t, Frame &frame) {
-  (void)t;
-  (void)frame;
-  throw std::runtime_error("jsrw not implemented");
+  const u1 *code = frame.method->code->code.data();
+  int32_t offset = (code[frame.pc] << 24 | code[frame.pc + 1] << 16 |
+  code[frame.pc + 2] | code[frame.pc + 3]);
+  u4 return_addr = frame.pc + 5;
+  frame.operand_stack.push_int((int32_t)return_addr);
+  frame.pc = frame.pc + offset;
 }
