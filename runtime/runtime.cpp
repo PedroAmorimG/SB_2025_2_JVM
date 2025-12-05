@@ -71,6 +71,13 @@ RuntimeArray *build_args_array(Runtime *runtime,
 
 void Runtime::start(std::string filepath,
                     const std::vector<std::string> &args) {
+  if (auto *boot = dynamic_cast<BootstrapClassLoader *>(class_loader)) {
+    size_t pos = filepath.find_last_of("/\\");
+    if (pos != std::string::npos) {
+      boot->set_classpath(filepath.substr(0, pos + 1));
+    }
+  }
+
   auto initial_class = class_loader->load_class(filepath);
 
   RuntimeArray *args_array =

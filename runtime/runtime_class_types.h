@@ -279,6 +279,7 @@ public:
       : classpath_(classpath), runtime(runtime) {}
 
   RuntimeClass *load_class(const std::string &name) override;
+  void set_classpath(std::string path) { classpath_ = std::move(path); }
 
 private:
   std::string classpath_;

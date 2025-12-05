@@ -34,7 +34,32 @@ RuntimeField *RuntimeClass::find_field(const std::string &name,
 }
 
 RuntimeClass *BootstrapClassLoader::load_class(const std::string &name) {
-  ClassParser parser(name);
+  auto ends_with_class = [](const std::string &p) {
+    return p.size() >= 6 && p.compare(p.size() - 6, 6, ".class") == 0;
+  };
+
+  std::string path = name;
+  bool is_java_lang = path.rfind("java/lang", 0) == 0;
+
+  if (is_java_lang) {
+    // Deixe o ClassParser acrescentar .class para java/lang/*
+    if (ends_with_class(path))
+      path = path.substr(0, path.size() - 6);
+  } else {
+    if (classpath_.empty())
+      classpath_ = "./";
+
+    // Se não há diretório explícito no nome, ancora no classpath base.
+    if (path.find('/') == std::string::npos &&
+        path.find('\\') == std::string::npos) {
+      path = classpath_ + path;
+    }
+
+    if (!ends_with_class(path))
+      path += ".class";
+  }
+
+  ClassParser parser(path);
   std::unique_ptr<ClassFile> cf(new ClassFile(parser.parse()));
 
   std::unique_ptr<RuntimeClass> klass = build_runtime_class(std::move(cf));
