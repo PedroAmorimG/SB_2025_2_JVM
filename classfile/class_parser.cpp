@@ -9,7 +9,11 @@ ClassParser::ClassParser(const std::string &filepath) {
 
   std::string sys_filepath(filepath);
 
-  if (sys_filepath.find("java/lang") == 0) {
+  if (sys_filepath.find("java/") == 0) {
+    if (sys_filepath.size() >= 6 &&
+        sys_filepath.compare(sys_filepath.size() - 6, 6, ".class") == 0) {
+      sys_filepath.erase(sys_filepath.size() - 6, 6);
+    }
     sys_filepath = RUNTIME_CLASSPATH + sys_filepath + ".class";
   }
 

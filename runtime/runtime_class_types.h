@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../classfile/classfile_types.h"
+#include "./debug.h"
 #include <cstring>
 #include <memory>
 #include <string>
@@ -10,10 +11,13 @@
 // Estruturas do runtime
 class RuntimeClass;
 class ClassLoader;
-class RuntimeObject;
 class Runtime;
 class Interpreter;
 class Thread;
+class RuntimeObject;
+// Avisa para o compilador que ao chamar essa função, o controle não irá
+// retornar para a função chamadora
+[[noreturn]] void throw_java_exception(RuntimeObject *exception_obj);
 
 // RuntimeField e RuntimeMethod
 
@@ -35,6 +39,9 @@ struct RuntimeField {
   std::string descriptor;
   u2 access_flags;
   bool is_static;
+  bool is_64bit;
+  u4 static_offset;
+  class RuntimeClass *owner;
 
   // Offset em bytes ou slots (dependendo do modelo)
   u4 offset;
@@ -42,7 +49,9 @@ struct RuntimeField {
   // Valor estático armazenado como bytes
   std::vector<u1> static_data;
 
-  RuntimeField() : access_flags(0), is_static(false), offset(0) {}
+  RuntimeField()
+      : access_flags(0), is_static(false), is_64bit(false), static_offset(0),
+        owner(nullptr), offset(0) {}
 
   u4 size_in_bytes() const {
     if (descriptor.empty())
@@ -62,8 +71,11 @@ struct RuntimeMethod {
   std::string descriptor;
   u2 access_flags;
   const CodeAttribute *code; // aponta diretamente para o atributo do ClassFile
+  int arg_slots;
+  RuntimeClass *owner;
 
-  RuntimeMethod() : access_flags(0), code(nullptr) {}
+  RuntimeMethod()
+      : access_flags(0), code(nullptr), arg_slots(0), owner(nullptr) {}
 };
 
 // ------------------------------------------------------
@@ -75,6 +87,7 @@ public:
   std::string name;
   std::string super_name;
   u2 access_flags;
+  std::vector<u1> static_data;
 
   RuntimeClass *super_class;
   std::unique_ptr<ClassFile> class_file;
@@ -83,9 +96,8 @@ public:
   std::unordered_map<std::string, RuntimeMethod> methods;
 
   RuntimeClass()
-      : name(std::move(name)), super_name(std::move(super_name)),
-        access_flags(access_flags), super_class(nullptr),
-        class_file(std::move(class_file)), fields(), methods() {}
+      : name(), super_name(), access_flags(0), super_class(nullptr),
+        class_file(nullptr), fields(), methods() {}
 
   // Busca de método/field
   RuntimeMethod *find_method(const std::string &name,
@@ -239,12 +251,56 @@ struct Thread {
 
   Thread(Runtime *rt);
   ~Thread();
+
+  void push_frame(Frame *f) {
+    call_stack.push_back(f);
+
+    if (!f) {
+      DEBUG_LOG("[JVM] Push frame -> <null> | depth=" << call_stack.size());
+      return;
+    }
+
+    std::string class_name =
+        f->current_class ? f->current_class->name : "<unknown-class>";
+    std::string method_name = f->method ? f->method->name : "<unknown-method>";
+    std::string descriptor =
+        f->method ? (" " + f->method->descriptor) : std::string{};
+
+    DEBUG_LOG("[JVM] Push frame -> " << class_name << "." << method_name
+              << descriptor << " | depth=" << call_stack.size());
+  }
+  void pop_frame() {
+    if (call_stack.empty()) {
+      if (g_debug_enabled)
+        std::cerr
+            << "[JVM] Pop frame requested but call stack is already empty\n";
+      return;
+    }
+
+    Frame *top = call_stack.back();
+
+    std::string class_name =
+        top && top->current_class ? top->current_class->name : "<unknown-class>";
+    std::string method_name =
+        top && top->method ? top->method->name : "<unknown-method>";
+    std::string descriptor =
+        top && top->method ? (" " + top->method->descriptor) : std::string{};
+
+    DEBUG_LOG("[JVM] Pop frame <- " << class_name << "." << method_name
+              << descriptor << " | depth=" << (call_stack.size() - 1));
+
+    call_stack.pop_back();
+    delete top;
+  }
+  void return_frame() {}
+
+  void execute_stack();
 };
 
 //  ClassLoader base
 class ClassLoader {
 public:
-  virtual std::unique_ptr<RuntimeClass> load_class(const std::string &name) = 0;
+  virtual RuntimeClass *load_class(const std::string &name) = 0;
 
   virtual ~ClassLoader() {}
 };
@@ -253,14 +309,14 @@ public:
 
 class BootstrapClassLoader : public ClassLoader {
 public:
-  explicit BootstrapClassLoader(const std::vector<std::string> &classpath,
-                                Runtime *runtime)
+  explicit BootstrapClassLoader(const std::string classpath, Runtime *runtime)
       : classpath_(classpath), runtime(runtime) {}
 
-  std::unique_ptr<RuntimeClass> load_class(const std::string &name) override;
+  RuntimeClass *load_class(const std::string &name) override;
+  void set_classpath(std::string path) { classpath_ = std::move(path); }
 
 private:
-  std::vector<std::string> classpath_;
+  std::string classpath_;
   std::unordered_map<std::string, std::unique_ptr<RuntimeClass>> loaded_;
 
   std::unique_ptr<RuntimeClass>
@@ -271,6 +327,11 @@ private:
 
 // Interpretador (esqueleto)
 struct Interpreter {
+  Thread *thread;
+  using Opfunc = void (*)(Thread *, Frame &);
+  std::unordered_map<uint8_t, Opfunc> opcode_table = {};
+  Interpreter(Thread *t);
+
   void execute(Frame &frame);
 };
 
@@ -301,5 +362,5 @@ public:
   }
 
   ~Runtime();
-  void start(std::string filepath);
+  void start(std::string filepath, const std::vector<std::string> &args);
 };

@@ -1,0 +1,22 @@
+package java.io;
+
+public class PrintStream {
+
+    public PrintStream() {
+    }
+
+    public native void println();
+
+    public native void println(String s);
+
+    public native void println(int i);
+
+    public native void println(long l);
+
+    public native void println(boolean b);
+
+    public native void println(float f);
+
+    public native void println(double d);
+
+}
