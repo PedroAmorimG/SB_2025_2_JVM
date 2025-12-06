@@ -1,0 +1,40 @@
+\doxysection{Runtime\+Object Struct Reference}
+\hypertarget{struct_runtime_object}{}\label{struct_runtime_object}\index{RuntimeObject@{RuntimeObject}}
+
+
+Representa um objeto (instância de classe) ou array na Heap.  
+
+
+
+
+{\ttfamily \#include $<$runtime\+\_\+class\+\_\+types.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_runtime_object_a12d43943c7ba141c9f5fa65b0c13a6f4}\label{struct_runtime_object_a12d43943c7ba141c9f5fa65b0c13a6f4} 
+{\bfseries Runtime\+Object} (\mbox{\hyperlink{class_runtime_class}{Runtime\+Class}} \texorpdfstring{$\ast$}{*}k)
+\begin{DoxyCompactList}\small\item\em Cria um objeto e aloca memória na Heap. O tamanho é calculado automaticamente com base na classe. \end{DoxyCompactList}\item 
+\Hypertarget{struct_runtime_object_a9594ce040ba148b3fab4a3b9d0f531c2}\label{struct_runtime_object_a9594ce040ba148b3fab4a3b9d0f531c2} 
+{\footnotesize template$<$typename T$>$ }\\T {\bfseries read\+\_\+field} (const \mbox{\hyperlink{struct_runtime_field}{Runtime\+Field}} \&field) const
+\item 
+\Hypertarget{struct_runtime_object_aed6b489f823b15ecfd9dd364b9b3f4e9}\label{struct_runtime_object_aed6b489f823b15ecfd9dd364b9b3f4e9} 
+{\footnotesize template$<$typename T$>$ }\\void {\bfseries write\+\_\+field} (const \mbox{\hyperlink{struct_runtime_field}{Runtime\+Field}} \&field, T value)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_runtime_object_af45a8d9eeefc669b26d26709b8ecdc9d}\label{struct_runtime_object_af45a8d9eeefc669b26d26709b8ecdc9d} 
+\mbox{\hyperlink{class_runtime_class}{Runtime\+Class}} \texorpdfstring{$\ast$}{*} {\bfseries klass}
+\begin{DoxyCompactList}\small\item\em Ponteiro para a classe deste objeto. \end{DoxyCompactList}\item 
+\Hypertarget{struct_runtime_object_a7865acae7f8699a1549e9276ca2560fb}\label{struct_runtime_object_a7865acae7f8699a1549e9276ca2560fb} 
+std\+::vector$<$ u1 $>$ {\bfseries data}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Representa um objeto (instância de classe) ou array na Heap. 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+runtime/runtime\+\_\+class\+\_\+types.\+h\end{DoxyCompactItemize}

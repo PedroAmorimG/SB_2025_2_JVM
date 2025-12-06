@@ -1,0 +1,46 @@
+\doxysection{Frame Struct Reference}
+\hypertarget{struct_frame}{}\label{struct_frame}\index{Frame@{Frame}}
+
+
+Contexto de execução de um único método.  
+
+
+
+
+{\ttfamily \#include $<$runtime\+\_\+class\+\_\+types.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_frame_aebf3db3421ab19a36fea2d9212464e66}\label{struct_frame_aebf3db3421ab19a36fea2d9212464e66} 
+{\bfseries Frame} (\mbox{\hyperlink{struct_runtime_method}{Runtime\+Method}} \texorpdfstring{$\ast$}{*}method, \mbox{\hyperlink{class_runtime_class}{Runtime\+Class}} \texorpdfstring{$\ast$}{*}current\+\_\+class)
+\item 
+\Hypertarget{struct_frame_a0543bd9c165ba48313e972a4d80d29bb}\label{struct_frame_a0543bd9c165ba48313e972a4d80d29bb} 
+void {\bfseries init} (u4 max\+\_\+locals, u4 max\+\_\+stack)
+\begin{DoxyCompactList}\small\item\em Inicializa as estruturas do frame com os tamanhos definidos no atributo Code. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_frame_a4249b77bd07452150c6542f924f5bb04}\label{struct_frame_a4249b77bd07452150c6542f924f5bb04} 
+\mbox{\hyperlink{struct_runtime_method}{Runtime\+Method}} \texorpdfstring{$\ast$}{*} {\bfseries method}
+\item 
+\Hypertarget{struct_frame_a647a7fe9e3e740a57d226c6382ede8da}\label{struct_frame_a647a7fe9e3e740a57d226c6382ede8da} 
+\mbox{\hyperlink{class_runtime_class}{Runtime\+Class}} \texorpdfstring{$\ast$}{*} {\bfseries current\+\_\+class}
+\item 
+\Hypertarget{struct_frame_a716c4b71f76bd14cd562ea67db10074d}\label{struct_frame_a716c4b71f76bd14cd562ea67db10074d} 
+std\+::vector$<$ Slot $>$ {\bfseries local\+\_\+vars}
+\begin{DoxyCompactList}\small\item\em Vetor de variáveis locais. \end{DoxyCompactList}\item 
+\Hypertarget{struct_frame_a48a57f3322f7091748fd58ac1e318f47}\label{struct_frame_a48a57f3322f7091748fd58ac1e318f47} 
+\mbox{\hyperlink{struct_operand_stack}{Operand\+Stack}} {\bfseries operand\+\_\+stack}
+\begin{DoxyCompactList}\small\item\em Pilha de operandos para cálculos. \end{DoxyCompactList}\item 
+\Hypertarget{struct_frame_ada6a6cf76d00cbadf43a86a686dd026c}\label{struct_frame_ada6a6cf76d00cbadf43a86a686dd026c} 
+u4 {\bfseries pc}
+\begin{DoxyCompactList}\small\item\em Program Counter (índice do bytecode atual). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Contexto de execução de um único método. 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+runtime/runtime\+\_\+class\+\_\+types.\+h\end{DoxyCompactItemize}

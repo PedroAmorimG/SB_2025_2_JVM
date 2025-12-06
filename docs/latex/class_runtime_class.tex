@@ -1,0 +1,56 @@
+\doxysection{Runtime\+Class Class Reference}
+\hypertarget{class_runtime_class}{}\label{class_runtime_class}\index{RuntimeClass@{RuntimeClass}}
+
+
+Representação de uma classe carregada na memória (Área de Métodos). Contém a estrutura da classe, campos, métodos e o \doxylink{struct_class_file}{Class\+File} original.  
+
+
+
+
+{\ttfamily \#include $<$runtime\+\_\+class\+\_\+types.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_runtime_class_a60955da421517eb88dc4b3e9f1047c0c}\label{class_runtime_class_a60955da421517eb88dc4b3e9f1047c0c} 
+\mbox{\hyperlink{struct_runtime_method}{Runtime\+Method}} \texorpdfstring{$\ast$}{*} {\bfseries find\+\_\+method} (const std\+::string \&name, const std\+::string \&descriptor)
+\item 
+\Hypertarget{class_runtime_class_aeb14add97c7d08ef2455d3faf22ff5b8}\label{class_runtime_class_aeb14add97c7d08ef2455d3faf22ff5b8} 
+\mbox{\hyperlink{struct_runtime_field}{Runtime\+Field}} \texorpdfstring{$\ast$}{*} {\bfseries find\+\_\+field} (const std\+::string \&name, const std\+::string \&descriptor)
+\item 
+\Hypertarget{class_runtime_class_afa6d53f0a1229568ce0e3ecab46f8dfe}\label{class_runtime_class_afa6d53f0a1229568ce0e3ecab46f8dfe} 
+u4 {\bfseries data\+\_\+size} ()
+\begin{DoxyCompactList}\small\item\em Calcula o tamanho total necessário para armazenar uma instância desta classe. Soma o tamanho de todos os campos de instância. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_runtime_class_ab0ecb29ab58ba3801609be1cb8c5e101}\label{class_runtime_class_ab0ecb29ab58ba3801609be1cb8c5e101} 
+std\+::string {\bfseries name}
+\item 
+\Hypertarget{class_runtime_class_a7e20cab3d165e7bcf0ac9f44bc91c055}\label{class_runtime_class_a7e20cab3d165e7bcf0ac9f44bc91c055} 
+std\+::string {\bfseries super\+\_\+name}
+\item 
+\Hypertarget{class_runtime_class_a8c69058619135f39cc651f1ab79d0021}\label{class_runtime_class_a8c69058619135f39cc651f1ab79d0021} 
+u2 {\bfseries access\+\_\+flags}
+\item 
+\Hypertarget{class_runtime_class_a5017fbfa852ab52821b8680b6c0aa7a5}\label{class_runtime_class_a5017fbfa852ab52821b8680b6c0aa7a5} 
+\mbox{\hyperlink{class_runtime_class}{Runtime\+Class}} \texorpdfstring{$\ast$}{*} {\bfseries super\+\_\+class}
+\item 
+\Hypertarget{class_runtime_class_ac3c55d6d2bb32676430a963edacac4de}\label{class_runtime_class_ac3c55d6d2bb32676430a963edacac4de} 
+std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{struct_class_file}{Class\+File}} $>$ {\bfseries class\+\_\+file}
+\item 
+\Hypertarget{class_runtime_class_a11eff534a3d3902d441bb219e901ffd0}\label{class_runtime_class_a11eff534a3d3902d441bb219e901ffd0} 
+std\+::unordered\+\_\+map$<$ std\+::string, \mbox{\hyperlink{struct_runtime_field}{Runtime\+Field}} $>$ {\bfseries fields}
+\item 
+\Hypertarget{class_runtime_class_ac3bd69e71750fe74820f083a08becd63}\label{class_runtime_class_ac3bd69e71750fe74820f083a08becd63} 
+std\+::unordered\+\_\+map$<$ std\+::string, \mbox{\hyperlink{struct_runtime_method}{Runtime\+Method}} $>$ {\bfseries methods}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Representação de uma classe carregada na memória (Área de Métodos). Contém a estrutura da classe, campos, métodos e o \doxylink{struct_class_file}{Class\+File} original. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+runtime/runtime\+\_\+class\+\_\+types.\+h\item 
+runtime/class.\+cpp\end{DoxyCompactItemize}

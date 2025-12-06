@@ -1,0 +1,41 @@
+\doxysection{Thread Struct Reference}
+\hypertarget{struct_thread}{}\label{struct_thread}\index{Thread@{Thread}}
+
+
+Representa uma thread de execução da JVM. Mantém a pilha de chamadas (Call Stack).  
+
+
+
+
+{\ttfamily \#include $<$runtime\+\_\+class\+\_\+types.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_thread_a38ff359bb6bfd6ed1cab1ab2f8f97fc3}\label{struct_thread_a38ff359bb6bfd6ed1cab1ab2f8f97fc3} 
+\mbox{\hyperlink{struct_frame}{Frame}} \& {\bfseries current\+\_\+frame} ()
+\item 
+\Hypertarget{struct_thread_a2bd8ca6fc71c9c5e93efcffd37349914}\label{struct_thread_a2bd8ca6fc71c9c5e93efcffd37349914} 
+{\bfseries Thread} (\mbox{\hyperlink{class_runtime}{Runtime}} \texorpdfstring{$\ast$}{*}rt)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_thread_a549f7defc878cf79dd361b2059d0fe7f}\label{struct_thread_a549f7defc878cf79dd361b2059d0fe7f} 
+std\+::vector$<$ \mbox{\hyperlink{struct_frame}{Frame}} \texorpdfstring{$\ast$}{*} $>$ {\bfseries call\+\_\+stack}
+\begin{DoxyCompactList}\small\item\em Pilha de frames (métodos ativos). \end{DoxyCompactList}\item 
+\Hypertarget{struct_thread_ac084e6dc1ba5de75a6f6d58d66249e05}\label{struct_thread_ac084e6dc1ba5de75a6f6d58d66249e05} 
+\mbox{\hyperlink{class_runtime}{Runtime}} \texorpdfstring{$\ast$}{*} {\bfseries runtime}
+\item 
+\Hypertarget{struct_thread_ae18d130e5b04f7715796f807a6fb3ec4}\label{struct_thread_ae18d130e5b04f7715796f807a6fb3ec4} 
+\mbox{\hyperlink{struct_interpreter}{Interpreter}} \texorpdfstring{$\ast$}{*} {\bfseries interpreter}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Representa uma thread de execução da JVM. Mantém a pilha de chamadas (Call Stack). 
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+runtime/runtime\+\_\+class\+\_\+types.\+h\item 
+runtime/class.\+cpp\end{DoxyCompactItemize}

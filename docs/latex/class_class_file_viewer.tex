@@ -1,0 +1,50 @@
+\doxysection{Class\+File\+Viewer Class Reference}
+\hypertarget{class_class_file_viewer}{}\label{class_class_file_viewer}\index{ClassFileViewer@{ClassFileViewer}}
+
+
+Responsável pela exibição legível dos dados de um \doxylink{struct_class_file}{Class\+File}.  
+
+
+
+
+{\ttfamily \#include $<$class\+\_\+viewer.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_class_file_viewer_a5581fbb3722cd614f74e9972733f192e}{Class\+File\+Viewer}} (\mbox{\hyperlink{struct_class_file}{Class\+File}} cf)
+\begin{DoxyCompactList}\small\item\em Construtor do Viewer. \end{DoxyCompactList}\item 
+\Hypertarget{class_class_file_viewer_ad0344f6a979a9b744b68f0064381e37b}\label{class_class_file_viewer_ad0344f6a979a9b744b68f0064381e37b} 
+void {\bfseries show\+\_\+class\+\_\+file} ()
+\begin{DoxyCompactList}\small\item\em Exibe todo o conteúdo do arquivo .class no terminal. Imprime Magic, Versões, Constant Pool, Interfaces, Fields, Methods e Attributes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Responsável pela exibição legível dos dados de um \doxylink{struct_class_file}{Class\+File}. 
+
+Funciona como um "{}disassembler"{} (similar ao javap), traduzindo os dados binários e índices da Constant Pool em texto formatado para o usuário. 
+
+\label{doc-constructors}
+\Hypertarget{class_class_file_viewer_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_class_file_viewer_a5581fbb3722cd614f74e9972733f192e}\index{ClassFileViewer@{ClassFileViewer}!ClassFileViewer@{ClassFileViewer}}
+\index{ClassFileViewer@{ClassFileViewer}!ClassFileViewer@{ClassFileViewer}}
+\doxysubsubsection{\texorpdfstring{ClassFileViewer()}{ClassFileViewer()}}
+{\footnotesize\ttfamily \label{class_class_file_viewer_a5581fbb3722cd614f74e9972733f192e} 
+Class\+File\+Viewer\+::\+Class\+File\+Viewer (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_class_file}{Class\+File}}}]{cf}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+Construtor do Viewer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cf} & A estrutura \doxylink{struct_class_file}{Class\+File} já parseada que será exibida. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+classfile/class\+\_\+viewer.\+h\item 
+classfile/class\+\_\+viewer.\+cpp\end{DoxyCompactItemize}

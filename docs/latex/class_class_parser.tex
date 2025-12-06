@@ -1,0 +1,74 @@
+\doxysection{Class\+Parser Class Reference}
+\hypertarget{class_class_parser}{}\label{class_class_parser}\index{ClassParser@{ClassParser}}
+
+
+Responsável pela leitura e análise estática (parsing) de um arquivo .class.  
+
+
+
+
+{\ttfamily \#include $<$class\+\_\+parser.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_class_parser_a495cfd92fcdfcd6f1e5948494d5b1c6f}{Class\+Parser}} (const std\+::string \&filepath)
+\begin{DoxyCompactList}\small\item\em Construtor do \doxylink{class_class_parser}{Class\+Parser}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{struct_class_file}{Class\+File}} \mbox{\hyperlink{class_class_parser_a764ff81f2fc634b23e4dfa0875e76107}{parse}} ()
+\begin{DoxyCompactList}\small\item\em Executa o parsing completo do arquivo. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Responsável pela leitura e análise estática (parsing) de um arquivo .class. 
+
+Esta classe encapsula a lógica de ler o arquivo binário byte a byte e preencher as estruturas de dados definidas em \doxylink{classfile__types_8h_source}{classfile\+\_\+types.\+h}. Ela lida com a ordem dos bytes (Big-\/\+Endian) e a estrutura sequencial do formato .class. 
+
+\label{doc-constructors}
+\Hypertarget{class_class_parser_doc-constructors}
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_class_parser_a495cfd92fcdfcd6f1e5948494d5b1c6f}\index{ClassParser@{ClassParser}!ClassParser@{ClassParser}}
+\index{ClassParser@{ClassParser}!ClassParser@{ClassParser}}
+\doxysubsubsection{\texorpdfstring{ClassParser()}{ClassParser()}}
+{\footnotesize\ttfamily \label{class_class_parser_a495cfd92fcdfcd6f1e5948494d5b1c6f} 
+Class\+Parser\+::\+Class\+Parser (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{filepath}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+Construtor do \doxylink{class_class_parser}{Class\+Parser}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em filepath} & O caminho (path) para o arquivo .class que será lido. \\
+\hline
+\end{DoxyParams}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::runtime\+\_\+error} & Se o arquivo não puder ser aberto. \\
+\hline
+\end{DoxyExceptions}
+
+
+\label{doc-func-members}
+\Hypertarget{class_class_parser_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_class_parser_a764ff81f2fc634b23e4dfa0875e76107}\index{ClassParser@{ClassParser}!parse@{parse}}
+\index{parse@{parse}!ClassParser@{ClassParser}}
+\doxysubsubsection{\texorpdfstring{parse()}{parse()}}
+{\footnotesize\ttfamily \label{class_class_parser_a764ff81f2fc634b23e4dfa0875e76107} 
+\mbox{\hyperlink{struct_class_file}{Class\+File}} Class\+Parser\+::parse (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Executa o parsing completo do arquivo. 
+
+Lê todas as seções do arquivo .class (Magic, Version, Constant Pool, Interfaces, Fields, Methods, Attributes) na ordem correta.
+
+\begin{DoxyReturn}{Returns}
+Uma estrutura \doxylink{struct_class_file}{Class\+File} preenchida com os dados lidos. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+classfile/class\+\_\+parser.\+h\item 
+classfile/class\+\_\+parser.\+cpp\end{DoxyCompactItemize}

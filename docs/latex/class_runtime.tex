@@ -1,0 +1,39 @@
+\doxysection{Runtime Class Reference}
+\hypertarget{class_runtime}{}\label{class_runtime}\index{Runtime@{Runtime}}
+
+
+Classe principal que gerencia os componentes da JVM em execução. Contém a \doxylink{struct_thread}{Thread} principal, a Área de Métodos e o \doxylink{class_class_loader}{Class\+Loader}.  
+
+
+
+
+{\ttfamily \#include $<$runtime\+\_\+class\+\_\+types.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_runtime_a70ee45467e63f70e592279dd6bc98aa8}\label{class_runtime_a70ee45467e63f70e592279dd6bc98aa8} 
+void {\bfseries start} (std\+::string filepath)
+\begin{DoxyCompactList}\small\item\em Inicia a execução da JVM carregando a classe principal. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_runtime_ab60c0f7f231ec02435b4807db7883bb4}\label{class_runtime_ab60c0f7f231ec02435b4807db7883bb4} 
+\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*} {\bfseries thread}
+\item 
+\Hypertarget{class_runtime_a4436b28a9ea34ba62a47d374f555c4cd}\label{class_runtime_a4436b28a9ea34ba62a47d374f555c4cd} 
+\mbox{\hyperlink{class_method_area}{Method\+Area}} \texorpdfstring{$\ast$}{*} {\bfseries method\+\_\+area}
+\item 
+\Hypertarget{class_runtime_af0f0b99f5cc68de900eab8d34bedf68a}\label{class_runtime_af0f0b99f5cc68de900eab8d34bedf68a} 
+\mbox{\hyperlink{class_class_loader}{Class\+Loader}} \texorpdfstring{$\ast$}{*} {\bfseries class\+\_\+loader}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Classe principal que gerencia os componentes da JVM em execução. Contém a \doxylink{struct_thread}{Thread} principal, a Área de Métodos e o \doxylink{class_class_loader}{Class\+Loader}. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+runtime/runtime\+\_\+class\+\_\+types.\+h\item 
+runtime/class.\+cpp\item 
+runtime/runtime.\+cpp\end{DoxyCompactItemize}

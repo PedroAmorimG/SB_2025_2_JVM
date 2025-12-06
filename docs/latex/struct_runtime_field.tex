@@ -1,0 +1,63 @@
+\doxysection{Runtime\+Field Struct Reference}
+\hypertarget{struct_runtime_field}{}\label{struct_runtime_field}\index{RuntimeField@{RuntimeField}}
+
+
+Representação de um campo (field) em tempo de execução. Contém o deslocamento (offset) para localizar o dado dentro do objeto.  
+
+
+
+
+{\ttfamily \#include $<$runtime\+\_\+class\+\_\+types.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+u4 \mbox{\hyperlink{struct_runtime_field_a0cb1c27d14e0af4d5d45e780ac5487de}{size\+\_\+in\+\_\+bytes}} () const
+\begin{DoxyCompactList}\small\item\em Calcula o tamanho do campo em bytes com base no descritor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_runtime_field_a96e76640ea3539a268509372b43c316b}\label{struct_runtime_field_a96e76640ea3539a268509372b43c316b} 
+std\+::string {\bfseries name}
+\item 
+\Hypertarget{struct_runtime_field_a9dbd3b82f76a447ff3388b37484780b2}\label{struct_runtime_field_a9dbd3b82f76a447ff3388b37484780b2} 
+std\+::string {\bfseries descriptor}
+\item 
+\Hypertarget{struct_runtime_field_a22278d49c72bed955dc1a79421c7fe36}\label{struct_runtime_field_a22278d49c72bed955dc1a79421c7fe36} 
+u2 {\bfseries access\+\_\+flags}
+\item 
+\Hypertarget{struct_runtime_field_aeb61407757f872469bd64274a466cf69}\label{struct_runtime_field_aeb61407757f872469bd64274a466cf69} 
+bool {\bfseries is\+\_\+static}
+\item 
+\Hypertarget{struct_runtime_field_a46dae7a27f2c2a70a3418065ebbd5c21}\label{struct_runtime_field_a46dae7a27f2c2a70a3418065ebbd5c21} 
+u4 {\bfseries offset}
+\begin{DoxyCompactList}\small\item\em Posição do dado na memória do objeto ou na área estática. \end{DoxyCompactList}\item 
+\Hypertarget{struct_runtime_field_a1d33647232c6832490fb0a1e033ea5d6}\label{struct_runtime_field_a1d33647232c6832490fb0a1e033ea5d6} 
+std\+::vector$<$ u1 $>$ {\bfseries static\+\_\+data}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Representação de um campo (field) em tempo de execução. Contém o deslocamento (offset) para localizar o dado dentro do objeto. 
+
+\label{doc-func-members}
+\Hypertarget{struct_runtime_field_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{struct_runtime_field_a0cb1c27d14e0af4d5d45e780ac5487de}\index{RuntimeField@{RuntimeField}!size\_in\_bytes@{size\_in\_bytes}}
+\index{size\_in\_bytes@{size\_in\_bytes}!RuntimeField@{RuntimeField}}
+\doxysubsubsection{\texorpdfstring{size\_in\_bytes()}{size\_in\_bytes()}}
+{\footnotesize\ttfamily \label{struct_runtime_field_a0cb1c27d14e0af4d5d45e780ac5487de} 
+u4 Runtime\+Field\+::size\+\_\+in\+\_\+bytes (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Calcula o tamanho do campo em bytes com base no descritor. 
+
+\begin{DoxyReturn}{Returns}
+Tamanho em bytes (ex\+: 4 para int, 8 para long). 
+\end{DoxyReturn}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+runtime/runtime\+\_\+class\+\_\+types.\+h\end{DoxyCompactItemize}

@@ -1,0 +1,47 @@
+\doxysection{class\+\_\+viewer.\+h}
+\hypertarget{class__viewer_8h_source}{}\label{class__viewer_8h_source}\index{classfile/class\_viewer.h@{classfile/class\_viewer.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}classfile\_types.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_class_file_viewer_a5581fbb3722cd614f74e9972733f192e}{ClassFileViewer}}\ \{}
+\DoxyCodeLine{00016\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00021\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{class_class_file_viewer_a5581fbb3722cd614f74e9972733f192e}{ClassFileViewer}}(\mbox{\hyperlink{struct_class_file}{ClassFile}}\ cf);}
+\DoxyCodeLine{00026\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_class_file_viewer_ad0344f6a979a9b744b68f0064381e37b}{show\_class\_file}}();}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00029\ \ \ \mbox{\hyperlink{struct_class_file}{ClassFile}}\ cf;}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{comment}{//\ Métodos\ de\ impressão\ para\ cada\ seção}}
+\DoxyCodeLine{00032\ \ \ \textcolor{keywordtype}{void}\ print\_magic();}
+\DoxyCodeLine{00033\ \ \ \textcolor{keywordtype}{void}\ print\_major\_version();}
+\DoxyCodeLine{00034\ \ \ \textcolor{keywordtype}{void}\ print\_java\_version();}
+\DoxyCodeLine{00035\ \ \ \textcolor{keywordtype}{void}\ print\_minor\_version();}
+\DoxyCodeLine{00036\ \ \ \textcolor{keywordtype}{void}\ print\_constant\_pool\_count();}
+\DoxyCodeLine{00041\ \ \ \textcolor{keywordtype}{void}\ print\_constant\_entry(u2\ index);}
+\DoxyCodeLine{00042\ \ \ \textcolor{keywordtype}{void}\ print\_constant\_pool();}
+\DoxyCodeLine{00043\ \ \ \textcolor{keywordtype}{void}\ print\_access\_flags();}
+\DoxyCodeLine{00044\ \ \ \textcolor{keywordtype}{void}\ print\_this\_class();}
+\DoxyCodeLine{00045\ \ \ \textcolor{keywordtype}{void}\ print\_super\_class();}
+\DoxyCodeLine{00046\ \ \ \textcolor{keywordtype}{void}\ print\_interface\_count();}
+\DoxyCodeLine{00047\ \ \ \textcolor{keywordtype}{void}\ print\_interfaces();}
+\DoxyCodeLine{00048\ \ \ \textcolor{keywordtype}{void}\ print\_field\_count();}
+\DoxyCodeLine{00049\ \ \ \textcolor{keywordtype}{void}\ print\_fields();}
+\DoxyCodeLine{00050\ \ \ \textcolor{keywordtype}{void}\ print\_attribute\_count();}
+\DoxyCodeLine{00055\ \ \ \textcolor{keywordtype}{void}\ print\_attributes(u2\ index,\ \textcolor{keyword}{const}\ std::vector<AttributeInfo>\ \&entry);}
+\DoxyCodeLine{00056\ \ \ \textcolor{keywordtype}{void}\ print\_attribute\_info\_entry(u4\ index,\ \textcolor{keyword}{const}\ std::vector<u1>\ entry);}
+\DoxyCodeLine{00061\ \ \ \textcolor{keywordtype}{void}\ print\_code\_attribute(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_code_attribute}{CodeAttribute}}\ \&code);}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \textcolor{keywordtype}{void}\ print\_methods\_count();}
+\DoxyCodeLine{00064\ \ \ \textcolor{keywordtype}{void}\ print\_methods();}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ std::string\ get\_utf8\_from\_pool(\textcolor{keyword}{const}\ std::vector<ConstantPoolEntry>\ \&pool,}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ u2\ index);}
+\DoxyCodeLine{00068\ \};}
+
+\end{DoxyCode}

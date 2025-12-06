@@ -1,0 +1,64 @@
+\doxysection{Operand\+Stack Struct Reference}
+\hypertarget{struct_operand_stack}{}\label{struct_operand_stack}\index{OperandStack@{OperandStack}}
+
+
+Pilha de operandos de um \doxylink{struct_frame}{Frame}. Gerencia push/pop de valores, tratando tipos de 64 bits como dois slots.  
+
+
+
+
+{\ttfamily \#include $<$runtime\+\_\+class\+\_\+types.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_operand_stack_a1a1e9b8331a5c599094dc50ff7fdf0e3}\label{struct_operand_stack_a1a1e9b8331a5c599094dc50ff7fdf0e3} 
+void {\bfseries push\+\_\+int} (int32\+\_\+t v)
+\item 
+\Hypertarget{struct_operand_stack_a25d75894a837f4ef04b7930b2026e425}\label{struct_operand_stack_a25d75894a837f4ef04b7930b2026e425} 
+void {\bfseries push\+\_\+long} (int64\+\_\+t v)
+\item 
+\Hypertarget{struct_operand_stack_abc4656c71ca986466983b3f9281f7a24}\label{struct_operand_stack_abc4656c71ca986466983b3f9281f7a24} 
+int32\+\_\+t {\bfseries pop\+\_\+int} ()
+\item 
+\Hypertarget{struct_operand_stack_af4e4fb7a8562f238d64fcb494e225a7b}\label{struct_operand_stack_af4e4fb7a8562f238d64fcb494e225a7b} 
+int64\+\_\+t {\bfseries pop\+\_\+long} ()
+\item 
+\Hypertarget{struct_operand_stack_a9e8d66d3dfc9c1b4101416332c24424a}\label{struct_operand_stack_a9e8d66d3dfc9c1b4101416332c24424a} 
+void {\bfseries push\+\_\+ref} (\mbox{\hyperlink{struct_runtime_object}{Runtime\+Object}} \texorpdfstring{$\ast$}{*}ref)
+\item 
+\Hypertarget{struct_operand_stack_a05de79e7540a4c407272a8f7374979e0}\label{struct_operand_stack_a05de79e7540a4c407272a8f7374979e0} 
+\mbox{\hyperlink{struct_runtime_object}{Runtime\+Object}} \texorpdfstring{$\ast$}{*} {\bfseries pop\+\_\+ref} ()
+\item 
+\Hypertarget{struct_operand_stack_aef53f0dfd39caf8ba6c934c2940d9cb0}\label{struct_operand_stack_aef53f0dfd39caf8ba6c934c2940d9cb0} 
+void {\bfseries push\+\_\+float} (float v)
+\item 
+\Hypertarget{struct_operand_stack_a8928fe81f1700adcafa36604419a7fcd}\label{struct_operand_stack_a8928fe81f1700adcafa36604419a7fcd} 
+float {\bfseries pop\+\_\+float} ()
+\item 
+\Hypertarget{struct_operand_stack_af6893882f6b3f7410ef95c1e44c70f92}\label{struct_operand_stack_af6893882f6b3f7410ef95c1e44c70f92} 
+void {\bfseries push\+\_\+double} (double v)
+\item 
+\Hypertarget{struct_operand_stack_acd229142faeda53f4fc50b2c721e6559}\label{struct_operand_stack_acd229142faeda53f4fc50b2c721e6559} 
+double {\bfseries pop\+\_\+double} ()
+\item 
+\Hypertarget{struct_operand_stack_a7a82d650522d26971c6a9e40dc265659}\label{struct_operand_stack_a7a82d650522d26971c6a9e40dc265659} 
+bool {\bfseries empty} () const
+\item 
+\Hypertarget{struct_operand_stack_a38df8d9426b5d52427da69cd43552ec2}\label{struct_operand_stack_a38df8d9426b5d52427da69cd43552ec2} 
+size\+\_\+t {\bfseries size} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_operand_stack_afa8ddb4e1d422392cb08f1a8e0866114}\label{struct_operand_stack_afa8ddb4e1d422392cb08f1a8e0866114} 
+std\+::vector$<$ Slot $>$ {\bfseries stack}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Pilha de operandos de um \doxylink{struct_frame}{Frame}. Gerencia push/pop de valores, tratando tipos de 64 bits como dois slots. 
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+runtime/runtime\+\_\+class\+\_\+types.\+h\end{DoxyCompactItemize}

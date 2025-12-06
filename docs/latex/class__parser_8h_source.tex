@@ -1,0 +1,55 @@
+\doxysection{class\+\_\+parser.\+h}
+\hypertarget{class__parser_8h_source}{}\label{class__parser_8h_source}\index{classfile/class\_parser.h@{classfile/class\_parser.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ "{}classfile\_types.h"{}}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <fstream>}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00014\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_class_parser_a495cfd92fcdfcd6f1e5948494d5b1c6f}{ClassParser}}\ \{}
+\DoxyCodeLine{00015\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00021\ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{class_class_parser_a495cfd92fcdfcd6f1e5948494d5b1c6f}{ClassParser}}(\textcolor{keyword}{const}\ std::string\ \&filepath);}
+\DoxyCodeLine{00030\ \ \ \mbox{\hyperlink{struct_class_file}{ClassFile}}\ \mbox{\hyperlink{class_class_parser_a764ff81f2fc634b23e4dfa0875e76107}{parse}}();}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00033\ \ \ std::ifstream\ file;\ }
+\DoxyCodeLine{00034\ \ \ \mbox{\hyperlink{struct_class_file}{ClassFile}}\ classfile;\ }
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \textcolor{comment}{//\ Métodos\ de\ Leitura\ de\ Tipos\ Básicos}}
+\DoxyCodeLine{00037\ \ \ u1\ read\_u1();\ }
+\DoxyCodeLine{00038\ \ \ u2\ read\_u2();\ }
+\DoxyCodeLine{00039\ \ \ u4\ read\_u4();\ }
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \textcolor{comment}{//\ Métodos\ de\ Leitura\ das\ Seções\ do\ ClassFile}}
+\DoxyCodeLine{00042\ \ \ u4\ readMagic();}
+\DoxyCodeLine{00043\ \ \ u2\ readMinorVersion();}
+\DoxyCodeLine{00044\ \ \ u2\ readMajorVersion();}
+\DoxyCodeLine{00045\ \ \ u2\ readConstantPoolCount();}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ std::vector<ConstantPoolEntry>\ readConstantPool(u2\ count);}
+\DoxyCodeLine{00054\ \ \ u2\ readAccessFlags();}
+\DoxyCodeLine{00055\ \ \ u2\ readThisClass();}
+\DoxyCodeLine{00056\ \ \ u2\ readSuperClass();}
+\DoxyCodeLine{00057\ \ \ u2\ readInterfacesCount();}
+\DoxyCodeLine{00058\ \ \ std::vector<u2>\ readInterfaces(u2\ count);}
+\DoxyCodeLine{00059\ \ \ u2\ readFieldsCount();}
+\DoxyCodeLine{00060\ \ \ std::vector<FieldInfo>\ readFields(u2\ count);}
+\DoxyCodeLine{00061\ \ \ u2\ readMethodsCount();}
+\DoxyCodeLine{00062\ \ \ std::vector<MethodInfo>\ readMethods(u2\ count);}
+\DoxyCodeLine{00063\ \ \ u2\ readAttributesCount();}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ std::vector<AttributeInfo>\ readAttributes(u2\ count);}
+\DoxyCodeLine{00077\ }
+\DoxyCodeLine{00078\ \textcolor{comment}{//\ Helpers}}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ std::string\ getUtf8(u2\ index);}
+\DoxyCodeLine{00086\ \ \ \mbox{\hyperlink{struct_verification_type_info}{VerificationTypeInfo}}\ read\_verification\_type\_info();}
+\DoxyCodeLine{00087\ \ \ \mbox{\hyperlink{struct_stack_map_frame}{StackMapFrame}}\ read\_stack\_map\_frame();}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ ConstantPoolEntry\ readConstantPoolEntry();}
+\DoxyCodeLine{00090\ \};}
+
+\end{DoxyCode}

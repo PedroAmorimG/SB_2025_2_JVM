@@ -1,0 +1,362 @@
+\doxysection{classfile\+\_\+types.\+h}
+\hypertarget{classfile__types_8h_source}{}\label{classfile__types_8h_source}\index{classfile/classfile\_types.h@{classfile/classfile\_types.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <utility>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ Tipos\ básicos}}
+\DoxyCodeLine{00009\ \textcolor{keyword}{using\ }u1\ =\ uint8\_t;}
+\DoxyCodeLine{00010\ \textcolor{keyword}{using\ }u2\ =\ uint16\_t;}
+\DoxyCodeLine{00011\ \textcolor{keyword}{using\ }u4\ =\ uint32\_t;}
+\DoxyCodeLine{00012\ \textcolor{keyword}{using\ }u8\ =\ uint64\_t;}
+\DoxyCodeLine{00013\ \textcolor{keyword}{static\_assert}(\textcolor{keyword}{sizeof}(u1)\ ==\ 1\ \&\&\ \textcolor{keyword}{sizeof}(u2)\ ==\ 2\ \&\&\ \textcolor{keyword}{sizeof}(u4)\ ==\ 4\ \&\&}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{sizeof}(u8)\ ==\ 8,}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}Fixed-\/width\ integer\ sizes\ required"{}});}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ Tags\ do\ constant\ pool}}
+\DoxyCodeLine{00018\ \textcolor{keyword}{enum\ class}\ ConstantTag\ :\ u1\ \{}
+\DoxyCodeLine{00019\ \ \ CONSTANT\_Class\ =\ 7,}
+\DoxyCodeLine{00020\ \ \ CONSTANT\_Fieldref\ =\ 9,}
+\DoxyCodeLine{00021\ \ \ CONSTANT\_Methodref\ =\ 10,}
+\DoxyCodeLine{00022\ \ \ CONSTANT\_InterfaceMethodref\ =\ 11,}
+\DoxyCodeLine{00023\ \ \ CONSTANT\_String\ =\ 8,}
+\DoxyCodeLine{00024\ \ \ CONSTANT\_Integer\ =\ 3,}
+\DoxyCodeLine{00025\ \ \ CONSTANT\_Float\ =\ 4,}
+\DoxyCodeLine{00026\ \ \ CONSTANT\_Long\ =\ 5,}
+\DoxyCodeLine{00027\ \ \ CONSTANT\_Double\ =\ 6,}
+\DoxyCodeLine{00028\ \ \ CONSTANT\_NameAndType\ =\ 12,}
+\DoxyCodeLine{00029\ \ \ CONSTANT\_Utf8\ =\ 1,}
+\DoxyCodeLine{00030\ \ \ CONSTANT\_MethodHandle\ =\ 15,}
+\DoxyCodeLine{00031\ \ \ CONSTANT\_MethodType\ =\ 16,}
+\DoxyCodeLine{00032\ \ \ CONSTANT\_InvokeDynamic\ =\ 18,}
+\DoxyCodeLine{00033\ \ \ None\ =\ 0,}
+\DoxyCodeLine{00034\ \};}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \textcolor{comment}{//\ Estruturas\ do\ constant\ pool}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_constant_class_info}{ConstantClassInfo}}\ \{}
+\DoxyCodeLine{00039\ \ \ u2\ name\_index;}
+\DoxyCodeLine{00040\ \};}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_constant_fieldref_info}{ConstantFieldrefInfo}}\ \{}
+\DoxyCodeLine{00043\ \ \ u2\ class\_index;}
+\DoxyCodeLine{00044\ \ \ u2\ name\_and\_type\_index;}
+\DoxyCodeLine{00045\ \};}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_constant_methodref_info}{ConstantMethodrefInfo}}\ \{}
+\DoxyCodeLine{00048\ \ \ u2\ class\_index;}
+\DoxyCodeLine{00049\ \ \ u2\ name\_and\_type\_index;}
+\DoxyCodeLine{00050\ \};}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_constant_interface_methodref_info}{ConstantInterfaceMethodrefInfo}}\ \{}
+\DoxyCodeLine{00053\ \ \ u2\ class\_index;}
+\DoxyCodeLine{00054\ \ \ u2\ name\_and\_type\_index;}
+\DoxyCodeLine{00055\ \};}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_constant_name_and_type_info}{ConstantNameAndTypeInfo}}\ \{}
+\DoxyCodeLine{00058\ \ \ u2\ name\_index;}
+\DoxyCodeLine{00059\ \ \ u2\ descriptor\_index;}
+\DoxyCodeLine{00060\ \};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_constant_u_t_f8_info}{ConstantUTF8Info}}\ \{}
+\DoxyCodeLine{00063\ \ \ u2\ length;}
+\DoxyCodeLine{00064\ \ \ u1\ *bytes;}
+\DoxyCodeLine{00065\ \};}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_constant_string_info}{ConstantStringInfo}}\ \{}
+\DoxyCodeLine{00068\ \ \ u2\ string\_index;}
+\DoxyCodeLine{00069\ \};}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_constant_integer_info}{ConstantIntegerInfo}}\ \{}
+\DoxyCodeLine{00072\ \ \ u4\ bytes;}
+\DoxyCodeLine{00073\ \};}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_constant_float_info}{ConstantFloatInfo}}\ \{}
+\DoxyCodeLine{00076\ \ \ u4\ bytes;}
+\DoxyCodeLine{00077\ \};}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_constant_long_info}{ConstantLongInfo}}\ \{}
+\DoxyCodeLine{00080\ \ \ u4\ high\_bytes;}
+\DoxyCodeLine{00081\ \ \ u4\ low\_bytes;}
+\DoxyCodeLine{00082\ \};}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_constant_double_info}{ConstantDoubleInfo}}\ \{}
+\DoxyCodeLine{00085\ \ \ u4\ high\_bytes;}
+\DoxyCodeLine{00086\ \ \ u4\ low\_bytes;}
+\DoxyCodeLine{00087\ \};}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_empty_info}{EmptyInfo}}\ \textcolor{comment}{//\ Índice\ 0\ do\ pool\ de\ constantes}}
+\DoxyCodeLine{00090\ \{\};}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \textcolor{keyword}{union\ }\mbox{\hyperlink{union_constant_info}{ConstantInfo}}\ \{}
+\DoxyCodeLine{00093\ \ \ \mbox{\hyperlink{struct_empty_info}{EmptyInfo}}\ empty;}
+\DoxyCodeLine{00094\ \ \ \mbox{\hyperlink{struct_constant_class_info}{ConstantClassInfo}}\ class\_info;}
+\DoxyCodeLine{00095\ \ \ \mbox{\hyperlink{struct_constant_fieldref_info}{ConstantFieldrefInfo}}\ fieldref\_info;}
+\DoxyCodeLine{00096\ \ \ \mbox{\hyperlink{struct_constant_methodref_info}{ConstantMethodrefInfo}}\ methodref\_info;}
+\DoxyCodeLine{00097\ \ \ \mbox{\hyperlink{struct_constant_interface_methodref_info}{ConstantInterfaceMethodrefInfo}}\ interface\_methodref\_info;}
+\DoxyCodeLine{00098\ \ \ \mbox{\hyperlink{struct_constant_string_info}{ConstantStringInfo}}\ string\_info;}
+\DoxyCodeLine{00099\ \ \ \mbox{\hyperlink{struct_constant_integer_info}{ConstantIntegerInfo}}\ integer\_info;}
+\DoxyCodeLine{00100\ \ \ \mbox{\hyperlink{struct_constant_float_info}{ConstantFloatInfo}}\ float\_info;}
+\DoxyCodeLine{00101\ \ \ \mbox{\hyperlink{struct_constant_long_info}{ConstantLongInfo}}\ long\_info;}
+\DoxyCodeLine{00102\ \ \ \mbox{\hyperlink{struct_constant_double_info}{ConstantDoubleInfo}}\ double\_info;}
+\DoxyCodeLine{00103\ \ \ \mbox{\hyperlink{struct_constant_name_and_type_info}{ConstantNameAndTypeInfo}}\ name\_and\_type\_info;}
+\DoxyCodeLine{00104\ \ \ \mbox{\hyperlink{struct_constant_u_t_f8_info}{ConstantUTF8Info}}\ utf8\_info;}
+\DoxyCodeLine{00105\ \};}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \textcolor{keyword}{using\ }ConstantPoolEntry\ =\ std::pair<ConstantTag,\ ConstantInfo>;}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \textcolor{comment}{//\ FieldInfo}}
+\DoxyCodeLine{00110\ }
+\DoxyCodeLine{00111\ \textcolor{keyword}{enum}\ FieldAccessFlag\ :\ u2\ \{}
+\DoxyCodeLine{00112\ \ \ ACC\_Public\_Field\ =\ 0x0001,}
+\DoxyCodeLine{00113\ \ \ ACC\_Private\_Field\ =\ 0x0002,}
+\DoxyCodeLine{00114\ \ \ ACC\_Protected\_Field\ =\ 0x0004,}
+\DoxyCodeLine{00115\ \ \ ACC\_Static\_Field\ =\ 0x0008,}
+\DoxyCodeLine{00116\ \ \ ACC\_Final\_Field\ =\ 0x0010,}
+\DoxyCodeLine{00117\ \ \ ACC\_Volatile\_Field\ =\ 0x0040,}
+\DoxyCodeLine{00118\ \ \ ACC\_Transient\_Field\ =\ 0x0080,}
+\DoxyCodeLine{00119\ \ \ ACC\_Synthetic\_Field\ =\ 0x1000,}
+\DoxyCodeLine{00120\ \ \ ACC\_Enum\_Field\ =\ 0x4000,}
+\DoxyCodeLine{00121\ \};}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \textcolor{comment}{//\ AttributeInfo}}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_attribute_info}{AttributeInfo}};}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_exception_table_entry}{ExceptionTableEntry}}\ \{}
+\DoxyCodeLine{00128\ \ \ u2\ start\_pc;}
+\DoxyCodeLine{00129\ \ \ u2\ end\_pc;}
+\DoxyCodeLine{00130\ \ \ u2\ handler\_pc;}
+\DoxyCodeLine{00131\ \ \ u2\ catch\_type;}
+\DoxyCodeLine{00132\ \};}
+\DoxyCodeLine{00133\ }
+\DoxyCodeLine{00134\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_code_attribute}{CodeAttribute}}\ \{}
+\DoxyCodeLine{00135\ \ \ u2\ max\_stack;}
+\DoxyCodeLine{00136\ \ \ u2\ max\_locals;}
+\DoxyCodeLine{00137\ \ \ u4\ code\_length;}
+\DoxyCodeLine{00138\ \ \ std::vector<u1>\ code;}
+\DoxyCodeLine{00139\ \ \ u2\ exception\_table\_length;}
+\DoxyCodeLine{00140\ \ \ std::vector<ExceptionTableEntry>\ exception\_table;}
+\DoxyCodeLine{00141\ \ \ u2\ attributes\_count;}
+\DoxyCodeLine{00142\ \ \ std::vector<AttributeInfo>\ attributes;}
+\DoxyCodeLine{00143\ \};}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_line_number_table_entry}{LineNumberTableEntry}}\ \{}
+\DoxyCodeLine{00146\ \ \ u2\ start\_pc;}
+\DoxyCodeLine{00147\ \ \ u2\ line\_number;}
+\DoxyCodeLine{00148\ \};}
+\DoxyCodeLine{00149\ }
+\DoxyCodeLine{00150\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_line_number_table_attribute}{LineNumberTableAttribute}}\ \{}
+\DoxyCodeLine{00151\ \ \ u2\ attribute\_name\_index;}
+\DoxyCodeLine{00152\ \ \ u4\ attribute\_length;}
+\DoxyCodeLine{00153\ \ \ u2\ line\_number\_table\_length;}
+\DoxyCodeLine{00154\ \ \ std::vector<LineNumberTableEntry>\ line\_number\_table;}
+\DoxyCodeLine{00155\ \};}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_source_file_attribute}{SourceFileAttribute}}\ \{}
+\DoxyCodeLine{00158\ \ \ u2\ sourcefile\_index;}
+\DoxyCodeLine{00159\ \};}
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_unknown_attribute}{UnknownAttribute}}\ \{}
+\DoxyCodeLine{00162\ \ \ std::vector<u1>\ info;}
+\DoxyCodeLine{00163\ \};}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_constant_value_attribute}{ConstantValueAttribute}}\ \{}
+\DoxyCodeLine{00166\ \ \ u2\ constantvalue\_index;\ \textcolor{comment}{//\ indice\ para\ o\ pool\ de\ constantes}}
+\DoxyCodeLine{00167\ \};}
+\DoxyCodeLine{00168\ }
+\DoxyCodeLine{00169\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_synthetic_attribute}{SyntheticAttribute}}\ \{}
+\DoxyCodeLine{00170\ \ \ \textcolor{comment}{//\ não\ tem\ corpo,\ seu\ LEN\ é\ 0.}}
+\DoxyCodeLine{00171\ \};}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_exceptions_attribute}{ExceptionsAttribute}}\ \{}
+\DoxyCodeLine{00174\ \ \ u2\ number\_of\_exceptions;}
+\DoxyCodeLine{00175\ \ \ std::vector<u2>\ exception\_index\_table;}
+\DoxyCodeLine{00176\ \};}
+\DoxyCodeLine{00177\ }
+\DoxyCodeLine{00178\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_inner_class_info}{InnerClassInfo}}\ \{}
+\DoxyCodeLine{00179\ \ \ u2\ inner\_class\_info\_index;}
+\DoxyCodeLine{00180\ \ \ u2\ outer\_class\_info\_index;}
+\DoxyCodeLine{00181\ \ \ u2\ inner\_name\_index;}
+\DoxyCodeLine{00182\ \ \ u2\ inner\_class\_access\_flags;}
+\DoxyCodeLine{00183\ \};}
+\DoxyCodeLine{00184\ }
+\DoxyCodeLine{00185\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_inner_classes_attribute}{InnerClassesAttribute}}\ \{}
+\DoxyCodeLine{00186\ \ \ u2\ number\_of\_classes;}
+\DoxyCodeLine{00187\ \ \ std::vector<InnerClassInfo>\ classes;}
+\DoxyCodeLine{00188\ \};}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \textcolor{keyword}{enum\ class}\ VTTag\ :\ u1\ \{}
+\DoxyCodeLine{00191\ \ \ Top\ =\ 0,}
+\DoxyCodeLine{00192\ \ \ Integer\ =\ 1,}
+\DoxyCodeLine{00193\ \ \ Float\ =\ 2,}
+\DoxyCodeLine{00194\ \ \ Double\ =\ 3,}
+\DoxyCodeLine{00195\ \ \ Long\ =\ 4,}
+\DoxyCodeLine{00196\ \ \ Null\ =\ 5,}
+\DoxyCodeLine{00197\ \ \ UninitializedThis\ =\ 6,}
+\DoxyCodeLine{00198\ \ \ Object\ =\ 7,}
+\DoxyCodeLine{00199\ \ \ Uninitialized\ =\ 8}
+\DoxyCodeLine{00200\ \};}
+\DoxyCodeLine{00201\ }
+\DoxyCodeLine{00202\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_verification_type_info}{VerificationTypeInfo}}\ \{}
+\DoxyCodeLine{00203\ \ \ VTTag\ tag;}
+\DoxyCodeLine{00204\ \ \ u2\ cpool\_index\ =\ 0;}
+\DoxyCodeLine{00205\ \ \ u2\ offset\ =\ 0;}
+\DoxyCodeLine{00206\ \};}
+\DoxyCodeLine{00207\ }
+\DoxyCodeLine{00208\ \textcolor{keyword}{enum\ class}\ SMFKind\ :\ u1\ \{}
+\DoxyCodeLine{00209\ \ \ Same,}
+\DoxyCodeLine{00210\ \ \ SameLocals1StackItem,}
+\DoxyCodeLine{00211\ \ \ SameLocals1StackItemExt,}
+\DoxyCodeLine{00212\ \ \ Chop,}
+\DoxyCodeLine{00213\ \ \ SameExt,}
+\DoxyCodeLine{00214\ \ \ Append,}
+\DoxyCodeLine{00215\ \ \ Full}
+\DoxyCodeLine{00216\ \};}
+\DoxyCodeLine{00217\ }
+\DoxyCodeLine{00218\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_stack_map_frame}{StackMapFrame}}\ \{}
+\DoxyCodeLine{00219\ \ \ SMFKind\ kind;}
+\DoxyCodeLine{00220\ \ \ u1\ frame\_type;}
+\DoxyCodeLine{00221\ \ \ u2\ offset\_delta\ =\ 0;}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \ \ \mbox{\hyperlink{struct_verification_type_info}{VerificationTypeInfo}}\ stack\_item;}
+\DoxyCodeLine{00224\ }
+\DoxyCodeLine{00225\ \ \ std::vector<VerificationTypeInfo>\ locals\_appended;}
+\DoxyCodeLine{00226\ }
+\DoxyCodeLine{00227\ \ \ std::vector<VerificationTypeInfo>\ locals\_full;}
+\DoxyCodeLine{00228\ \ \ std::vector<VerificationTypeInfo>\ stack\_full;}
+\DoxyCodeLine{00229\ \};}
+\DoxyCodeLine{00230\ }
+\DoxyCodeLine{00231\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_stack_map_table_info}{StackMapTableInfo}}\ \{}
+\DoxyCodeLine{00232\ \ \ u2\ number\_of\_entries\ =\ 0;}
+\DoxyCodeLine{00233\ \ \ std::vector<StackMapFrame>\ entries;}
+\DoxyCodeLine{00234\ \};}
+\DoxyCodeLine{00235\ }
+\DoxyCodeLine{00236\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_local_variable_table_entry}{LocalVariableTableEntry}}\ \{}
+\DoxyCodeLine{00237\ \ \ u2\ start\_pc;}
+\DoxyCodeLine{00238\ \ \ u2\ length;}
+\DoxyCodeLine{00239\ \ \ u2\ name\_index;}
+\DoxyCodeLine{00240\ \ \ u2\ descriptor\_index;}
+\DoxyCodeLine{00241\ \ \ u2\ index;}
+\DoxyCodeLine{00242\ \};}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00244\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_local_variable_table_info}{LocalVariableTableInfo}}\ \{}
+\DoxyCodeLine{00245\ \ \ u2\ local\_variable\_table\_length;}
+\DoxyCodeLine{00246\ \ \ std::vector<LocalVariableTableEntry>\ local\_variable\_table;}
+\DoxyCodeLine{00247\ \};}
+\DoxyCodeLine{00248\ }
+\DoxyCodeLine{00249\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_attribute_info}{AttributeInfo}}\ \{}
+\DoxyCodeLine{00250\ \ \ u2\ attribute\_name\_index;}
+\DoxyCodeLine{00251\ \ \ std::string\ attribute\_name;}
+\DoxyCodeLine{00252\ \ \ u4\ attribute\_length;}
+\DoxyCodeLine{00253\ }
+\DoxyCodeLine{00254\ \ \ \mbox{\hyperlink{struct_code_attribute}{CodeAttribute}}\ code\_info;}
+\DoxyCodeLine{00255\ \ \ \mbox{\hyperlink{struct_source_file_attribute}{SourceFileAttribute}}\ sourcefile\_info;}
+\DoxyCodeLine{00256\ \ \ \mbox{\hyperlink{struct_constant_value_attribute}{ConstantValueAttribute}}\ constantvalue\_info;}
+\DoxyCodeLine{00257\ \ \ \mbox{\hyperlink{struct_synthetic_attribute}{SyntheticAttribute}}\ synthetic\_info;}
+\DoxyCodeLine{00258\ \ \ \mbox{\hyperlink{struct_line_number_table_attribute}{LineNumberTableAttribute}}\ linenumbertable\_info;}
+\DoxyCodeLine{00259\ \ \ \mbox{\hyperlink{struct_stack_map_table_info}{StackMapTableInfo}}\ stackmaptable\_info;}
+\DoxyCodeLine{00260\ \ \ \mbox{\hyperlink{struct_local_variable_table_info}{LocalVariableTableInfo}}\ localvariabletable\_info;}
+\DoxyCodeLine{00261\ \ \ \mbox{\hyperlink{struct_unknown_attribute}{UnknownAttribute}}\ unknown\_info;}
+\DoxyCodeLine{00262\ \ \ \mbox{\hyperlink{struct_exceptions_attribute}{ExceptionsAttribute}}\ exceptions\_info;}
+\DoxyCodeLine{00263\ \ \ \mbox{\hyperlink{struct_inner_classes_attribute}{InnerClassesAttribute}}\ innerclasses\_info;}
+\DoxyCodeLine{00264\ \};}
+\DoxyCodeLine{00265\ }
+\DoxyCodeLine{00266\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_field_info}{FieldInfo}}\ \{}
+\DoxyCodeLine{00267\ \ \ FieldAccessFlag\ access\_flags;}
+\DoxyCodeLine{00268\ \ \ u2\ name\_index;}
+\DoxyCodeLine{00269\ \ \ u2\ descriptor\_index;}
+\DoxyCodeLine{00270\ \ \ u2\ attributes\_count;}
+\DoxyCodeLine{00271\ \ \ std::vector<AttributeInfo>\ attributes;}
+\DoxyCodeLine{00272\ \};}
+\DoxyCodeLine{00273\ }
+\DoxyCodeLine{00274\ \textcolor{comment}{//\ MethodInfo}}
+\DoxyCodeLine{00275\ }
+\DoxyCodeLine{00276\ \textcolor{keyword}{enum}\ MethodAccessFlag\ :\ u2\ \{}
+\DoxyCodeLine{00277\ \ \ ACC\_Public\_Method\ =\ 0x0001,}
+\DoxyCodeLine{00278\ \ \ ACC\_Private\_Method\ =\ 0x0002,}
+\DoxyCodeLine{00279\ \ \ ACC\_Protected\_Method\ =\ 0x0004,}
+\DoxyCodeLine{00280\ \ \ ACC\_Static\_Method\ =\ 0x0008,}
+\DoxyCodeLine{00281\ \ \ ACC\_Final\_Method\ =\ 0x0010,}
+\DoxyCodeLine{00282\ \ \ ACC\_Synchronized\_Method\ =\ 0x0020,}
+\DoxyCodeLine{00283\ \ \ ACC\_Bridge\_Method\ =\ 0x0040,}
+\DoxyCodeLine{00284\ \ \ ACC\_Varargs\_Method\ =\ 0x0080,}
+\DoxyCodeLine{00285\ \ \ ACC\_Native\_Method\ =\ 0x0100,}
+\DoxyCodeLine{00286\ \ \ ACC\_Abstract\_Method\ =\ 0x0400,}
+\DoxyCodeLine{00287\ \ \ ACC\_Strict\_Method\ =\ 0x0800,}
+\DoxyCodeLine{00288\ \ \ ACC\_Synthetic\_Method\ =\ 0x1000,}
+\DoxyCodeLine{00289\ \};}
+\DoxyCodeLine{00290\ }
+\DoxyCodeLine{00291\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_method_info}{MethodInfo}}\ \{}
+\DoxyCodeLine{00292\ \ \ MethodAccessFlag\ access\_flags;}
+\DoxyCodeLine{00293\ \ \ u2\ name\_index;}
+\DoxyCodeLine{00294\ \ \ u2\ descriptor\_index;}
+\DoxyCodeLine{00295\ \ \ u2\ attributes\_count;}
+\DoxyCodeLine{00296\ \ \ std::vector<AttributeInfo>\ attributes;}
+\DoxyCodeLine{00297\ }
+\DoxyCodeLine{00298\ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_code_attribute}{CodeAttribute}}\ *find\_code\_attribute()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00299\ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ \&attr\ :\ attributes)\ \{}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (attr.attribute\_name\ ==\ \textcolor{stringliteral}{"{}Code"{}})\ \{}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \&attr.code\_info;}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00303\ \ \ \ \ \}}
+\DoxyCodeLine{00304\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00305\ \ \ \}}
+\DoxyCodeLine{00306\ \};}
+\DoxyCodeLine{00307\ }
+\DoxyCodeLine{00308\ \textcolor{comment}{//\ ClassFile}}
+\DoxyCodeLine{00309\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_class_file}{ClassFile}}\ \{}
+\DoxyCodeLine{00310\ \ \ u4\ magic;}
+\DoxyCodeLine{00311\ \ \ u2\ minor\_version;}
+\DoxyCodeLine{00312\ \ \ u2\ major\_version;}
+\DoxyCodeLine{00313\ \ \ u2\ constant\_pool\_count;}
+\DoxyCodeLine{00314\ \ \ std::vector<ConstantPoolEntry>\ constant\_pool;}
+\DoxyCodeLine{00315\ \ \ u2\ access\_flags;}
+\DoxyCodeLine{00316\ \ \ u2\ this\_class;}
+\DoxyCodeLine{00317\ \ \ u2\ super\_class;}
+\DoxyCodeLine{00318\ \ \ u2\ interfaces\_count;}
+\DoxyCodeLine{00319\ \ \ std::vector<u2>\ interfaces;}
+\DoxyCodeLine{00320\ \ \ u2\ fields\_count;}
+\DoxyCodeLine{00321\ \ \ std::vector<FieldInfo>\ fields;}
+\DoxyCodeLine{00322\ \ \ u2\ methods\_count;}
+\DoxyCodeLine{00323\ \ \ std::vector<MethodInfo>\ methods;}
+\DoxyCodeLine{00324\ \ \ u2\ attributes\_count;}
+\DoxyCodeLine{00325\ \ \ std::vector<AttributeInfo>\ attributes;}
+\DoxyCodeLine{00326\ }
+\DoxyCodeLine{00327\ \ \ std::string\ resolve\_utf8(u2\ index)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00328\ \ \ \ \ \textcolor{keywordflow}{if}\ (index\ ==\ 0\ ||\ index\ >=\ constant\_pool.size())}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ \ \ \ \ \textcolor{keyword}{const}\ \textcolor{keyword}{auto}\ \&entry\ =\ constant\_pool[index];}
+\DoxyCodeLine{00332\ }
+\DoxyCodeLine{00333\ \ \ \ \ \textcolor{keywordflow}{switch}\ (entry.first)\ \{}
+\DoxyCodeLine{00334\ \ \ \ \ \textcolor{keywordflow}{case}\ ConstantTag::CONSTANT\_Class:}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ resolve\_utf8(entry.second.class\_info.name\_index);}
+\DoxyCodeLine{00336\ \ \ \ \ \textcolor{keywordflow}{case}\ ConstantTag::CONSTANT\_Fieldref:}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ resolve\_utf8(entry.second.fieldref\_info.name\_and\_type\_index);}
+\DoxyCodeLine{00338\ \ \ \ \ \textcolor{keywordflow}{case}\ ConstantTag::CONSTANT\_Methodref:}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ resolve\_utf8(entry.second.methodref\_info.name\_and\_type\_index);}
+\DoxyCodeLine{00340\ \ \ \ \ \textcolor{keywordflow}{case}\ ConstantTag::CONSTANT\_InterfaceMethodref:}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ resolve\_utf8(}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \ \ entry.second.interface\_methodref\_info.name\_and\_type\_index);}
+\DoxyCodeLine{00343\ \ \ \ \ \textcolor{keywordflow}{case}\ ConstantTag::CONSTANT\_NameAndType:}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ resolve\_utf8(entry.second.name\_and\_type\_info.descriptor\_index)\ +}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}\ "{}}\ +\ resolve\_utf8(entry.second.name\_and\_type\_info.name\_index);}
+\DoxyCodeLine{00346\ \ \ \ \ \textcolor{keywordflow}{case}\ ConstantTag::CONSTANT\_Utf8:\ \{}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_constant_u_t_f8_info}{ConstantUTF8Info}}\ \&utf\ =\ entry.second.utf8\_info;}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ std::string(\textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\textcolor{keywordtype}{char}\ *\textcolor{keyword}{>}(utf.bytes),\ utf.length);}
+\DoxyCodeLine{00349\ \ \ \ \ \}}
+\DoxyCodeLine{00350\ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00352\ \ \ \ \ \}}
+\DoxyCodeLine{00353\ }
+\DoxyCodeLine{00354\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00355\ \ \ \}}
+\DoxyCodeLine{00356\ \};}
+
+\end{DoxyCode}
