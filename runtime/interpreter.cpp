@@ -1,12 +1,96 @@
 #include "interpreter.h"
 #include "../classfile/class_parser.h"
 #include "./array.h"
+#include "./debug.h"
+#include "./native_methods.h"
 #include "./runtime_class_types.h"
 #include <cmath>
 #include <cstring>
+#include <iostream>
+#include <string>
+#include <unordered_map>
+
+namespace {
+std::string format_method_id(const RuntimeMethod *method) {
+  if (!method)
+    return "<unknown-method>";
+  std::string class_name = method->owner ? method->owner->name : "<no-owner>";
+  return class_name + "." + method->name + " " + method->descriptor;
+}
+
+void log_native_invocation(const char *opcode, const RuntimeMethod *method) {
+  DEBUG_LOG("[JVM] " << opcode
+                     << " resolved a native method: "
+                     << format_method_id(method));
+}
+
+RuntimeMethod *lookup_virtual_method(RuntimeClass *klass,
+                                     const std::string &key) {
+  for (auto cur = klass; cur != nullptr; cur = cur->super_class) {
+    auto it = cur->methods.find(key);
+    if (it != cur->methods.end())
+      return &it->second;
+  }
+  return nullptr;
+}
+
+RuntimeMethod *resolve_method_virtual(RuntimeClass *current_class, u2 index,
+                                      Thread *thread) {
+  if (!current_class || !current_class->class_file)
+    throw std::runtime_error("resolve_method_virtual: missing class file");
+  auto &cp = current_class->class_file->constant_pool;
+  if (index == 0 || index >= cp.size() ||
+      cp[index].first != ConstantTag::CONSTANT_Methodref)
+    throw std::runtime_error("resolve_method_virtual: invalid cp index");
+
+  u2 class_index = cp[index].second.methodref_info.class_index;
+  u2 nat_idx = cp[index].second.methodref_info.name_and_type_index;
+
+  std::string class_name =
+      current_class->class_file->resolve_utf8(
+          cp[class_index].second.class_info.name_index);
+  std::string name = current_class->class_file->resolve_utf8(
+      cp[nat_idx].second.name_and_type_info.name_index);
+  std::string desc = current_class->class_file->resolve_utf8(
+      cp[nat_idx].second.name_and_type_info.descriptor_index);
+  std::string key = desc + " " + name;
+
+  RuntimeClass *target = nullptr;
+  if (thread && thread->runtime) {
+    if (auto loaded = thread->runtime->method_area->getClassRef(class_name)) {
+      target = loaded;
+    } else {
+      target = thread->runtime->class_loader->load_class(class_name);
+    }
+  }
+  if (!target)
+    throw std::runtime_error("resolve_method_virtual: class not found " +
+                             class_name);
+
+  auto *method = lookup_virtual_method(target, key);
+  if (!method)
+    throw std::runtime_error("resolve_method_virtual: method not found " +
+                             key + " in " + class_name);
+  return method;
+}
+
+NativeMethod find_native(const std::string &key) {
+  static std::unordered_map<std::string, NativeMethod> native_methods;
+  static bool initialized = false;
+  if (!initialized) {
+    load_map(&native_methods);
+    initialized = true;
+  }
+  auto it = native_methods.find(key);
+  return it == native_methods.end() ? nullptr : it->second;
+}
+} // namespace
 
 void Interpreter::execute(Frame &frame) {
   while (true) {
+    if (thread->call_stack.empty() || thread->call_stack.back() != &frame)
+      return;
+
     const u1 *code = frame.method->code->code.data();
     u1 opcode = code[frame.pc];
     auto it = opcode_table.find(opcode);
@@ -305,7 +389,8 @@ void exec_sipush(Thread *t, Frame &frame) {
 }
 
 void exec_ldc(Thread *t, Frame &frame) {
-  u1 index = frame.method->code->code[frame.pc++];
+  const u1 *code = frame.method->code->code.data();
+  u1 index = code[frame.pc + 1];
   auto &entry = frame.current_class->class_file->constant_pool[index];
   switch (entry.first) {
   case ConstantTag::CONSTANT_Integer:
@@ -317,15 +402,45 @@ void exec_ldc(Thread *t, Frame &frame) {
     break;
 
   case ConstantTag::CONSTANT_String:
-    break;
-  /*std::string frase = frame.current_class->class_file->resolve_utf8(index);
-      RuntimeObject* rf =
-      frame.operand_stack.push_ref(rf);
+    // Materializa java/lang/String a partir do literal Utf8 referenciado
+    if (!frame.current_class || !frame.current_class->class_file)
+      throw std::runtime_error("ldc: missing class file");
+
+    if (t && t->runtime) {
+      RuntimeClass *string_class =
+          t->runtime->method_area->getClassRef("java/lang/String");
+      if (!string_class) {
+        string_class = t->runtime->class_loader->load_class("java/lang/String");
+      }
+
+      u2 str_idx = entry.second.string_info.string_index;
+      std::string literal = frame.current_class->class_file->resolve_utf8(str_idx);
+
+      RuntimeObject *str_obj = nullptr;
+      if (string_class) {
+        str_obj = new RuntimeObject(string_class);
+        if (auto value_field = string_class->find_field("value", "[B")) {
+          RuntimeArray *bytes = RuntimeArray::create_primitive(
+              nullptr, literal.size(), sizeof(u1));
+          for (size_t j = 0; j < literal.size(); ++j) {
+            bytes->write_primitive<u1>(j, static_cast<u1>(literal[j]));
+          }
+          str_obj->write_field<u4>(
+              *value_field,
+              static_cast<u4>(reinterpret_cast<uintptr_t>(bytes)));
+        }
+      }
+
+      frame.operand_stack.push_ref(str_obj);
       break;
-  */
+    }
+    throw std::runtime_error("ldc: runtime not available for String constant");
+
   default:
     throw std::runtime_error("ldc: constant type not supported");
   }
+
+  frame.pc += 2;
 }
 
 void exec_ldc_w(Thread *t, Frame &frame) {}
@@ -529,12 +644,12 @@ void exec_daload(Thread *t, Frame &frame) {
 
 void exec_aaload(Thread *t, Frame &frame) {
   int32_t index = frame.operand_stack.pop_int();
-  RuntimeObject *array_ref = frame.operand_stack.pop_ref();
+  auto *array_ref =
+      reinterpret_cast<RuntimeArray *>(frame.operand_stack.pop_ref());
   if (!array_ref)
     throw std::runtime_error("aaload: null array reference");
-  RuntimeObject *value = nullptr;
-  std::memcpy(&value, &array_ref->data[index * sizeof(RuntimeObject *)],
-              sizeof(RuntimeObject *));
+
+  RuntimeObject *value = array_ref->read_ref(static_cast<size_t>(index));
   frame.operand_stack.push_ref(value);
   frame.pc++;
 }
@@ -770,7 +885,16 @@ void exec_iastore(Thread *t, Frame &frame) {}
 void exec_lastore(Thread *t, Frame &frame) {}
 void exec_fastore(Thread *t, Frame &frame) {}
 void exec_dastore(Thread *t, Frame &frame) {}
-void exec_aastore(Thread *t, Frame &frame) {}
+void exec_aastore(Thread *t, Frame &frame) {
+  RuntimeObject *value = frame.operand_stack.pop_ref();
+  int32_t index = frame.operand_stack.pop_int();
+  auto *array_ref =
+      reinterpret_cast<RuntimeArray *>(frame.operand_stack.pop_ref());
+  if (!array_ref)
+    throw std::runtime_error("aastore: null array reference");
+  array_ref->write_ref(static_cast<size_t>(index), value);
+  frame.pc++;
+}
 void exec_bastore(Thread *t, Frame &frame) {}
 void exec_castore(Thread *t, Frame &frame) {}
 void exec_sastore(Thread *t, Frame &frame) {}
@@ -1670,6 +1794,22 @@ void exec_getstatic(Thread *t, Frame &frame) {
     u4 v = 0;
     std::memcpy(&v, &field->owner->static_data[field->static_offset],
                 sizeof(u4));
+
+    // Auto-initialize System.out if still null to avoid missing <clinit>
+    if (v == 0 && field->owner && field->owner->name == "java/lang/System" &&
+        field->name == "out" && t && t->runtime) {
+      RuntimeClass *ps_class =
+          t->runtime->class_loader->load_class("java/io/PrintStream");
+      if (ps_class) {
+        RuntimeObject *ps_obj = new RuntimeObject(ps_class);
+        u4 ps_bits = static_cast<u4>(reinterpret_cast<uintptr_t>(ps_obj));
+        std::memcpy(&field->owner->static_data[field->static_offset], &ps_bits,
+                    sizeof(u4));
+        v = ps_bits;
+        DEBUG_LOG("[JVM] Lazy-initialized java/lang/System.out");
+      }
+    }
+
     frame.operand_stack.push_int(static_cast<int32_t>(v));
   }
 
@@ -1757,7 +1897,14 @@ void exec_invokespecial(Thread *t, Frame &frame) {
              frame.method->code->code[frame.pc + 2];
 
   RuntimeMethod *method = resolve_method_special(frame.current_class, index, t);
-  if (!method || !method->code)
+  if (!method)
+    throw std::runtime_error("invokespecial: method not found");
+  if (method->access_flags & ACC_Native_Method) {
+    log_native_invocation("invokespecial", method);
+    throw std::runtime_error(
+        "invokespecial: native method execution not implemented");
+  }
+  if (!method->code)
     throw std::runtime_error("invokespecial: method has no code");
 
   std::vector<Slot> locals(method->code->max_locals, 0);
@@ -1780,7 +1927,14 @@ void exec_invokestatic(Thread *t, Frame &frame) {
              frame.method->code->code[frame.pc + 2];
 
   RuntimeMethod *method = resolve_method_static(frame.current_class, index, t);
-  if (!method || !method->code)
+  if (!method)
+    throw std::runtime_error("invokestatic: method not found");
+  if (method->access_flags & ACC_Native_Method) {
+    log_native_invocation("invokestatic", method);
+    throw std::runtime_error(
+        "invokestatic: native method execution not implemented");
+  }
+  if (!method->code)
     throw std::runtime_error("invokestatic: method has no code");
 
   std::vector<Slot> locals(method->code->max_locals, 0);
@@ -1803,9 +1957,67 @@ void exec_invokedynamic(Thread *t, Frame &frame) {
 }
 
 void exec_invokevirtual(Thread *t, Frame &frame) {
-  (void)t;
-  (void)frame;
-  throw std::runtime_error("invokevirtual not implemented");
+  const u1 *code = frame.method->code->code.data();
+  u2 index = (code[frame.pc + 1] << 8) | code[frame.pc + 2];
+
+  RuntimeMethod *resolved = resolve_method_virtual(frame.current_class, index, t);
+  if (!resolved)
+    throw std::runtime_error("invokevirtual: method resolution failed");
+
+  int arg_slots = resolved->arg_slots;
+  if (arg_slots <= 0)
+    throw std::runtime_error("invokevirtual: invalid arg_slots");
+
+  // Pop arguments (including this) from caller operand stack.
+  std::vector<Slot> locals(arg_slots, 0);
+  for (int i = arg_slots - 1; i >= 0; --i) {
+    locals[i] = frame.operand_stack.stack.back();
+    frame.operand_stack.stack.pop_back();
+  }
+
+  RuntimeObject *target_obj = reinterpret_cast<RuntimeObject *>(
+      static_cast<uintptr_t>(locals[0]));
+  if (!target_obj)
+    throw std::runtime_error("invokevirtual: null target");
+
+  std::string key = resolved->descriptor + " " + resolved->name;
+  RuntimeMethod *target_method =
+      lookup_virtual_method(target_obj->klass, key);
+  if (!target_method)
+    throw std::runtime_error("invokevirtual: target method not found in class");
+
+  // Native?
+  if (target_method->access_flags & ACC_Native_Method) {
+    std::string native_key =
+        target_method->descriptor + " " + target_method->owner->name + "." +
+        target_method->name;
+    NativeMethod nm = find_native(native_key);
+    if (!nm)
+      throw std::runtime_error("invokevirtual: native method not registered");
+
+    Frame *native_frame = new Frame(target_method, target_method->owner);
+    native_frame->init(static_cast<u4>(target_method->arg_slots),
+                       static_cast<u4>(target_method->arg_slots));
+    native_frame->local_vars.swap(locals);
+
+    t->push_frame(native_frame);
+    log_native_invocation("invokevirtual", target_method);
+    nm(*native_frame);
+    t->pop_frame();
+    frame.pc += 3;
+    return;
+  }
+
+  if (!target_method->code)
+    throw std::runtime_error("invokevirtual: method has no code");
+
+  Frame *new_frame = new Frame(target_method, target_method->owner);
+  new_frame->init(target_method->code->max_locals,
+                  target_method->code->max_stack);
+  new_frame->local_vars.swap(locals);
+
+  t->push_frame(new_frame);
+  frame.pc += 3;
 }
 
 void exec_invokeinterface(Thread *t, Frame &frame) {

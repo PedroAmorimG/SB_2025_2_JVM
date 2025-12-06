@@ -1,6 +1,7 @@
 #include "./classfile/class_parser.h"
 #include "./classfile/class_viewer.h"
 #include "./classfile/classfile_types.h"
+#include "./runtime/debug.h"
 #include "./runtime/runtime_class_types.h"
 #include <cstring>
 #include <fstream>
@@ -15,6 +16,7 @@ void printHelp(const std::string &progName) {
             << "  -f, --filepath <path>   Path to the .class file\n"
             << "  -i, --interactive       Execute the JVM (run main) instead "
                "of just showing\n"
+            << "  -d, --debug             Enable verbose JVM debug logs\n"
             << "  -a, --args <args...>    Arguments forwarded to "
                "Java main(String[])\n"
             << "  -h, --help              Show this help message\n\n"
@@ -41,6 +43,9 @@ int main(int argc, char *argv[]) {
 
     } else if (arg == "--interactive" || arg == "-i") {
       execMode = true;
+
+    } else if (arg == "--debug" || arg == "-d") {
+      g_debug_enabled = true;
 
     } else if (arg == "--args" || arg == "-a") {
       for (++i; i < argc; ++i) {

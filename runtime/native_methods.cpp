@@ -3,6 +3,12 @@
 #include <cstring>
 #include <iostream>
 #include <string>
+#include "./debug.h"
+
+static void log_native_call(const char *id) {
+  if (g_debug_enabled)
+    std::cerr << "[JVM] Native call: " << id << std::endl;
+}
 
 // Chaves para mapear métodos nativos.
 // Formato: "<descriptor> <class>/<method>"
@@ -45,9 +51,13 @@ static std::string string_from_value(RuntimeObject *str_obj) {
                      arr->length);
 }
 
-void print_ln(Frame &frame) { std::cout << std::endl; }
+void print_ln(Frame &frame) {
+  log_native_call("java/io/PrintStream.println()V");
+  std::cout << std::endl;
+}
 
 void print_str_ln(Frame &frame) {
+  log_native_call("java/io/PrintStream.println(Ljava/lang/String;)V");
   auto ref_bits = frame.local_vars.size() > 1 ? frame.local_vars[1] : 0;
   auto str_obj =
       reinterpret_cast<RuntimeObject *>(static_cast<uintptr_t>(ref_bits));
@@ -55,12 +65,14 @@ void print_str_ln(Frame &frame) {
 }
 
 void print_int_ln(Frame &frame) {
+  log_native_call("java/io/PrintStream.println(I)V");
   int32_t value = static_cast<int32_t>(
       frame.local_vars.size() > 1 ? frame.local_vars[1] : 0);
   std::cout << value << std::endl;
 }
 
 void print_lg_ln(Frame &frame) {
+  log_native_call("java/io/PrintStream.println(J)V");
   int64_t value = 0;
   if (frame.local_vars.size() > 2) {
     u4 high = frame.local_vars[1];
@@ -71,12 +83,14 @@ void print_lg_ln(Frame &frame) {
 }
 
 void print_bl_ln(Frame &frame) {
+  log_native_call("java/io/PrintStream.println(Z)V");
   int32_t value = static_cast<int32_t>(
       frame.local_vars.size() > 1 ? frame.local_vars[1] : 0);
   std::cout << (value != 0 ? "true" : "false") << std::endl;
 }
 
 void print_fl_ln(Frame &frame) {
+  log_native_call("java/io/PrintStream.println(F)V");
   float value = 0.0f;
   if (frame.local_vars.size() > 1) {
     u4 bits = frame.local_vars[1];
@@ -86,6 +100,7 @@ void print_fl_ln(Frame &frame) {
 }
 
 void print_db_ln(Frame &frame) {
+  log_native_call("java/io/PrintStream.println(D)V");
   double value = 0.0;
   if (frame.local_vars.size() > 2) {
     u4 high = frame.local_vars[1];
@@ -97,6 +112,7 @@ void print_db_ln(Frame &frame) {
 }
 
 void str_len(Frame &frame) {
+  log_native_call("java/lang/String.length()I");
   auto self_bits = frame.local_vars.size() > 0 ? frame.local_vars[0] : 0;
   auto str_obj =
       reinterpret_cast<RuntimeObject *>(static_cast<uintptr_t>(self_bits));
@@ -106,6 +122,7 @@ void str_len(Frame &frame) {
 }
 
 void str_char_at(Frame &frame) {
+  log_native_call("java/lang/String.charAt(I)C");
   auto self_bits = frame.local_vars.size() > 0 ? frame.local_vars[0] : 0;
   auto str_obj =
       reinterpret_cast<RuntimeObject *>(static_cast<uintptr_t>(self_bits));
@@ -123,6 +140,7 @@ void str_char_at(Frame &frame) {
 }
 
 void str_eq(Frame &frame) {
+  log_native_call("java/lang/String.equals(Ljava/lang/Object;)Z");
   auto self_bits = frame.local_vars.size() > 0 ? frame.local_vars[0] : 0;
   auto other_bits = frame.local_vars.size() > 1 ? frame.local_vars[1] : 0;
   auto self_obj =
@@ -149,6 +167,7 @@ void str_eq(Frame &frame) {
 }
 
 void str_get_bytes(Frame &frame) {
+  log_native_call("java/lang/String.getBytes()[B");
   auto self_bits = frame.local_vars.size() > 0 ? frame.local_vars[0] : 0;
   auto str_obj =
       reinterpret_cast<RuntimeObject *>(static_cast<uintptr_t>(self_bits));

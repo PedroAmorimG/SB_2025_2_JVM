@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../classfile/classfile_types.h"
+#include "./debug.h"
 #include <cstring>
 #include <memory>
 #include <string>
@@ -95,9 +96,8 @@ public:
   std::unordered_map<std::string, RuntimeMethod> methods;
 
   RuntimeClass()
-      : name(std::move(name)), super_name(std::move(super_name)),
-        access_flags(access_flags), super_class(nullptr),
-        class_file(std::move(class_file)), fields(), methods() {}
+      : name(), super_name(), access_flags(0), super_class(nullptr),
+        class_file(nullptr), fields(), methods() {}
 
   // Busca de método/field
   RuntimeMethod *find_method(const std::string &name,
@@ -252,9 +252,43 @@ struct Thread {
   Thread(Runtime *rt);
   ~Thread();
 
-  void push_frame(Frame *f) { call_stack.push_back(f); }
+  void push_frame(Frame *f) {
+    call_stack.push_back(f);
+
+    if (!f) {
+      DEBUG_LOG("[JVM] Push frame -> <null> | depth=" << call_stack.size());
+      return;
+    }
+
+    std::string class_name =
+        f->current_class ? f->current_class->name : "<unknown-class>";
+    std::string method_name = f->method ? f->method->name : "<unknown-method>";
+    std::string descriptor =
+        f->method ? (" " + f->method->descriptor) : std::string{};
+
+    DEBUG_LOG("[JVM] Push frame -> " << class_name << "." << method_name
+              << descriptor << " | depth=" << call_stack.size());
+  }
   void pop_frame() {
+    if (call_stack.empty()) {
+      if (g_debug_enabled)
+        std::cerr
+            << "[JVM] Pop frame requested but call stack is already empty\n";
+      return;
+    }
+
     Frame *top = call_stack.back();
+
+    std::string class_name =
+        top && top->current_class ? top->current_class->name : "<unknown-class>";
+    std::string method_name =
+        top && top->method ? top->method->name : "<unknown-method>";
+    std::string descriptor =
+        top && top->method ? (" " + top->method->descriptor) : std::string{};
+
+    DEBUG_LOG("[JVM] Pop frame <- " << class_name << "." << method_name
+              << descriptor << " | depth=" << (call_stack.size() - 1));
+
     call_stack.pop_back();
     delete top;
   }

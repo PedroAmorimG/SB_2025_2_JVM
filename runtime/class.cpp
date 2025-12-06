@@ -1,4 +1,5 @@
 #include "../classfile/class_parser.h"
+#include "./debug.h"
 #include "./runtime_class_types.h"
 
 #include <iostream>
@@ -34,6 +35,7 @@ RuntimeField *RuntimeClass::find_field(const std::string &name,
 }
 
 RuntimeClass *BootstrapClassLoader::load_class(const std::string &name) {
+  DEBUG_LOG("[JVM] load_class entry: " << name);
   auto ends_with_class = [](const std::string &p) {
     return p.size() >= 6 && p.compare(p.size() - 6, 6, ".class") == 0;
   };
@@ -59,18 +61,26 @@ RuntimeClass *BootstrapClassLoader::load_class(const std::string &name) {
       path += ".class";
   }
 
-  ClassParser parser(path);
-  std::unique_ptr<ClassFile> cf(new ClassFile(parser.parse()));
+  DEBUG_LOG("[JVM] Loading class request: " << name
+            << " (resolved path: " << path << ")");
 
+  ClassParser parser(path);
+  DEBUG_LOG("[JVM] Parsing class file: " << path);
+  std::unique_ptr<ClassFile> cf(new ClassFile(parser.parse()));
+  DEBUG_LOG("[JVM] Parsed class file: " << path);
+
+  DEBUG_LOG("[JVM] Building runtime class: " << name);
   std::unique_ptr<RuntimeClass> klass = build_runtime_class(std::move(cf));
   auto klass_ptr = klass.get();
+  DEBUG_LOG("[JVM] Built runtime class: " << klass_ptr->name);
 
   runtime->method_area->storeClass(std::move(klass));
+  DEBUG_LOG("[JVM] Stored class in method area: " << klass_ptr->name);
 
   if (auto class_init = klass_ptr->find_method("<clinit>", "()V")) {
     auto frame = new Frame(class_init, klass_ptr);
     frame->init(class_init->code->max_locals, class_init->code->max_stack);
-    runtime->thread->call_stack.push_back(frame);
+    runtime->thread->push_frame(frame);
   }
 
   RuntimeClass *super_ref = nullptr;
@@ -86,8 +96,10 @@ RuntimeClass *BootstrapClassLoader::load_class(const std::string &name) {
 
   klass_ptr->super_class = super_ref;
 
-  std::cout << "JVM runtime log | " << "Class loaded: " << klass_ptr->name
-            << "\n";
+  DEBUG_LOG("[JVM] Class loaded: " << klass_ptr->name
+            << " (super: "
+            << (klass_ptr->super_name.empty() ? "<none>" : klass_ptr->super_name)
+            << ")");
   return klass_ptr;
 }
 
@@ -96,6 +108,9 @@ BootstrapClassLoader::build_runtime_class(std::unique_ptr<ClassFile> cf) {
   std::string name = cf->resolve_utf8(cf->this_class);
   std::unordered_map<std::string, RuntimeField> fields;
   std::unordered_map<std::string, RuntimeMethod> methods;
+
+  DEBUG_LOG("[JVM] build_runtime_class: fields=" << cf->fields.size()
+            << " methods=" << cf->methods.size() << " for " << name);
 
   auto compute_arg_slots = [](const std::string &desc, bool is_static) -> int {
     int slots = is_static ? 0 : 1; // this
@@ -140,6 +155,7 @@ BootstrapClassLoader::build_runtime_class(std::unique_ptr<ClassFile> cf) {
   for (const auto &f : cf->fields) {
     std::string name = cf->resolve_utf8(f.name_index);
     std::string desc = cf->resolve_utf8(f.descriptor_index);
+    DEBUG_LOG("[JVM]   field: " << name << " desc=" << desc);
 
     std::string key = desc + " " + name;
 
@@ -164,9 +180,11 @@ BootstrapClassLoader::build_runtime_class(std::unique_ptr<ClassFile> cf) {
     fields.emplace(key, rf);
   }
 
+  DEBUG_LOG("[JVM]   finished fields, starting methods");
   for (const auto &m : cf->methods) {
     std::string name = cf->resolve_utf8(m.name_index);
     std::string desc = cf->resolve_utf8(m.descriptor_index);
+    DEBUG_LOG("[JVM]   method: " << name << " desc=" << desc);
 
     std::string key = desc + " " + name;
 
@@ -179,21 +197,28 @@ BootstrapClassLoader::build_runtime_class(std::unique_ptr<ClassFile> cf) {
     rm.owner = nullptr;
     bool is_static = (m.access_flags & ACC_Static_Method) != 0;
     rm.arg_slots = compute_arg_slots(desc, is_static);
+    DEBUG_LOG("[JVM]     arg_slots=" << rm.arg_slots);
 
     methods.emplace(key, rm);
   }
+  DEBUG_LOG("[JVM]   finished methods");
 
   std::unique_ptr<RuntimeClass> klass(new RuntimeClass());
+  DEBUG_LOG("[JVM]   RuntimeClass allocated");
+  DEBUG_LOG("[JVM]   setting names");
   klass->name = name;
   if (cf->super_class != 0) {
+    DEBUG_LOG("[JVM]   resolving super name index " << cf->super_class);
     klass->super_name = cf->resolve_utf8(cf->super_class);
   }
+  DEBUG_LOG("[JVM]   resolved names");
   klass->access_flags = cf->access_flags;
   klass->class_file = std::move(cf);
   klass->fields = std::move(fields);
   klass->methods = std::move(methods);
   klass->super_class = nullptr;
   klass->static_data.resize(static_offset_acc);
+  DEBUG_LOG("[JVM]   RuntimeClass metadata filled");
 
   // fix owner ptrs
   for (auto &fkv : klass->fields) {
@@ -202,6 +227,7 @@ BootstrapClassLoader::build_runtime_class(std::unique_ptr<ClassFile> cf) {
   for (auto &mkv : klass->methods) {
     mkv.second.owner = klass.get();
   }
+  DEBUG_LOG("[JVM]   RuntimeClass owner pointers fixed");
 
   return klass;
 }
