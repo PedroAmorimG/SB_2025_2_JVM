@@ -16,6 +16,7 @@ void print_lg_ln(Frame &frame);
 void print_bl_ln(Frame &frame);
 void print_fl_ln(Frame &frame);
 void print_db_ln(Frame &frame);
+void print_char_ln(Frame &frame);
 
 void str_len(Frame &frame);
 void str_char_at(Frame &frame);

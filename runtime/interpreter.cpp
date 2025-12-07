@@ -376,8 +376,9 @@ void exec_dconst_1(Thread *t, Frame &frame) {
 }
 
 void exec_bipush(Thread *t, Frame &frame) {
-  u1 val = (u1)frame.method->code->code[frame.pc + 1];
-  frame.operand_stack.push_int(val);
+  u1 byte_unsigned = frame.method->code->code[frame.pc + 1];
+  int32_t value = static_cast<int8_t>(byte_unsigned);
+  frame.operand_stack.push_int(value);
   frame.pc += 2;
 }
 
@@ -397,9 +398,13 @@ void exec_ldc(Thread *t, Frame &frame) {
     frame.operand_stack.push_int(entry.second.integer_info.bytes);
     break;
 
-  case ConstantTag::CONSTANT_Float:
-    frame.operand_stack.push_float(entry.second.float_info.bytes);
+  case ConstantTag::CONSTANT_Float: {
+    u4 bits = entry.second.float_info.bytes;
+    float val;
+    std::memcpy(&val, &bits, sizeof(float)); 
+    frame.operand_stack.push_float(val);
     break;
+  }
 
   case ConstantTag::CONSTANT_String:
     // Materializa java/lang/String a partir do literal Utf8 referenciado
@@ -443,8 +448,88 @@ void exec_ldc(Thread *t, Frame &frame) {
   frame.pc += 2;
 }
 
-void exec_ldc_w(Thread *t, Frame &frame) {}
-void exec_ldc2_w(Thread *t, Frame &frame) {}
+void exec_ldc_w(Thread *t, Frame &frame) {
+  u1 index_byte1 = frame.method->code->code[frame.pc + 1];
+  u1 index_byte2 = frame.method->code->code[frame.pc + 2];
+  u2 index = (index_byte1 << 8) | index_byte2;
+  
+  auto &entry = frame.current_class->class_file->constant_pool[index];
+  
+  switch (entry.first) {
+    case ConstantTag::CONSTANT_Integer:
+      frame.operand_stack.push_int(entry.second.integer_info.bytes);
+      break;
+    case ConstantTag::CONSTANT_Float: {
+      u4 bits = entry.second.float_info.bytes;
+      float val;
+      std::memcpy(&val, &bits, sizeof(float)); 
+      frame.operand_stack.push_float(val);
+      break;
+    }
+    case ConstantTag::CONSTANT_String:
+      {
+         if (!frame.current_class || !frame.current_class->class_file) throw std::runtime_error("Missing CF");
+         RuntimeClass *str_cls = t->runtime->method_area->getClassRef("java/lang/String");
+         if(!str_cls) str_cls = t->runtime->class_loader->load_class("java/lang/String");
+         
+         u2 str_idx = entry.second.string_info.string_index;
+         std::string literal = frame.current_class->class_file->resolve_utf8(str_idx);
+         
+         RuntimeObject *str_obj = new RuntimeObject(str_cls);
+         auto val_field = str_cls->find_field("value", "[B");
+         if(val_field) {
+             RuntimeArray *bytes = RuntimeArray::create_primitive(nullptr, literal.size(), 1);
+             for(size_t i=0; i<literal.size(); i++) bytes->write_primitive<u1>(i, (u1)literal[i]);
+             str_obj->write_field<u4>(*val_field, (u4)(uintptr_t)bytes);
+         }
+         frame.operand_stack.push_ref(str_obj);
+      }
+      break;
+    default:
+      throw std::runtime_error("ldc_w: Invalid constant type");
+  }
+
+  frame.pc += 3;
+}
+
+void exec_ldc2_w(Thread *t, Frame &frame) {
+  u1 index_byte1 = frame.method->code->code[frame.pc + 1];
+  u1 index_byte2 = frame.method->code->code[frame.pc + 2];
+  u2 index = (index_byte1 << 8) | index_byte2;
+
+  auto &cp = frame.current_class->class_file->constant_pool;
+  
+  if (index >= cp.size()) throw std::runtime_error("Constant Pool Index Out of Bounds");
+
+  auto &entry = cp[index];
+
+  switch (entry.first) {
+    case ConstantTag::CONSTANT_Long:
+      {
+         u4 high = entry.second.long_info.high_bytes;
+         u4 low = entry.second.long_info.low_bytes;
+         int64_t val = (static_cast<int64_t>(high) << 32) | low;
+         frame.operand_stack.push_long(val);
+      }
+      break;
+
+    case ConstantTag::CONSTANT_Double:
+      {
+         u4 high = entry.second.double_info.high_bytes;
+         u4 low = entry.second.double_info.low_bytes;
+         uint64_t bits = (static_cast<uint64_t>(high) << 32) | low;
+         double val;
+         std::memcpy(&val, &bits, sizeof(double));
+         frame.operand_stack.push_double(val);
+      }
+      break;
+
+    default:
+      throw std::runtime_error("ldc2_w: Invalid constant type (expected Long or Double)");
+  }
+
+  frame.pc += 3;
+}
 
 void exec_iload(Thread *t, Frame &frame) {
   const u1 *code = frame.method->code->code.data();
@@ -596,49 +681,55 @@ void exec_aload_3(Thread *t, Frame &frame) {
   frame.pc++;
 }
 
+// INT (iaload)
 void exec_iaload(Thread *t, Frame &frame) {
   int32_t index = frame.operand_stack.pop_int();
-  RuntimeObject *array_ref = frame.operand_stack.pop_ref();
-  if (!array_ref)
-    throw std::runtime_error("iaload: null array reference");
-  int32_t value;
-  std::memcpy(&value, &array_ref->data[index * sizeof(int32_t)],
-              sizeof(int32_t));
-  frame.operand_stack.push_int(value);
+  auto *arr = reinterpret_cast<RuntimeArray *>(frame.operand_stack.pop_ref());
+
+  if (!arr) throw std::runtime_error("NullPointerException: iaload");
+  if (index < 0 || (size_t)index >= arr->length) throw std::runtime_error("ArrayIndexOutOfBoundsException");
+
+  int32_t val = arr->read_primitive<int32_t>((size_t)index);
+  frame.operand_stack.push_int(val);
   frame.pc++;
 }
 
+// LONG (laload)
 void exec_laload(Thread *t, Frame &frame) {
   int32_t index = frame.operand_stack.pop_int();
-  RuntimeObject *array_ref = frame.operand_stack.pop_ref();
-  if (!array_ref)
-    throw std::runtime_error("laload: null array reference");
-  int64_t value = 0;
-  std::memcpy(&value, &array_ref->data[index * sizeof(int64_t)],
-              sizeof(int64_t));
-  frame.operand_stack.push_long(value);
+  auto *arr = reinterpret_cast<RuntimeArray *>(frame.operand_stack.pop_ref());
+
+  if (!arr) throw std::runtime_error("NullPointerException: laload");
+  if (index < 0 || (size_t)index >= arr->length) throw std::runtime_error("ArrayIndexOutOfBoundsException");
+
+  int64_t val = arr->read_primitive<int64_t>((size_t)index);
+  frame.operand_stack.push_long(val);
   frame.pc++;
 }
 
+// FLOAT (faload)
 void exec_faload(Thread *t, Frame &frame) {
   int32_t index = frame.operand_stack.pop_int();
-  RuntimeObject *array_ref = frame.operand_stack.pop_ref();
-  if (!array_ref)
-    throw std::runtime_error("faload: null array reference");
-  float value = 0.0f;
-  std::memcpy(&value, &array_ref->data[index * sizeof(float)], sizeof(float));
-  frame.operand_stack.push_float(value);
+  auto *arr = reinterpret_cast<RuntimeArray *>(frame.operand_stack.pop_ref());
+
+  if (!arr) throw std::runtime_error("NullPointerException: faload");
+  if (index < 0 || (size_t)index >= arr->length) throw std::runtime_error("ArrayIndexOutOfBoundsException");
+
+  float val = arr->read_primitive<float>((size_t)index);
+  frame.operand_stack.push_float(val);
   frame.pc++;
 }
 
+// DOUBLE (daload)
 void exec_daload(Thread *t, Frame &frame) {
   int32_t index = frame.operand_stack.pop_int();
-  RuntimeObject *array_ref = frame.operand_stack.pop_ref();
-  if (!array_ref)
-    throw std::runtime_error("daload: null array reference");
-  double value = 0.0;
-  std::memcpy(&value, &array_ref->data[index * sizeof(double)], sizeof(double));
-  frame.operand_stack.push_double(value);
+  auto *arr = reinterpret_cast<RuntimeArray *>(frame.operand_stack.pop_ref());
+
+  if (!arr) throw std::runtime_error("NullPointerException: daload");
+  if (index < 0 || (size_t)index >= arr->length) throw std::runtime_error("ArrayIndexOutOfBoundsException");
+
+  double val = arr->read_primitive<double>((size_t)index);
+  frame.operand_stack.push_double(val);
   frame.pc++;
 }
 
@@ -656,37 +747,40 @@ void exec_aaload(Thread *t, Frame &frame) {
 
 void exec_baload(Thread *t, Frame &frame) {
   int32_t index = frame.operand_stack.pop_int();
-  RuntimeObject *array_ref = frame.operand_stack.pop_ref();
-  if (!array_ref)
-    throw std::runtime_error("baload: null array reference");
-  uint8_t value = 0;
-  std::memcpy(&value, &array_ref->data[index * sizeof(uint8_t)],
-              sizeof(uint8_t));
-  frame.operand_stack.push_int(value);
+  auto *arr = reinterpret_cast<RuntimeArray *>(frame.operand_stack.pop_ref());
+
+  if (!arr) throw std::runtime_error("NullPointerException: baload");
+  if (index < 0 || (size_t)index >= arr->length) throw std::runtime_error("ArrayIndexOutOfBoundsException");
+  u1 raw_val = arr->read_primitive<u1>((size_t)index);
+  int32_t val = static_cast<int8_t>(raw_val);
+  
+  frame.operand_stack.push_int(val);
   frame.pc++;
 }
 
+// CHAR (caload)
 void exec_caload(Thread *t, Frame &frame) {
   int32_t index = frame.operand_stack.pop_int();
-  RuntimeObject *array_ref = frame.operand_stack.pop_ref();
-  if (!array_ref)
-    throw std::runtime_error("caload: null array reference");
-  uint16_t value = 0;
-  std::memcpy(&value, &array_ref->data[index * sizeof(uint16_t)],
-              sizeof(uint16_t));
-  frame.operand_stack.push_int(value); // char também promovido para int
+  auto *arr = reinterpret_cast<RuntimeArray *>(frame.operand_stack.pop_ref());
+
+  if (!arr) throw std::runtime_error("NullPointerException: caload");
+  if (index < 0 || (size_t)index >= arr->length) throw std::runtime_error("ArrayIndexOutOfBoundsException");
+
+  uint16_t val = arr->read_primitive<uint16_t>((size_t)index);
+  frame.operand_stack.push_int((int32_t)val);
   frame.pc++;
 }
 
+// SHORT (saload)
 void exec_saload(Thread *t, Frame &frame) {
   int32_t index = frame.operand_stack.pop_int();
-  RuntimeObject *array_ref = frame.operand_stack.pop_ref();
-  if (!array_ref)
-    throw std::runtime_error("saload: null array reference");
-  int16_t value = 0;
-  std::memcpy(&value, &array_ref->data[index * sizeof(int16_t)],
-              sizeof(int16_t));
-  frame.operand_stack.push_int(value); // short promovido para int
+  auto *arr = reinterpret_cast<RuntimeArray *>(frame.operand_stack.pop_ref());
+
+  if (!arr) throw std::runtime_error("NullPointerException: saload");
+  if (index < 0 || (size_t)index >= arr->length) throw std::runtime_error("ArrayIndexOutOfBoundsException");
+
+  int16_t val = arr->read_primitive<int16_t>((size_t)index);
+  frame.operand_stack.push_int((int32_t)val);
   frame.pc++;
 }
 
@@ -881,10 +975,59 @@ void exec_astore_3(Thread *t, Frame &frame) {
   frame.local_vars[3] = (Slot)(uintptr_t)ref;
   frame.pc++;
 }
-void exec_iastore(Thread *t, Frame &frame) {}
-void exec_lastore(Thread *t, Frame &frame) {}
-void exec_fastore(Thread *t, Frame &frame) {}
-void exec_dastore(Thread *t, Frame &frame) {}
+void exec_iastore(Thread *t, Frame &frame) {
+  int32_t value = frame.operand_stack.pop_int();
+  int32_t index = frame.operand_stack.pop_int();
+  auto *array_ref = reinterpret_cast<RuntimeArray *>(frame.operand_stack.pop_ref());
+
+  if (!array_ref) {
+    throw std::runtime_error("NullPointerException: iastore on null array");
+  }
+  
+  if (index < 0 || static_cast<size_t>(index) >= array_ref->length) {
+      throw std::runtime_error("ArrayIndexOutOfBoundsException");
+  }
+
+  array_ref->write_primitive<int32_t>(static_cast<size_t>(index), value);
+
+  frame.pc++;
+}
+
+void exec_lastore(Thread *t, Frame &frame) {
+  int64_t value = frame.operand_stack.pop_long();
+  int32_t index = frame.operand_stack.pop_int();
+  auto *arr = reinterpret_cast<RuntimeArray *>(frame.operand_stack.pop_ref());
+
+  if (!arr) throw std::runtime_error("NullPointerException: lastore");
+  if (index < 0 || (size_t)index >= arr->length) throw std::runtime_error("ArrayIndexOutOfBoundsException");
+
+  arr->write_primitive<int64_t>((size_t)index, value);
+  frame.pc++;
+}
+
+void exec_fastore(Thread *t, Frame &frame) {
+  float value = frame.operand_stack.pop_float();
+  int32_t index = frame.operand_stack.pop_int();
+  auto *arr = reinterpret_cast<RuntimeArray *>(frame.operand_stack.pop_ref());
+
+  if (!arr) throw std::runtime_error("NullPointerException: fastore");
+  if (index < 0 || (size_t)index >= arr->length) throw std::runtime_error("ArrayIndexOutOfBoundsException");
+
+  arr->write_primitive<float>((size_t)index, value);
+  frame.pc++;
+}
+
+void exec_dastore(Thread *t, Frame &frame) {
+  double value = frame.operand_stack.pop_double();
+  int32_t index = frame.operand_stack.pop_int();
+  auto *arr = reinterpret_cast<RuntimeArray *>(frame.operand_stack.pop_ref());
+
+  if (!arr) throw std::runtime_error("NullPointerException: dastore");
+  if (index < 0 || (size_t)index >= arr->length) throw std::runtime_error("ArrayIndexOutOfBoundsException");
+
+  arr->write_primitive<double>((size_t)index, value);
+  frame.pc++;
+}
 void exec_aastore(Thread *t, Frame &frame) {
   RuntimeObject *value = frame.operand_stack.pop_ref();
   int32_t index = frame.operand_stack.pop_int();
@@ -895,9 +1038,42 @@ void exec_aastore(Thread *t, Frame &frame) {
   array_ref->write_ref(static_cast<size_t>(index), value);
   frame.pc++;
 }
-void exec_bastore(Thread *t, Frame &frame) {}
-void exec_castore(Thread *t, Frame &frame) {}
-void exec_sastore(Thread *t, Frame &frame) {}
+void exec_bastore(Thread *t, Frame &frame) {
+  int32_t value = frame.operand_stack.pop_int();
+  int32_t index = frame.operand_stack.pop_int();
+  auto *array_ref = reinterpret_cast<RuntimeArray *>(frame.operand_stack.pop_ref());
+
+  if (!array_ref) throw std::runtime_error("NullPointerException");
+  if (index < 0 || (size_t)index >= array_ref->length) throw std::runtime_error("ArrayIndexOutOfBounds");
+
+  array_ref->write_primitive<u1>(static_cast<size_t>(index), static_cast<u1>(value));
+
+  frame.pc++; 
+}
+
+void exec_castore(Thread *t, Frame &frame) {
+  int32_t val_int = frame.operand_stack.pop_int(); 
+  int32_t index = frame.operand_stack.pop_int();
+  auto *arr = reinterpret_cast<RuntimeArray *>(frame.operand_stack.pop_ref());
+
+  if (!arr) throw std::runtime_error("NullPointerException: castore");
+  if (index < 0 || (size_t)index >= arr->length) throw std::runtime_error("ArrayIndexOutOfBoundsException");
+
+  arr->write_primitive<uint16_t>((size_t)index, (uint16_t)val_int);
+  frame.pc++;
+}
+
+void exec_sastore(Thread *t, Frame &frame) {
+  int32_t val_int = frame.operand_stack.pop_int(); 
+  int32_t index = frame.operand_stack.pop_int();
+  auto *arr = reinterpret_cast<RuntimeArray *>(frame.operand_stack.pop_ref());
+
+  if (!arr) throw std::runtime_error("NullPointerException: sastore");
+  if (index < 0 || (size_t)index >= arr->length) throw std::runtime_error("ArrayIndexOutOfBoundsException");
+
+  arr->write_primitive<int16_t>((size_t)index, (int16_t)val_int);
+  frame.pc++;
+}
 
 // STACK OPS
 void exec_pop(Thread *t, Frame &frame) {
@@ -2011,19 +2187,88 @@ void exec_invokevirtual(Thread *t, Frame &frame) {
   if (!target_method->code)
     throw std::runtime_error("invokevirtual: method has no code");
 
+  // Cria o frame novo com o tamanho CORRETO (max_locals)
   Frame *new_frame = new Frame(target_method, target_method->owner);
   new_frame->init(target_method->code->max_locals,
                   target_method->code->max_stack);
-  new_frame->local_vars.swap(locals);
+
+  
+  for (size_t i = 0; i < locals.size(); ++i) {
+      new_frame->local_vars[i] = locals[i];
+  }
 
   t->push_frame(new_frame);
   frame.pc += 3;
+
 }
 
 void exec_invokeinterface(Thread *t, Frame &frame) {
-  (void)t;
-  (void)frame;
-  throw std::runtime_error("invokeinterface not implemented");
+  u1 idx1 = frame.method->code->code[frame.pc + 1];
+  u1 idx2 = frame.method->code->code[frame.pc + 2];
+  u2 index = (idx1 << 8) | idx2;
+  
+  u1 count = frame.method->code->code[frame.pc + 3]; // Número de argumentos (slots)
+
+  auto &cp = frame.current_class->class_file->constant_pool;
+  if (cp[index].first != ConstantTag::CONSTANT_InterfaceMethodref) {
+      throw std::runtime_error("invokeinterface: CP entry is not InterfaceMethodref");
+  }
+  
+  auto &info = cp[index].second.interface_methodref_info;
+  u2 nat_idx = info.name_and_type_index;
+  
+  std::string name = frame.current_class->class_file->resolve_utf8(
+      cp[nat_idx].second.name_and_type_info.name_index);
+  std::string desc = frame.current_class->class_file->resolve_utf8(
+      cp[nat_idx].second.name_and_type_info.descriptor_index);
+
+  int arg_slots = count; 
+  if (frame.operand_stack.size() < (size_t)arg_slots) {
+      throw std::runtime_error("Stack underflow invokeinterface");
+  }
+  
+  std::vector<Slot> args(arg_slots);
+  for (int i = arg_slots - 1; i >= 0; --i) {
+      args[i] = frame.operand_stack.stack.back();
+      frame.operand_stack.stack.pop_back();
+  }
+  
+  RuntimeObject *this_obj = reinterpret_cast<RuntimeObject*>(static_cast<uintptr_t>(args[0]));
+  if (this_obj == nullptr) {
+      throw std::runtime_error("java.lang.NullPointerException");
+  }
+
+  RuntimeMethod *method_to_call = nullptr;
+  RuntimeClass *curr = this_obj->klass;
+  std::string key = desc + " " + name; 
+  
+  while (curr != nullptr) {
+      auto it = curr->methods.find(key);
+      if (it != curr->methods.end()) {
+          method_to_call = &it->second;
+          break; 
+      }
+      curr = curr->super_class;
+  }
+
+  if (!method_to_call) {
+      throw std::runtime_error("AbstractMethodError: Method not found for invokeinterface: " + name);
+  }
+  
+  if (method_to_call->access_flags & ACC_Native_Method) {
+      std::string native_key = method_to_call->descriptor + " " + method_to_call->owner->name + "." + method_to_call->name;
+      throw std::runtime_error("invokeinterface: native methods not fully supported here yet");
+  } else {
+      Frame *new_frame = new Frame(method_to_call, method_to_call->owner);
+      new_frame->init(method_to_call->code->max_locals, method_to_call->code->max_stack);
+      for(size_t i=0; i<args.size(); i++) {
+          new_frame->local_vars[i] = args[i];
+      }
+      
+      t->push_frame(new_frame);
+  }
+
+  frame.pc += 5;
 }
 
 void exec_new(Thread *t, Frame &frame) {
@@ -2038,9 +2283,41 @@ void exec_new(Thread *t, Frame &frame) {
 }
 
 void exec_newarray(Thread *t, Frame &frame) {
-  (void)t;
-  (void)frame;
-  throw std::runtime_error("newarray not implemented");
+  u1 atype = frame.method->code->code[frame.pc + 1];
+
+  int32_t count = frame.operand_stack.pop_int();
+
+  if (count < 0) {
+    throw std::runtime_error("NegativeArraySizeException");
+  }
+
+  size_t elem_size = 0;
+  
+  switch (atype) {
+    case 4: // T_BOOLEAN
+    case 8: // T_BYTE
+      elem_size = 1;
+      break;
+    case 5: // T_CHAR
+    case 9: // T_SHORT
+      elem_size = 2;
+      break;
+    case 6: // T_FLOAT
+    case 10: // T_INT
+      elem_size = 4;
+      break;
+    case 7: // T_DOUBLE
+    case 11: // T_LONG
+      elem_size = 8;
+      break;
+    default:
+      throw std::runtime_error("Invalid array type code in newarray");
+  }
+
+  RuntimeArray *arr = RuntimeArray::create_primitive(nullptr, static_cast<size_t>(count), elem_size);
+
+  frame.operand_stack.push_ref(reinterpret_cast<RuntimeObject *>(arr));
+  frame.pc += 2;
 }
 
 void exec_anewarray(Thread *t, Frame &frame) {
@@ -2059,12 +2336,13 @@ void exec_anewarray(Thread *t, Frame &frame) {
 }
 
 void exec_arraylength(Thread *t, Frame &frame) {
-  int ref = frame.operand_stack.pop_int();
-  RuntimeArray *arr = (RuntimeArray*)(ref);
+  auto *arr = reinterpret_cast<RuntimeArray *>(frame.operand_stack.pop_ref());
 
-  if (!arr)
-      throw std::runtime_error("arraylength: null pointer");
-  frame.operand_stack.push_int(arr->length);
+  if (!arr) {
+      throw std::runtime_error("java.lang.NullPointerException");
+  }
+  
+  frame.operand_stack.push_int(static_cast<int32_t>(arr->length));
   frame.pc++;
 }
 
@@ -2079,15 +2357,69 @@ void exec_athrow(Thread *t, Frame &frame) {
 }
 
 void exec_checkcast(Thread *t, Frame &frame) {
-  (void)t;
-  (void)frame;
-  throw std::runtime_error("checkcast not implemented");
+  u1 byte1 = frame.method->code->code[frame.pc + 1];
+  u1 byte2 = frame.method->code->code[frame.pc + 2];
+  u2 index = (byte1 << 8) | byte2;
+
+  RuntimeObject *obj = frame.operand_stack.pop_ref();
+    frame.operand_stack.push_ref(obj); 
+
+    if (obj == nullptr) {
+        frame.pc += 3;
+        return; 
+    }
+
+  RuntimeClass *target_class = resolve_class_cp(frame.current_class, index, t);
+
+  bool is_instance = false;
+  RuntimeClass *curr = obj->klass;
+
+  while (curr != nullptr) {
+    if (curr == target_class || curr->name == target_class->name) {
+      is_instance = true;
+      break;
+    }
+
+    curr = curr->super_class;
+  }
+
+  if (!is_instance) {
+        throw std::runtime_error("java.lang.ClassCastException");
+    }
+
+    frame.pc += 3;
 }
 
 void exec_instanceof(Thread *t, Frame &frame) {
-  (void)t;
-  (void)frame;
-  throw std::runtime_error("instanceof not implemented");
+  u1 byte1 = frame.method->code->code[frame.pc + 1];
+  u1 byte2 = frame.method->code->code[frame.pc + 2];
+  u2 index = (byte1 << 8) | byte2;
+
+  RuntimeObject *obj = frame.operand_stack.pop_ref();
+
+  if (obj == nullptr) {
+    frame.operand_stack.push_int(0);
+    frame.pc += 3;
+    return;
+  }
+
+  RuntimeClass *target_class = resolve_class_cp(frame.current_class, index, t);
+
+  bool is_instance = false;
+  RuntimeClass *curr = obj->klass;
+
+  while (curr != nullptr) {
+    if (curr == target_class || curr->name == target_class->name) {
+      is_instance = true;
+      break;
+    }
+
+    curr = curr->super_class;
+  }
+
+
+  frame.operand_stack.push_int(is_instance ? 1 : 0);
+  frame.pc += 3;
 }
 
 void exec_monitorenter(Thread *t, Frame &frame) {
@@ -2103,15 +2435,161 @@ void exec_monitorexit(Thread *t, Frame &frame) {
 }
 
 void exec_wide(Thread *t, Frame &frame) {
-  (void)t;
-  (void)frame;
-  throw std::runtime_error("wide not implemented");
+  u1 modified_opcode = frame.method->code->code[frame.pc + 1];
+  
+  u1 idx1 = frame.method->code->code[frame.pc + 2];
+  u1 idx2 = frame.method->code->code[frame.pc + 3];
+  u2 index = (idx1 << 8) | idx2;
+  
+  switch (modified_opcode) {
+    case 0x15: // iload
+      frame.operand_stack.push_int(frame.local_vars[index]);
+      frame.pc += 4; 
+      break;
+      
+    case 0x17: // fload
+      frame.operand_stack.push_float(frame.local_vars[index]);
+      frame.pc += 4;
+      break;
+      
+    case 0x19: // aload
+      frame.operand_stack.stack.push_back(frame.local_vars[index]);
+      frame.pc += 4;
+      break;
+      
+    case 0x16: // lload
+    {
+      u4 high = frame.local_vars[index];
+      u4 low = frame.local_vars[index + 1];
+      int64_t val = (static_cast<int64_t>(high) << 32) | low;
+      frame.operand_stack.push_long(val);
+      frame.pc += 4;
+      break;
+    }
+    
+    case 0x18: // dload
+    {
+      u4 high = frame.local_vars[index];
+      u4 low = frame.local_vars[index + 1];
+      int64_t bits = (static_cast<int64_t>(high) << 32) | low;
+      double val;
+      std::memcpy(&val, &bits, sizeof(double));
+      frame.operand_stack.push_double(val);
+      frame.pc += 4;
+      break;
+    }
+
+    case 0x36: // istore
+      frame.local_vars[index] = frame.operand_stack.pop_int();
+      frame.pc += 4;
+      break;
+      
+    case 0x38: // fstore
+    {
+      float val = frame.operand_stack.pop_float();
+      u4 bits;
+      std::memcpy(&bits, &val, sizeof(float));
+      frame.local_vars[index] = bits;
+      frame.pc += 4;
+      break;
+    }
+      
+    case 0x3A: // astore
+    {
+      RuntimeObject* ref = frame.operand_stack.pop_ref();
+      frame.local_vars[index] = (Slot)(uintptr_t)ref;
+      frame.pc += 4;
+      break;
+    }
+    
+
+    case 0x84: 
+    {
+      
+      u1 c1 = frame.method->code->code[frame.pc + 4];
+      u1 c2 = frame.method->code->code[frame.pc + 5];
+      int16_t constant = (int16_t)((c1 << 8) | c2);
+      
+      int32_t val = (int32_t)frame.local_vars[index];
+      val += constant;
+      frame.local_vars[index] = (u4)val;
+      
+      frame.pc += 6; 
+      break;
+    }
+
+    default:
+      throw std::runtime_error("wide: Unsupported modified opcode");
+  }
+}
+
+// AS DUAS FUNÇÕES ABAIXO SÃO AUXILIARES PARA A exec_multinewarray
+static size_t get_element_size(char type) {
+    switch (type) {
+        case 'Z': case 'B': return 1;
+        case 'C': case 'S': return 2;
+        case 'F': case 'I': return 4;
+        case 'J': case 'D': return 8;
+        default: return 4; 
+    }
+}
+
+static RuntimeArray* recursive_create_multi_array(Thread *t, const std::string& desc, const std::vector<int32_t>& counts, int current_depth) {
+    int32_t count = counts[current_depth];  
+    std::string component_desc = desc.substr(1);
+    RuntimeArray* arr = nullptr;
+
+    if (current_depth == counts.size() - 1) {
+        if (component_desc[0] == '[') {
+            arr = RuntimeArray::create_reference(nullptr, static_cast<size_t>(count));
+        } else if (component_desc[0] == 'L') {
+            std::string class_name = component_desc.substr(1, component_desc.size() - 2);
+            RuntimeClass* k = nullptr;
+            if (t->runtime) {
+               k = t->runtime->method_area->getClassRef(class_name);
+               if(!k) k = t->runtime->class_loader->load_class(class_name);
+            }
+            arr = RuntimeArray::create_reference(k, static_cast<size_t>(count));
+        } else {
+            size_t size = get_element_size(component_desc[0]);
+            arr = RuntimeArray::create_primitive(nullptr, static_cast<size_t>(count), size);
+        }
+    } else {
+        arr = RuntimeArray::create_reference(nullptr, static_cast<size_t>(count));
+        for (int i = 0; i < count; ++i) {
+            RuntimeArray* sub_array = recursive_create_multi_array(t, component_desc, counts, current_depth + 1);
+            arr->write_ref(i, reinterpret_cast<RuntimeObject*>(sub_array));
+        }
+    }
+    
+    return arr;
 }
 
 void exec_multianewarray(Thread *t, Frame &frame) {
-  (void)t;
-  (void)frame;
-  throw std::runtime_error("multianewarray not implemented");
+  u1 index1 = frame.method->code->code[frame.pc + 1];
+  u1 index2 = frame.method->code->code[frame.pc + 2];
+  u2 index = (index1 << 8) | index2;
+  u1 dimensions = frame.method->code->code[frame.pc + 3];
+
+  if (dimensions < 1) throw std::runtime_error("multianewarray: dimensions must be >= 1");
+
+  auto &cp = frame.current_class->class_file->constant_pool;
+  if (cp[index].first != ConstantTag::CONSTANT_Class) {
+      throw std::runtime_error("multianewarray: CP index is not a Class");
+  }
+  u2 name_idx = cp[index].second.class_info.name_index;
+  std::string array_class_desc = frame.current_class->class_file->resolve_utf8(name_idx);
+
+  std::vector<int32_t> counts(dimensions);
+  for (int i = dimensions - 1; i >= 0; --i) {
+      int32_t c = frame.operand_stack.pop_int();
+      if (c < 0) throw std::runtime_error("NegativeArraySizeException");
+      counts[i] = c; 
+  }
+
+  RuntimeArray* root_array = recursive_create_multi_array(t, array_class_desc, counts, 0);
+  frame.operand_stack.push_ref(reinterpret_cast<RuntimeObject*>(root_array));
+  frame.pc += 4;
 }
 
 void exec_ifnull(Thread *t, Frame &frame) {

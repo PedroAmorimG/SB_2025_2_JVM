@@ -9,6 +9,10 @@
 #include <string>
 #include <vector>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 void printHelp(const std::string &progName) {
   std::cout << "Usage:\n"
             << "  " << progName << " [options]\n\n"
@@ -28,6 +32,10 @@ void printHelp(const std::string &progName) {
 }
 
 int main(int argc, char *argv[]) {
+
+  #ifdef _WIN32
+    SetConsoleOutputCP(CP_UTF8); 
+  #endif
 
   bool execMode = false; // changed: "interactive" → "execution mode"
   std::string filepath = "";
