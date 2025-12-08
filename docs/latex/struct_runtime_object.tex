@@ -1,0 +1,87 @@
+\doxysection{Runtime\+Object Struct Reference}
+\hypertarget{struct_runtime_object}{}\label{struct_runtime_object}\index{RuntimeObject@{RuntimeObject}}
+
+
+Representa um objeto (instância de classe) ou array na Heap.  
+
+
+
+
+{\ttfamily \#include $<$runtime\+\_\+class\+\_\+types.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_runtime_object_a12d43943c7ba141c9f5fa65b0c13a6f4}\label{struct_runtime_object_a12d43943c7ba141c9f5fa65b0c13a6f4} 
+{\bfseries Runtime\+Object} (\mbox{\hyperlink{class_runtime_class}{Runtime\+Class}} \texorpdfstring{$\ast$}{*}k)
+\begin{DoxyCompactList}\small\item\em Cria um objeto e aloca memória na Heap. O tamanho é calculado automaticamente com base na classe fornecida. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T$>$ }\\T \mbox{\hyperlink{struct_runtime_object_a9594ce040ba148b3fab4a3b9d0f531c2}{read\+\_\+field}} (const \mbox{\hyperlink{struct_runtime_field}{Runtime\+Field}} \&field) const
+\begin{DoxyCompactList}\small\item\em Lê um valor de um campo da memória do objeto. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T$>$ }\\void \mbox{\hyperlink{struct_runtime_object_aed6b489f823b15ecfd9dd364b9b3f4e9}{write\+\_\+field}} (const \mbox{\hyperlink{struct_runtime_field}{Runtime\+Field}} \&field, T value)
+\begin{DoxyCompactList}\small\item\em Escreve um valor num campo na memória do objeto. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_runtime_object_af45a8d9eeefc669b26d26709b8ecdc9d}\label{struct_runtime_object_af45a8d9eeefc669b26d26709b8ecdc9d} 
+\mbox{\hyperlink{class_runtime_class}{Runtime\+Class}} \texorpdfstring{$\ast$}{*} {\bfseries klass}
+\item 
+\Hypertarget{struct_runtime_object_a7865acae7f8699a1549e9276ca2560fb}\label{struct_runtime_object_a7865acae7f8699a1549e9276ca2560fb} 
+std\+::vector$<$ u1 $>$ {\bfseries data}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Representa um objeto (instância de classe) ou array na Heap. 
+
+\label{doc-func-members}
+\Hypertarget{struct_runtime_object_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{struct_runtime_object_a9594ce040ba148b3fab4a3b9d0f531c2}\index{RuntimeObject@{RuntimeObject}!read\_field@{read\_field}}
+\index{read\_field@{read\_field}!RuntimeObject@{RuntimeObject}}
+\doxysubsubsection{\texorpdfstring{read\_field()}{read\_field()}}
+{\footnotesize\ttfamily \label{struct_runtime_object_a9594ce040ba148b3fab4a3b9d0f531c2} 
+template$<$typename T$>$ \\
+T Runtime\+Object\+::read\+\_\+field (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_runtime_field}{Runtime\+Field}} \&}]{field}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Lê um valor de um campo da memória do objeto. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & O tipo de dado a ser lido (int, float, etc). \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em field} & A estrutura \doxylink{struct_runtime_field}{Runtime\+Field} que contém o offset correto. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{struct_runtime_object_aed6b489f823b15ecfd9dd364b9b3f4e9}\index{RuntimeObject@{RuntimeObject}!write\_field@{write\_field}}
+\index{write\_field@{write\_field}!RuntimeObject@{RuntimeObject}}
+\doxysubsubsection{\texorpdfstring{write\_field()}{write\_field()}}
+{\footnotesize\ttfamily \label{struct_runtime_object_aed6b489f823b15ecfd9dd364b9b3f4e9} 
+template$<$typename T$>$ \\
+void Runtime\+Object\+::write\+\_\+field (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{struct_runtime_field}{Runtime\+Field}} \&}]{field}{, }\item[{T}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Escreve um valor num campo na memória do objeto. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & O tipo de dado a ser escrito. \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em field} & A estrutura \doxylink{struct_runtime_field}{Runtime\+Field} que contém o offset correto. \\
+\hline
+{\em value} & O valor a ser escrito. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+runtime/runtime\+\_\+class\+\_\+types.\+h\end{DoxyCompactItemize}

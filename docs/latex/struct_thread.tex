@@ -1,0 +1,56 @@
+\doxysection{Thread Struct Reference}
+\hypertarget{struct_thread}{}\label{struct_thread}\index{Thread@{Thread}}
+
+
+Representa uma thread de execução da JVM.  
+
+
+
+
+{\ttfamily \#include $<$runtime\+\_\+class\+\_\+types.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_thread_a38ff359bb6bfd6ed1cab1ab2f8f97fc3}\label{struct_thread_a38ff359bb6bfd6ed1cab1ab2f8f97fc3} 
+\mbox{\hyperlink{struct_frame}{Frame}} \& {\bfseries current\+\_\+frame} ()
+\item 
+\Hypertarget{struct_thread_a2bd8ca6fc71c9c5e93efcffd37349914}\label{struct_thread_a2bd8ca6fc71c9c5e93efcffd37349914} 
+{\bfseries Thread} (\mbox{\hyperlink{class_runtime}{Runtime}} \texorpdfstring{$\ast$}{*}rt)
+\item 
+\Hypertarget{struct_thread_a924b503bc448e47f5890c4e07e88e364}\label{struct_thread_a924b503bc448e47f5890c4e07e88e364} 
+void {\bfseries push\+\_\+frame} (\mbox{\hyperlink{struct_frame}{Frame}} \texorpdfstring{$\ast$}{*}f)
+\item 
+\Hypertarget{struct_thread_ae8ec82602033ffe9d94b3aade18b98e4}\label{struct_thread_ae8ec82602033ffe9d94b3aade18b98e4} 
+void {\bfseries pop\+\_\+frame} ()
+\item 
+\Hypertarget{struct_thread_af23c8b417b431326542fb813e899ffe5}\label{struct_thread_af23c8b417b431326542fb813e899ffe5} 
+void {\bfseries return\+\_\+frame} ()
+\item 
+\Hypertarget{struct_thread_a80792fee1d2d9fd04d96136edb231b06}\label{struct_thread_a80792fee1d2d9fd04d96136edb231b06} 
+void {\bfseries execute\+\_\+stack} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_thread_a549f7defc878cf79dd361b2059d0fe7f}\label{struct_thread_a549f7defc878cf79dd361b2059d0fe7f} 
+std\+::vector$<$ \mbox{\hyperlink{struct_frame}{Frame}} \texorpdfstring{$\ast$}{*} $>$ {\bfseries call\+\_\+stack}
+\item 
+\Hypertarget{struct_thread_ac084e6dc1ba5de75a6f6d58d66249e05}\label{struct_thread_ac084e6dc1ba5de75a6f6d58d66249e05} 
+\mbox{\hyperlink{class_runtime}{Runtime}} \texorpdfstring{$\ast$}{*} {\bfseries runtime}
+\item 
+\Hypertarget{struct_thread_ae18d130e5b04f7715796f807a6fb3ec4}\label{struct_thread_ae18d130e5b04f7715796f807a6fb3ec4} 
+\mbox{\hyperlink{struct_interpreter}{Interpreter}} \texorpdfstring{$\ast$}{*} {\bfseries interpreter}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Representa uma thread de execução da JVM. 
+
+Mantém a Pilha de Chamadas (Call Stack), que é a sequência de métodos sendo executados. 
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+runtime/runtime\+\_\+class\+\_\+types.\+h\item 
+runtime/class.\+cpp\item 
+runtime/runtime.\+cpp\end{DoxyCompactItemize}

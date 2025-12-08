@@ -5,7 +5,7 @@
 #include <utility>
 #include <vector>
 
-// Tipos básicos
+// Tipos básicos com tamanho garantido (u1=1 byte, u2=2 bytes, etc.)
 using u1 = uint8_t;
 using u2 = uint16_t;
 using u4 = uint32_t;
@@ -14,7 +14,10 @@ static_assert(sizeof(u1) == 1 && sizeof(u2) == 2 && sizeof(u4) == 4 &&
                   sizeof(u8) == 8,
               "Fixed-width integer sizes required");
 
-// Tags do constant pool
+/**
+ * @enum ConstantTag
+ * @brief Identificadores (tags) para os tipos de constantes no Constant Pool.
+ */
 enum class ConstantTag : u1 {
   CONSTANT_Class = 7,
   CONSTANT_Fieldref = 9,
@@ -33,15 +36,15 @@ enum class ConstantTag : u1 {
   None = 0,
 };
 
-// Estruturas do constant pool
+//  Estruturas do Constant Pool 
 
 struct ConstantClassInfo {
-  u2 name_index;
+  u2 name_index; ///< Índice para um CONSTANT_Utf8 com o nome da classe.
 };
 
 struct ConstantFieldrefInfo {
-  u2 class_index;
-  u2 name_and_type_index;
+  u2 class_index;       ///< Índice para a classe que contém o campo.
+  u2 name_and_type_index; ///< Índice para NameAndType.
 };
 
 struct ConstantMethodrefInfo {
@@ -55,25 +58,25 @@ struct ConstantInterfaceMethodrefInfo {
 };
 
 struct ConstantNameAndTypeInfo {
-  u2 name_index;
-  u2 descriptor_index;
+  u2 name_index;       ///< Nome do campo/método.
+  u2 descriptor_index; ///< Descritor de tipo (ex: "()V").
 };
 
 struct ConstantUTF8Info {
   u2 length;
-  u1 *bytes;
+  u1 *bytes; ///< Array de bytes da string (não null-terminated).
 };
 
 struct ConstantStringInfo {
-  u2 string_index;
+  u2 string_index; ///< Índice para o Utf8 com o valor da string.
 };
 
 struct ConstantIntegerInfo {
-  u4 bytes;
+  u4 bytes; ///< Valor inteiro de 4 bytes (Big-Endian).
 };
 
 struct ConstantFloatInfo {
-  u4 bytes;
+  u4 bytes; ///< Valor float em formato IEEE 754 (bits brutos).
 };
 
 struct ConstantLongInfo {
@@ -86,9 +89,12 @@ struct ConstantDoubleInfo {
   u4 low_bytes;
 };
 
-struct EmptyInfo // Índice 0 do pool de constantes
-{};
+struct EmptyInfo {}; ///< Placeholder para slots vazios ou padding.
 
+/**
+ * @union ConstantInfo
+ * @brief União que armazena o valor de uma constante, dependendo da sua Tag.
+ */
 union ConstantInfo {
   EmptyInfo empty;
   ConstantClassInfo class_info;
@@ -106,7 +112,7 @@ union ConstantInfo {
 
 using ConstantPoolEntry = std::pair<ConstantTag, ConstantInfo>;
 
-// FieldInfo
+//  Fields 
 
 enum FieldAccessFlag : u2 {
   ACC_Public_Field = 0x0001,
@@ -120,9 +126,9 @@ enum FieldAccessFlag : u2 {
   ACC_Enum_Field = 0x4000,
 };
 
-// AttributeInfo
+//  Atributos
 
-struct AttributeInfo;
+struct AttributeInfo; // Forward declaration
 
 struct ExceptionTableEntry {
   u2 start_pc;
@@ -131,20 +137,24 @@ struct ExceptionTableEntry {
   u2 catch_type;
 };
 
+/**
+ * @struct CodeAttribute
+ * @brief O atributo mais importante, contendo o bytecode do método.
+ */
 struct CodeAttribute {
-  u2 max_stack;
-  u2 max_locals;
+  u2 max_stack;   ///< Tamanho máximo da pilha de operandos.
+  u2 max_locals;  ///< Tamanho máximo do vetor de variáveis locais.
   u4 code_length;
-  std::vector<u1> code;
+  std::vector<u1> code; ///< O array de bytecodes (instruções).
   u2 exception_table_length;
   std::vector<ExceptionTableEntry> exception_table;
   u2 attributes_count;
-  std::vector<AttributeInfo> attributes;
+  std::vector<AttributeInfo> attributes; ///< Atributos aninhados (ex: LineNumberTable).
 };
 
 struct LineNumberTableEntry {
-  u2 start_pc;
-  u2 line_number;
+  u2 start_pc;    ///< Índice no bytecode.
+  u2 line_number; ///< Linha correspondente no código fonte original.
 };
 
 struct LineNumberTableAttribute {
@@ -159,16 +169,14 @@ struct SourceFileAttribute {
 };
 
 struct UnknownAttribute {
-  std::vector<u1> info;
+  std::vector<u1> info; ///< Bytes brutos de atributos não suportados.
 };
 
 struct ConstantValueAttribute {
-  u2 constantvalue_index; // indice para o pool de constantes
+  u2 constantvalue_index;
 };
 
-struct SyntheticAttribute {
-  // não tem corpo, seu LEN é 0.
-};
+struct SyntheticAttribute {};
 
 struct ExceptionsAttribute {
   u2 number_of_exceptions;
@@ -187,16 +195,11 @@ struct InnerClassesAttribute {
   std::vector<InnerClassInfo> classes;
 };
 
+// StackMapTable (Verificação de Tipos) 
+
 enum class VTTag : u1 {
-  Top = 0,
-  Integer = 1,
-  Float = 2,
-  Double = 3,
-  Long = 4,
-  Null = 5,
-  UninitializedThis = 6,
-  Object = 7,
-  Uninitialized = 8
+  Top = 0, Integer = 1, Float = 2, Double = 3, Long = 4,
+  Null = 5, UninitializedThis = 6, Object = 7, Uninitialized = 8
 };
 
 struct VerificationTypeInfo {
@@ -206,24 +209,16 @@ struct VerificationTypeInfo {
 };
 
 enum class SMFKind : u1 {
-  Same,
-  SameLocals1StackItem,
-  SameLocals1StackItemExt,
-  Chop,
-  SameExt,
-  Append,
-  Full
+  Same, SameLocals1StackItem, SameLocals1StackItemExt,
+  Chop, SameExt, Append, Full
 };
 
 struct StackMapFrame {
   SMFKind kind;
   u1 frame_type;
   u2 offset_delta = 0;
-
   VerificationTypeInfo stack_item;
-
   std::vector<VerificationTypeInfo> locals_appended;
-
   std::vector<VerificationTypeInfo> locals_full;
   std::vector<VerificationTypeInfo> stack_full;
 };
@@ -234,11 +229,7 @@ struct StackMapTableInfo {
 };
 
 struct LocalVariableTableEntry {
-  u2 start_pc;
-  u2 length;
-  u2 name_index;
-  u2 descriptor_index;
-  u2 index;
+  u2 start_pc; u2 length; u2 name_index; u2 descriptor_index; u2 index;
 };
 
 struct LocalVariableTableInfo {
@@ -246,6 +237,11 @@ struct LocalVariableTableInfo {
   std::vector<LocalVariableTableEntry> local_variable_table;
 };
 
+/**
+ * @struct AttributeInfo
+ * @brief Estrutura genérica que encapsula qualquer tipo de atributo.
+ * O parser preenche o campo específico baseado no `attribute_name`.
+ */
 struct AttributeInfo {
   u2 attribute_name_index;
   std::string attribute_name;
@@ -271,7 +267,7 @@ struct FieldInfo {
   std::vector<AttributeInfo> attributes;
 };
 
-// MethodInfo
+//  Methods 
 
 enum MethodAccessFlag : u2 {
   ACC_Public_Method = 0x0001,
@@ -295,6 +291,10 @@ struct MethodInfo {
   u2 attributes_count;
   std::vector<AttributeInfo> attributes;
 
+  /**
+   * @brief Helper para encontrar o atributo "Code" deste método.
+   * @return Um ponteiro para o CodeAttribute ou nullptr se não existir.
+   */
   const CodeAttribute *find_code_attribute() const {
     for (const auto &attr : attributes) {
       if (attr.attribute_name == "Code") {
@@ -305,7 +305,12 @@ struct MethodInfo {
   }
 };
 
-// ClassFile
+//  ClassFile Principal 
+
+/**
+ * @struct ClassFile
+ * @brief Representação completa de um arquivo .class parseado em memória.
+ */
 struct ClassFile {
   u4 magic;
   u2 minor_version;
@@ -324,10 +329,17 @@ struct ClassFile {
   u2 attributes_count;
   std::vector<AttributeInfo> attributes;
 
+  /**
+   
+   * @brief Resolve um índice da Constant Pool para sua representação em String.
+   * * Esta função é recursiva. Se o índice apontar para uma ClassInfo, ela busca o
+   * nome da classe. Se apontar para NameAndType, busca o nome e descritor.
+   * * @param index O índice na constant pool a ser resolvido.
+   * @return A string resolvida (ex: "java/lang/Object") ou vazia em caso de erro.
+   */
+  
   std::string resolve_utf8(u2 index) const {
-    if (index == 0 || index >= constant_pool.size())
-      return "";
-
+    if (index == 0 || index >= constant_pool.size()) return "";
     const auto &entry = constant_pool[index];
 
     switch (entry.first) {
@@ -338,8 +350,7 @@ struct ClassFile {
     case ConstantTag::CONSTANT_Methodref:
       return resolve_utf8(entry.second.methodref_info.name_and_type_index);
     case ConstantTag::CONSTANT_InterfaceMethodref:
-      return resolve_utf8(
-          entry.second.interface_methodref_info.name_and_type_index);
+      return resolve_utf8(entry.second.interface_methodref_info.name_and_type_index);
     case ConstantTag::CONSTANT_NameAndType:
       return resolve_utf8(entry.second.name_and_type_info.descriptor_index) +
              " " + resolve_utf8(entry.second.name_and_type_info.name_index);
@@ -347,10 +358,8 @@ struct ClassFile {
       const ConstantUTF8Info &utf = entry.second.utf8_info;
       return std::string(reinterpret_cast<const char *>(utf.bytes), utf.length);
     }
-    default:
-      return "";
+    default: return "";
     }
-
     return "";
   }
 };

@@ -1,0 +1,366 @@
+\doxysection{runtime\+\_\+class\+\_\+types.\+h}
+\hypertarget{runtime__class__types_8h_source}{}\label{runtime__class__types_8h_source}\index{runtime/runtime\_class\_types.h@{runtime/runtime\_class\_types.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}../classfile/classfile\_types.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}./debug.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <cstring>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <unordered\_map>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ Estruturas\ do\ runtime}}
+\DoxyCodeLine{00012\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_runtime_class}{RuntimeClass}};}
+\DoxyCodeLine{00013\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_class_loader}{ClassLoader}};}
+\DoxyCodeLine{00014\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_runtime}{Runtime}};}
+\DoxyCodeLine{00015\ \textcolor{keyword}{class\ }\mbox{\hyperlink{struct_interpreter}{Interpreter}};}
+\DoxyCodeLine{00016\ \textcolor{keyword}{class\ }\mbox{\hyperlink{struct_thread}{Thread}};}
+\DoxyCodeLine{00017\ \textcolor{keyword}{class\ }\mbox{\hyperlink{struct_runtime_object}{RuntimeObject}};}
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ Avisa\ para\ o\ compilador\ que\ ao\ chamar\ essa\ função,\ o\ controle\ não\ irá}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ retornar\ para\ a\ função\ chamadora}}
+\DoxyCodeLine{00020\ [[noreturn]]\ \textcolor{keywordtype}{void}\ throw\_java\_exception(\mbox{\hyperlink{struct_runtime_object}{RuntimeObject}}\ *exception\_obj);}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \textcolor{comment}{//\ RuntimeField\ e\ RuntimeMethod}}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ std::unordered\_map<char,\ u4>\ descriptor\_table\ =\ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \{\textcolor{charliteral}{'B'},\ 1\},\ \textcolor{comment}{//\ byte}}
+\DoxyCodeLine{00026\ \ \ \ \ \{\textcolor{charliteral}{'Z'},\ 1\},\ \textcolor{comment}{//\ boolean}}
+\DoxyCodeLine{00027\ \ \ \ \ \{\textcolor{charliteral}{'C'},\ 2\},\ \textcolor{comment}{//\ char}}
+\DoxyCodeLine{00028\ \ \ \ \ \{\textcolor{charliteral}{'S'},\ 2\},\ \textcolor{comment}{//\ short}}
+\DoxyCodeLine{00029\ \ \ \ \ \{\textcolor{charliteral}{'I'},\ 4\},\ \textcolor{comment}{//\ int}}
+\DoxyCodeLine{00030\ \ \ \ \ \{\textcolor{charliteral}{'F'},\ 4\},\ \textcolor{comment}{//\ float}}
+\DoxyCodeLine{00031\ \ \ \ \ \{\textcolor{charliteral}{'L'},\ 4\},\ \textcolor{comment}{//\ reference}}
+\DoxyCodeLine{00032\ \ \ \ \ \{\textcolor{charliteral}{'['},\ 4\},\ \textcolor{comment}{//\ array\ reference}}
+\DoxyCodeLine{00033\ \ \ \ \ \{\textcolor{charliteral}{'J'},\ 8\},\ \textcolor{comment}{//\ long}}
+\DoxyCodeLine{00034\ \ \ \ \ \{\textcolor{charliteral}{'D'},\ 8\},\ \textcolor{comment}{//\ double}}
+\DoxyCodeLine{00035\ \};}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \textcolor{keyword}{struct\ }RuntimeField\ \{}
+\DoxyCodeLine{00045\ \ \ std::string\ name;}
+\DoxyCodeLine{00046\ \ \ std::string\ descriptor;}
+\DoxyCodeLine{00047\ \ \ u2\ access\_flags;}
+\DoxyCodeLine{00048\ \ \ \textcolor{keywordtype}{bool}\ is\_static;}
+\DoxyCodeLine{00049\ \ \ \textcolor{keywordtype}{bool}\ is\_64bit;}
+\DoxyCodeLine{00050\ \ \ u4\ static\_offset;}
+\DoxyCodeLine{00051\ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_runtime_class}{RuntimeClass}}\ *owner;}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00057\ \ \ \textcolor{comment}{//\ Offset\ em\ bytes\ ou\ slots\ (dependendo\ do\ modelo)}}
+\DoxyCodeLine{00058\ \ \ u4\ \mbox{\hyperlink{struct_runtime_field_a46dae7a27f2c2a70a3418065ebbd5c21}{offset}};}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \textcolor{comment}{//\ Valor\ estático\ armazenado\ como\ bytes}}
+\DoxyCodeLine{00061\ \ \ std::vector<u1>\ static\_data;}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ RuntimeField()}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ :\ access\_flags(0),\ is\_static(false),\ is\_64bit(false),\ static\_offset(0),}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ owner(nullptr),\ \mbox{\hyperlink{struct_runtime_field_a46dae7a27f2c2a70a3418065ebbd5c21}{offset}}(0)\ \{\}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ u4\ size\_in\_bytes()\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordflow}{if}\ (descriptor.empty())}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 4;}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keyword}{auto}\ it\ =\ descriptor\_table.find(descriptor[0]);}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keywordflow}{if}\ (it\ !=\ descriptor\_table.end())\ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ it-\/>second;}
+\DoxyCodeLine{00074\ \ \ \ \ \}}
+\DoxyCodeLine{00075\ }
+\DoxyCodeLine{00076\ \ \ \ \ \textcolor{keywordflow}{return}\ 4;}
+\DoxyCodeLine{00077\ \ \ \}}
+\DoxyCodeLine{00078\ \};}
+\DoxyCodeLine{00085\ \textcolor{keyword}{struct\ }RuntimeMethod\ \{}
+\DoxyCodeLine{00086\ \ \ std::string\ name;}
+\DoxyCodeLine{00087\ \ \ std::string\ descriptor;}
+\DoxyCodeLine{00088\ \ \ u2\ access\_flags;}
+\DoxyCodeLine{00089\ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{struct_code_attribute}{CodeAttribute}}\ *code;\ \textcolor{comment}{//\ aponta\ diretamente\ para\ o\ atributo\ do\ ClassFile}}
+\DoxyCodeLine{00090\ \ \ \textcolor{keywordtype}{int}\ arg\_slots;}
+\DoxyCodeLine{00091\ \ \ \mbox{\hyperlink{class_runtime_class}{RuntimeClass}}\ *owner;}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \ \ RuntimeMethod()}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ :\ access\_flags(0),\ code(\textcolor{keyword}{nullptr}),\ arg\_slots(0),\ owner(\textcolor{keyword}{nullptr})\ \{\}}
+\DoxyCodeLine{00095\ \};}
+\DoxyCodeLine{00096\ }
+\DoxyCodeLine{00097\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00098\ \textcolor{comment}{//\ 2.\ RuntimeClass}}
+\DoxyCodeLine{00099\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00107\ \textcolor{keyword}{class\ }RuntimeClass\ \{}
+\DoxyCodeLine{00108\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00109\ \ \ std::string\ name;}
+\DoxyCodeLine{00110\ \ \ std::string\ super\_name;}
+\DoxyCodeLine{00111\ \ \ u2\ access\_flags;}
+\DoxyCodeLine{00112\ \ \ std::vector<u1>\ static\_data;}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ RuntimeClass\ *super\_class;}
+\DoxyCodeLine{00115\ \ \ std::unique\_ptr<ClassFile>\ class\_file;}
+\DoxyCodeLine{00116\ }
+\DoxyCodeLine{00117\ \ \ std::unordered\_map<std::string,\ RuntimeField>\ fields;}
+\DoxyCodeLine{00118\ \ \ std::unordered\_map<std::string,\ RuntimeMethod>\ methods;}
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ RuntimeClass()}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ :\ name(),\ super\_name(),\ access\_flags(0),\ super\_class(\textcolor{keyword}{nullptr}),}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ class\_file(\textcolor{keyword}{nullptr}),\ fields(),\ methods()\ \{\}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \textcolor{comment}{//\ Busca\ de\ método/field}}
+\DoxyCodeLine{00128\ \ \ \mbox{\hyperlink{struct_runtime_method}{RuntimeMethod}}\ *\mbox{\hyperlink{class_runtime_class_a60955da421517eb88dc4b3e9f1047c0c}{find\_method}}(\textcolor{keyword}{const}\ std::string\ \&name,}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\ \&descriptor);}
+\DoxyCodeLine{00130\ }
+\DoxyCodeLine{00134\ \ \ \mbox{\hyperlink{struct_runtime_field}{RuntimeField}}\ *\mbox{\hyperlink{class_runtime_class_aeb14add97c7d08ef2455d3faf22ff5b8}{find\_field}}(\textcolor{keyword}{const}\ std::string\ \&name,}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ std::string\ \&descriptor);}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \ \ \textcolor{comment}{//\ Tamanho\ em\ bytes\ do\ data}}
+\DoxyCodeLine{00142\ \ \ u4\ \mbox{\hyperlink{class_runtime_class_afa6d53f0a1229568ce0e3ecab46f8dfe}{data\_size}}();}
+\DoxyCodeLine{00143\ \};}
+\DoxyCodeLine{00148\ }
+\DoxyCodeLine{00149\ \textcolor{comment}{//\ Objetos}}
+\DoxyCodeLine{00150\ }
+\DoxyCodeLine{00151\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_runtime_object_a12d43943c7ba141c9f5fa65b0c13a6f4}{RuntimeObject}}\ \{}
+\DoxyCodeLine{00152\ \ \ \mbox{\hyperlink{class_runtime_class}{RuntimeClass}}\ *klass;}
+\DoxyCodeLine{00153\ \ \ std::vector<u1>\ data;\ \textcolor{comment}{//\ bytes\ da\ instância}}
+\DoxyCodeLine{00158\ }
+\DoxyCodeLine{00159\ \ \ \textcolor{comment}{//\ Métodos\ genéricos\ para\ ler/escrever\ na\ memória\ do\ objeto}}
+\DoxyCodeLine{00160\ \ \ \mbox{\hyperlink{struct_runtime_object_a12d43943c7ba141c9f5fa65b0c13a6f4}{RuntimeObject}}(\mbox{\hyperlink{class_runtime_class}{RuntimeClass}}\ *k)\ :\ klass(k)\ \{\ data.resize(k-\/>\mbox{\hyperlink{class_runtime_class_afa6d53f0a1229568ce0e3ecab46f8dfe}{data\_size}}());\ \}}
+\DoxyCodeLine{00166\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ T\ \mbox{\hyperlink{struct_runtime_object_a9594ce040ba148b3fab4a3b9d0f531c2}{read\_field}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_runtime_field}{RuntimeField}}\ \&field)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00167\ \ \ \ \ T\ value;}
+\DoxyCodeLine{00168\ \ \ \ \ std::memcpy(\&value,\ \&data[field.\mbox{\hyperlink{struct_runtime_field_a46dae7a27f2c2a70a3418065ebbd5c21}{offset}}],\ \textcolor{keyword}{sizeof}(T));}
+\DoxyCodeLine{00169\ \ \ \ \ \textcolor{keywordflow}{return}\ value;}
+\DoxyCodeLine{00170\ \ \ \}}
+\DoxyCodeLine{00177\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{struct_runtime_object_aed6b489f823b15ecfd9dd364b9b3f4e9}{write\_field}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{struct_runtime_field}{RuntimeField}}\ \&field,\ T\ value)\ \{}
+\DoxyCodeLine{00178\ \ \ \ \ std::memcpy(\&data[field.\mbox{\hyperlink{struct_runtime_field_a46dae7a27f2c2a70a3418065ebbd5c21}{offset}}],\ \&value,\ \textcolor{keyword}{sizeof}(T));}
+\DoxyCodeLine{00179\ \ \ \}}
+\DoxyCodeLine{00180\ \};}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \textcolor{comment}{//\ Frame\ e\ pilha\ de\ execução}}
+\DoxyCodeLine{00183\ }
+\DoxyCodeLine{00184\ \textcolor{keyword}{using\ }Slot\ =\ u4;}
+\DoxyCodeLine{00192\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_operand_stack}{OperandStack}}\ \{}
+\DoxyCodeLine{00193\ \ \ std::vector<Slot>\ stack;}
+\DoxyCodeLine{00194\ }
+\DoxyCodeLine{00195\ \ \ \textcolor{comment}{//\ -\/-\/-\/\ Push\ de\ 32\ bits\ -\/-\/-\/}}
+\DoxyCodeLine{00196\ \ \ \textcolor{keywordtype}{void}\ push\_int(int32\_t\ v)\ \{\ stack.push\_back(\textcolor{keyword}{static\_cast<}u4\textcolor{keyword}{>}(v));\ \}}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \ \ \textcolor{comment}{//\ -\/-\/-\/\ Push\ de\ 64\ bits\ (2\ slots)\ -\/-\/-\/}}
+\DoxyCodeLine{00199\ \ \ \textcolor{keywordtype}{void}\ push\_long(int64\_t\ v)\ \{}
+\DoxyCodeLine{00200\ \ \ \ \ u4\ high\ =\ \textcolor{keyword}{static\_cast<}u4\textcolor{keyword}{>}((v\ >>\ 32)\ \&\ 0xFFFFFFFF);}
+\DoxyCodeLine{00201\ \ \ \ \ u4\ low\ =\ \textcolor{keyword}{static\_cast<}u4\textcolor{keyword}{>}(v\ \&\ 0xFFFFFFFF);}
+\DoxyCodeLine{00202\ \ \ \ \ stack.push\_back(high);}
+\DoxyCodeLine{00203\ \ \ \ \ stack.push\_back(low);}
+\DoxyCodeLine{00204\ \ \ \}}
+\DoxyCodeLine{00205\ }
+\DoxyCodeLine{00206\ \ \ \textcolor{comment}{//\ -\/-\/-\/\ Pop\ de\ 32\ bits\ -\/-\/-\/}}
+\DoxyCodeLine{00207\ \ \ int32\_t\ pop\_int()\ \{}
+\DoxyCodeLine{00208\ \ \ \ \ \textcolor{keywordflow}{if}\ (stack.empty())}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}Operand\ stack\ underflow"{}});}
+\DoxyCodeLine{00210\ \ \ \ \ int32\_t\ v\ =\ \textcolor{keyword}{static\_cast<}int32\_t\textcolor{keyword}{>}(stack.back());}
+\DoxyCodeLine{00211\ \ \ \ \ stack.pop\_back();}
+\DoxyCodeLine{00212\ \ \ \ \ \textcolor{keywordflow}{return}\ v;}
+\DoxyCodeLine{00213\ \ \ \}}
+\DoxyCodeLine{00214\ }
+\DoxyCodeLine{00215\ \ \ \textcolor{comment}{//\ -\/-\/-\/\ Pop\ de\ 64\ bits\ -\/-\/-\/}}
+\DoxyCodeLine{00216\ \ \ int64\_t\ pop\_long()\ \{}
+\DoxyCodeLine{00217\ \ \ \ \ \textcolor{keywordflow}{if}\ (stack.size()\ <\ 2)}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}Operand\ stack\ underflow"{}});}
+\DoxyCodeLine{00219\ \ \ \ \ u4\ low\ =\ stack.back();}
+\DoxyCodeLine{00220\ \ \ \ \ stack.pop\_back();}
+\DoxyCodeLine{00221\ \ \ \ \ u4\ high\ =\ stack.back();}
+\DoxyCodeLine{00222\ \ \ \ \ stack.pop\_back();}
+\DoxyCodeLine{00223\ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keyword}{static\_cast<}int64\_t\textcolor{keyword}{>}(high)\ <<\ 32)\ |\ low;}
+\DoxyCodeLine{00224\ \ \ \}}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00226\ \ \ \textcolor{comment}{//\ -\/-\/-\/\ Referências\ -\/-\/-\/}}
+\DoxyCodeLine{00227\ \ \ \textcolor{keywordtype}{void}\ push\_ref(\mbox{\hyperlink{struct_runtime_object}{RuntimeObject}}\ *ref)\ \{}
+\DoxyCodeLine{00228\ \ \ \ \ \textcolor{comment}{//\ armazenar\ ponteiro\ como\ índice\ ou\ endereço\ truncado\ (32-\/bit)}}
+\DoxyCodeLine{00229\ \ \ \ \ stack.push\_back(\textcolor{keyword}{static\_cast<}u4\textcolor{keyword}{>}(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ref)));}
+\DoxyCodeLine{00230\ \ \ \}}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00232\ \ \ \mbox{\hyperlink{struct_runtime_object}{RuntimeObject}}\ *pop\_ref()\ \{}
+\DoxyCodeLine{00233\ \ \ \ \ \textcolor{keywordflow}{if}\ (stack.empty())}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}Operand\ stack\ underflow"{}});}
+\DoxyCodeLine{00235\ \ \ \ \ u4\ bits\ =\ stack.back();}
+\DoxyCodeLine{00236\ \ \ \ \ stack.pop\_back();}
+\DoxyCodeLine{00237\ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{reinterpret\_cast<}\mbox{\hyperlink{struct_runtime_object}{RuntimeObject}}\ *\textcolor{keyword}{>}(\textcolor{keyword}{static\_cast<}uintptr\_t\textcolor{keyword}{>}(bits));}
+\DoxyCodeLine{00238\ \ \ \}}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \ \ \textcolor{comment}{//\ -\/-\/-\/\ Float\ /\ Double\ helpers\ -\/-\/-\/}}
+\DoxyCodeLine{00241\ \ \ \textcolor{keywordtype}{void}\ push\_float(\textcolor{keywordtype}{float}\ v)\ \{}
+\DoxyCodeLine{00242\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ f;}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ u4\ u;}
+\DoxyCodeLine{00245\ \ \ \ \ \}\ conv;}
+\DoxyCodeLine{00246\ \ \ \ \ conv.f\ =\ v;}
+\DoxyCodeLine{00247\ \ \ \ \ stack.push\_back(conv.u);}
+\DoxyCodeLine{00248\ \ \ \}}
+\DoxyCodeLine{00249\ }
+\DoxyCodeLine{00250\ \ \ \textcolor{keywordtype}{float}\ pop\_float()\ \{}
+\DoxyCodeLine{00251\ \ \ \ \ \textcolor{keywordflow}{if}\ (stack.empty())}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}Operand\ stack\ underflow"{}});}
+\DoxyCodeLine{00253\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ f;}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ u4\ u;}
+\DoxyCodeLine{00256\ \ \ \ \ \}\ conv;}
+\DoxyCodeLine{00257\ \ \ \ \ conv.u\ =\ stack.back();}
+\DoxyCodeLine{00258\ \ \ \ \ stack.pop\_back();}
+\DoxyCodeLine{00259\ \ \ \ \ \textcolor{keywordflow}{return}\ conv.f;}
+\DoxyCodeLine{00260\ \ \ \}}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \ \ \textcolor{keywordtype}{void}\ push\_double(\textcolor{keywordtype}{double}\ v)\ \{}
+\DoxyCodeLine{00263\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ d;}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ u8\ u;}
+\DoxyCodeLine{00266\ \ \ \ \ \}\ conv;}
+\DoxyCodeLine{00267\ \ \ \ \ conv.d\ =\ v;}
+\DoxyCodeLine{00268\ \ \ \ \ push\_long(\textcolor{keyword}{static\_cast<}int64\_t\textcolor{keyword}{>}(conv.u));}
+\DoxyCodeLine{00269\ \ \ \}}
+\DoxyCodeLine{00270\ }
+\DoxyCodeLine{00271\ \ \ \textcolor{keywordtype}{double}\ pop\_double()\ \{}
+\DoxyCodeLine{00272\ \ \ \ \ \textcolor{keyword}{union\ }\{}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \textcolor{keywordtype}{double}\ d;}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ u8\ u;}
+\DoxyCodeLine{00275\ \ \ \ \ \}\ conv;}
+\DoxyCodeLine{00276\ \ \ \ \ conv.u\ =\ \textcolor{keyword}{static\_cast<}u8\textcolor{keyword}{>}(pop\_long());}
+\DoxyCodeLine{00277\ \ \ \ \ \textcolor{keywordflow}{return}\ conv.d;}
+\DoxyCodeLine{00278\ \ \ \}}
+\DoxyCodeLine{00279\ }
+\DoxyCodeLine{00280\ \ \ \textcolor{keywordtype}{bool}\ empty()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ stack.empty();\ \}}
+\DoxyCodeLine{00281\ \ \ \textcolor{keywordtype}{size\_t}\ size()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ stack.size();\ \}}
+\DoxyCodeLine{00282\ \};}
+\DoxyCodeLine{00283\ }
+\DoxyCodeLine{00284\ \textcolor{comment}{//\ =====================================================}}
+\DoxyCodeLine{00285\ \textcolor{comment}{//\ Frame:\ contexto\ de\ execução\ de\ um\ método}}
+\DoxyCodeLine{00286\ \textcolor{comment}{//\ =====================================================}}
+\DoxyCodeLine{00294\ \textcolor{keyword}{struct\ }Frame\ \{}
+\DoxyCodeLine{00295\ \ \ \mbox{\hyperlink{struct_runtime_method}{RuntimeMethod}}\ *\mbox{\hyperlink{struct_frame_a4249b77bd07452150c6542f924f5bb04}{method}};\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00296\ \ \ \mbox{\hyperlink{class_runtime_class}{RuntimeClass}}\ *\mbox{\hyperlink{struct_frame_a647a7fe9e3e740a57d226c6382ede8da}{current\_class}};\ \ }
+\DoxyCodeLine{00297\ \ \ std::vector<Slot>\ \mbox{\hyperlink{struct_frame_a716c4b71f76bd14cd562ea67db10074d}{local\_vars}};\ }
+\DoxyCodeLine{00298\ \ \ \mbox{\hyperlink{struct_operand_stack}{OperandStack}}\ \mbox{\hyperlink{struct_frame_a48a57f3322f7091748fd58ac1e318f47}{operand\_stack}};\ \ \ }
+\DoxyCodeLine{00299\ \ \ u4\ \mbox{\hyperlink{struct_frame_ada6a6cf76d00cbadf43a86a686dd026c}{pc}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00300\ }
+\DoxyCodeLine{00301\ \ \ Frame(\mbox{\hyperlink{struct_runtime_method}{RuntimeMethod}}\ *\mbox{\hyperlink{struct_frame_a4249b77bd07452150c6542f924f5bb04}{method}},\ \mbox{\hyperlink{class_runtime_class}{RuntimeClass}}\ *\mbox{\hyperlink{struct_frame_a647a7fe9e3e740a57d226c6382ede8da}{current\_class}})}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ :\ \mbox{\hyperlink{struct_frame_a4249b77bd07452150c6542f924f5bb04}{method}}(\mbox{\hyperlink{struct_frame_a4249b77bd07452150c6542f924f5bb04}{method}}),\ \mbox{\hyperlink{struct_frame_a647a7fe9e3e740a57d226c6382ede8da}{current\_class}}(\mbox{\hyperlink{struct_frame_a647a7fe9e3e740a57d226c6382ede8da}{current\_class}}),\ \mbox{\hyperlink{struct_frame_ada6a6cf76d00cbadf43a86a686dd026c}{pc}}(0)\ \{\}}
+\DoxyCodeLine{00303\ }
+\DoxyCodeLine{00307\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{struct_frame_a0543bd9c165ba48313e972a4d80d29bb}{init}}(u4\ max\_locals,\ u4\ max\_stack)\ \{}
+\DoxyCodeLine{00308\ \ \ \ \ \mbox{\hyperlink{struct_frame_a716c4b71f76bd14cd562ea67db10074d}{local\_vars}}.resize(max\_locals);}
+\DoxyCodeLine{00309\ \ \ \ \ \mbox{\hyperlink{struct_frame_a48a57f3322f7091748fd58ac1e318f47}{operand\_stack}}.stack.reserve(max\_stack);}
+\DoxyCodeLine{00310\ \ \ \}}
+\DoxyCodeLine{00311\ \};}
+\DoxyCodeLine{00312\ }
+\DoxyCodeLine{00319\ \textcolor{keyword}{struct\ }Thread\ \{}
+\DoxyCodeLine{00320\ \ \ std::vector<Frame\ *>\ call\_stack;}
+\DoxyCodeLine{00321\ \ \ \mbox{\hyperlink{struct_frame}{Frame}}\ \&current\_frame()\ \{\ \textcolor{keywordflow}{return}\ *call\_stack.back();\ \}}
+\DoxyCodeLine{00322\ \ \ \mbox{\hyperlink{class_runtime}{Runtime}}\ *runtime;}
+\DoxyCodeLine{00323\ \ \ \mbox{\hyperlink{struct_interpreter}{Interpreter}}\ *interpreter;}
+\DoxyCodeLine{00324\ }
+\DoxyCodeLine{00325\ \ \ Thread(\mbox{\hyperlink{class_runtime}{Runtime}}\ *rt);}
+\DoxyCodeLine{00326\ \ \ \string~Thread();}
+\DoxyCodeLine{00327\ }
+\DoxyCodeLine{00328\ \ \ \textcolor{keywordtype}{void}\ push\_frame(\mbox{\hyperlink{struct_frame}{Frame}}\ *f)\ \{}
+\DoxyCodeLine{00329\ \ \ \ \ call\_stack.push\_back(f);}
+\DoxyCodeLine{00330\ }
+\DoxyCodeLine{00331\ \ \ \ \ \textcolor{keywordflow}{if}\ (!f)\ \{}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ DEBUG\_LOG(\textcolor{stringliteral}{"{}[JVM]\ Push\ frame\ -\/>\ <null>\ |\ depth="{}}\ <<\ call\_stack.size());}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00334\ \ \ \ \ \}}
+\DoxyCodeLine{00335\ }
+\DoxyCodeLine{00336\ \ \ \ \ std::string\ class\_name\ =}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ f-\/>\mbox{\hyperlink{struct_frame_a647a7fe9e3e740a57d226c6382ede8da}{current\_class}}\ ?\ f-\/>\mbox{\hyperlink{struct_frame_a647a7fe9e3e740a57d226c6382ede8da}{current\_class}}-\/>name\ :\ \textcolor{stringliteral}{"{}<unknown-\/class>"{}};}
+\DoxyCodeLine{00338\ \ \ \ \ std::string\ method\_name\ =\ f-\/>\mbox{\hyperlink{struct_frame_a4249b77bd07452150c6542f924f5bb04}{method}}\ ?\ f-\/>\mbox{\hyperlink{struct_frame_a4249b77bd07452150c6542f924f5bb04}{method}}-\/>name\ :\ \textcolor{stringliteral}{"{}<unknown-\/method>"{}};}
+\DoxyCodeLine{00339\ \ \ \ \ std::string\ descriptor\ =}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ f-\/>\mbox{\hyperlink{struct_frame_a4249b77bd07452150c6542f924f5bb04}{method}}\ ?\ (\textcolor{stringliteral}{"{}\ "{}}\ +\ f-\/>\mbox{\hyperlink{struct_frame_a4249b77bd07452150c6542f924f5bb04}{method}}-\/>descriptor)\ :\ std::string\{\};}
+\DoxyCodeLine{00341\ }
+\DoxyCodeLine{00342\ \ \ \ \ DEBUG\_LOG(\textcolor{stringliteral}{"{}[JVM]\ Push\ frame\ -\/>\ "{}}\ <<\ class\_name\ <<\ \textcolor{stringliteral}{"{}."{}}\ <<\ method\_name}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <<\ descriptor\ <<\ \textcolor{stringliteral}{"{}\ |\ depth="{}}\ <<\ call\_stack.size());}
+\DoxyCodeLine{00344\ \ \ \}}
+\DoxyCodeLine{00345\ \ \ \textcolor{keywordtype}{void}\ pop\_frame()\ \{}
+\DoxyCodeLine{00346\ \ \ \ \ \textcolor{keywordflow}{if}\ (call\_stack.empty())\ \{}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (g\_debug\_enabled)}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ std::cerr}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \ \ \ \ <<\ \textcolor{stringliteral}{"{}[JVM]\ Pop\ frame\ requested\ but\ call\ stack\ is\ already\ empty\(\backslash\)n"{}};}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00351\ \ \ \ \ \}}
+\DoxyCodeLine{00352\ }
+\DoxyCodeLine{00353\ \ \ \ \ \mbox{\hyperlink{struct_frame}{Frame}}\ *top\ =\ call\_stack.back();}
+\DoxyCodeLine{00354\ }
+\DoxyCodeLine{00355\ \ \ \ \ std::string\ class\_name\ =}
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ top\ \&\&\ top-\/>\mbox{\hyperlink{struct_frame_a647a7fe9e3e740a57d226c6382ede8da}{current\_class}}\ ?\ top-\/>\mbox{\hyperlink{struct_frame_a647a7fe9e3e740a57d226c6382ede8da}{current\_class}}-\/>name\ :\ \textcolor{stringliteral}{"{}<unknown-\/class>"{}};}
+\DoxyCodeLine{00357\ \ \ \ \ std::string\ method\_name\ =}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ top\ \&\&\ top-\/>\mbox{\hyperlink{struct_frame_a4249b77bd07452150c6542f924f5bb04}{method}}\ ?\ top-\/>\mbox{\hyperlink{struct_frame_a4249b77bd07452150c6542f924f5bb04}{method}}-\/>name\ :\ \textcolor{stringliteral}{"{}<unknown-\/method>"{}};}
+\DoxyCodeLine{00359\ \ \ \ \ std::string\ descriptor\ =}
+\DoxyCodeLine{00360\ \ \ \ \ \ \ \ \ top\ \&\&\ top-\/>\mbox{\hyperlink{struct_frame_a4249b77bd07452150c6542f924f5bb04}{method}}\ ?\ (\textcolor{stringliteral}{"{}\ "{}}\ +\ top-\/>\mbox{\hyperlink{struct_frame_a4249b77bd07452150c6542f924f5bb04}{method}}-\/>descriptor)\ :\ std::string\{\};}
+\DoxyCodeLine{00361\ }
+\DoxyCodeLine{00362\ \ \ \ \ DEBUG\_LOG(\textcolor{stringliteral}{"{}[JVM]\ Pop\ frame\ <-\/\ "{}}\ <<\ class\_name\ <<\ \textcolor{stringliteral}{"{}."{}}\ <<\ method\_name}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ <<\ descriptor\ <<\ \textcolor{stringliteral}{"{}\ |\ depth="{}}\ <<\ (call\_stack.size()\ -\/\ 1));}
+\DoxyCodeLine{00364\ }
+\DoxyCodeLine{00365\ \ \ \ \ call\_stack.pop\_back();}
+\DoxyCodeLine{00366\ \ \ \ \ \textcolor{keyword}{delete}\ top;}
+\DoxyCodeLine{00367\ \ \ \}}
+\DoxyCodeLine{00368\ \ \ \textcolor{keywordtype}{void}\ return\_frame()\ \{\}}
+\DoxyCodeLine{00369\ }
+\DoxyCodeLine{00370\ \ \ \textcolor{keywordtype}{void}\ execute\_stack();}
+\DoxyCodeLine{00371\ \};}
+\DoxyCodeLine{00372\ }
+\DoxyCodeLine{00373\ \textcolor{comment}{//\ \ ClassLoader\ base}}
+\DoxyCodeLine{00378\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_class_loader}{ClassLoader}}\ \{}
+\DoxyCodeLine{00379\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00380\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{class_runtime_class}{RuntimeClass}}\ *load\_class(\textcolor{keyword}{const}\ std::string\ \&name)\ =\ 0;}
+\DoxyCodeLine{00381\ }
+\DoxyCodeLine{00382\ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{class_class_loader}{\string~ClassLoader}}()\ \{\}}
+\DoxyCodeLine{00383\ \};}
+\DoxyCodeLine{00384\ }
+\DoxyCodeLine{00385\ \textcolor{comment}{//\ \ BootstrapClassLoader}}
+\DoxyCodeLine{00393\ \textcolor{keyword}{class\ }BootstrapClassLoader\ :\ \textcolor{keyword}{public}\ \mbox{\hyperlink{class_class_loader}{ClassLoader}}\ \{}
+\DoxyCodeLine{00394\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00395\ \ \ \textcolor{keyword}{explicit}\ BootstrapClassLoader(\textcolor{keyword}{const}\ std::string\ classpath,\ \mbox{\hyperlink{class_runtime}{Runtime}}\ *runtime)}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ :\ classpath\_(classpath),\ runtime(runtime)\ \{\}}
+\DoxyCodeLine{00401\ \ \ \mbox{\hyperlink{class_runtime_class}{RuntimeClass}}\ *\mbox{\hyperlink{class_bootstrap_class_loader_a27805c3f0663ed3a71e026170daadb60}{load\_class}}(\textcolor{keyword}{const}\ std::string\ \&name)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{00402\ \ \ \textcolor{keywordtype}{void}\ set\_classpath(std::string\ path)\ \{\ classpath\_\ =\ std::move(path);\ \}}
+\DoxyCodeLine{00403\ }
+\DoxyCodeLine{00404\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00405\ \ \ std::string\ classpath\_;}
+\DoxyCodeLine{00406\ \ \ std::unordered\_map<std::string,\ std::unique\_ptr<RuntimeClass>>\ loaded\_;}
+\DoxyCodeLine{00410\ \ \ std::unique\_ptr<RuntimeClass>}
+\DoxyCodeLine{00411\ \ \ build\_runtime\_class(std::unique\_ptr<ClassFile>\ cf);}
+\DoxyCodeLine{00412\ }
+\DoxyCodeLine{00413\ \ \ \mbox{\hyperlink{class_runtime}{Runtime}}\ *runtime;}
+\DoxyCodeLine{00414\ \};}
+\DoxyCodeLine{00415\ }
+\DoxyCodeLine{00416\ \textcolor{comment}{//\ Interpretador\ (esqueleto)}}
+\DoxyCodeLine{00423\ \textcolor{keyword}{struct\ }Interpreter\ \{}
+\DoxyCodeLine{00427\ \ \ \mbox{\hyperlink{struct_thread}{Thread}}\ *\mbox{\hyperlink{struct_interpreter_a7175041b558673e6e7a89af54e947f07}{thread}};}
+\DoxyCodeLine{00428\ \ \ \textcolor{keyword}{using\ }Opfunc\ =\ void\ (*)(\mbox{\hyperlink{struct_thread}{Thread}}\ *,\ \mbox{\hyperlink{struct_frame}{Frame}}\ \&);}
+\DoxyCodeLine{00429\ \ \ std::unordered\_map<uint8\_t,\ Opfunc>\ opcode\_table\ =\ \{\};}
+\DoxyCodeLine{00430\ \ \ \mbox{\hyperlink{struct_interpreter}{Interpreter}}(\mbox{\hyperlink{struct_thread}{Thread}}\ *t);}
+\DoxyCodeLine{00431\ }
+\DoxyCodeLine{00432\ \ \ \textcolor{keywordtype}{void}\ execute(\mbox{\hyperlink{struct_frame}{Frame}}\ \&frame);}
+\DoxyCodeLine{00433\ \};}
+\DoxyCodeLine{00434\ }
+\DoxyCodeLine{00435\ \textcolor{comment}{//\ Method\ Area}}
+\DoxyCodeLine{00440\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_method_area}{MethodArea}}\ \{}
+\DoxyCodeLine{00441\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00442\ \ \ std::unordered\_map<std::string,\ std::unique\_ptr<RuntimeClass>>\ classes;}
+\DoxyCodeLine{00443\ }
+\DoxyCodeLine{00444\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00446\ \ \ \mbox{\hyperlink{class_runtime_class}{RuntimeClass}}\ *\mbox{\hyperlink{class_method_area_a39f4df54ad226ac029b236bc51512c0c}{getClassRef}}(\textcolor{keyword}{const}\ std::string\ \&name);}
+\DoxyCodeLine{00448\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_method_area_a5c476da46f2b91226adf6efc1f843bc0}{storeClass}}(std::unique\_ptr<RuntimeClass>\ klass);}
+\DoxyCodeLine{00449\ \};}
+\DoxyCodeLine{00450\ }
+\DoxyCodeLine{00451\ \textcolor{comment}{//\ Runtime}}
+\DoxyCodeLine{00452\ \textcolor{comment}{//\ Pensei\ mais\ como\ um\ classe\ para\ resolver\ o\ início\ do\ modo\ interpretador\ e}}
+\DoxyCodeLine{00453\ \textcolor{comment}{//\ reunir\ os\ componentes\ para\ organizar\ melhor\ as\ classes}}
+\DoxyCodeLine{00460\ \textcolor{keyword}{class\ }Runtime\ \{}
+\DoxyCodeLine{00461\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00462\ \ \ \mbox{\hyperlink{struct_thread}{Thread}}\ *thread;}
+\DoxyCodeLine{00463\ \ \ \mbox{\hyperlink{class_method_area}{MethodArea}}\ *method\_area;}
+\DoxyCodeLine{00464\ }
+\DoxyCodeLine{00465\ \ \ \mbox{\hyperlink{class_class_loader}{ClassLoader}}\ *class\_loader;}
+\DoxyCodeLine{00466\ }
+\DoxyCodeLine{00467\ \ \ Runtime()\ \{}
+\DoxyCodeLine{00468\ \ \ \ \ thread\ =\ \textcolor{keyword}{new}\ \mbox{\hyperlink{struct_thread}{Thread}}(\textcolor{keyword}{this});}
+\DoxyCodeLine{00469\ \ \ \ \ method\_area\ =\ \textcolor{keyword}{new}\ \mbox{\hyperlink{class_method_area}{MethodArea}}();}
+\DoxyCodeLine{00470\ \ \ \ \ class\_loader\ =\ \textcolor{keyword}{new}\ \mbox{\hyperlink{class_bootstrap_class_loader}{BootstrapClassLoader}}(\{\},\ \textcolor{keyword}{this});}
+\DoxyCodeLine{00471\ \ \ \}}
+\DoxyCodeLine{00472\ }
+\DoxyCodeLine{00473\ \ \ \string~Runtime();}
+\DoxyCodeLine{00478\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_runtime_a4e3ca2559b1121ed96f958314b2dc2a4}{start}}(std::string\ filepath,\ \textcolor{keyword}{const}\ std::vector<std::string>\ \&args);}
+\DoxyCodeLine{00479\ \};}
+
+\end{DoxyCode}

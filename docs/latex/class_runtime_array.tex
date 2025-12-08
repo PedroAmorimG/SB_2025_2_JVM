@@ -1,0 +1,182 @@
+\doxysection{Runtime\+Array Class Reference}
+\hypertarget{class_runtime_array}{}\label{class_runtime_array}\index{RuntimeArray@{RuntimeArray}}
+
+
+Representa um array alocado na Heap da JVM.  
+
+
+
+
+{\ttfamily \#include $<$array.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_runtime_array_a2a1c669c3acb01d9fba81da285196ffe}\label{class_runtime_array_a2a1c669c3acb01d9fba81da285196ffe} 
+{\bfseries Runtime\+Array} ()
+\begin{DoxyCompactList}\small\item\em Construtor padrão privado (use os métodos estáticos create\+\_\+\texorpdfstring{$\ast$}{*}). \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_runtime_array_a1bd21e91ac048309bf37302b593038cb}{check\+\_\+index}} (size\+\_\+t idx) const
+\begin{DoxyCompactList}\small\item\em Verifica se o índice está dentro dos limites. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T$>$ }\\T \mbox{\hyperlink{class_runtime_array_a6f6dbe6799503acfac8bc7c0aa912983}{read\+\_\+primitive}} (size\+\_\+t idx) const
+\begin{DoxyCompactList}\small\item\em Lê um valor primitivo do array. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename T$>$ }\\void \mbox{\hyperlink{class_runtime_array_a9e46f8d0a734eb2cc7bfeecbb7282a70}{write\+\_\+primitive}} (size\+\_\+t idx, T value)
+\begin{DoxyCompactList}\small\item\em Escreve um valor primitivo no array. \end{DoxyCompactList}\item 
+\Hypertarget{class_runtime_array_a5aa7bd264c3f4760c275fc70c7342a38}\label{class_runtime_array_a5aa7bd264c3f4760c275fc70c7342a38} 
+\mbox{\hyperlink{struct_runtime_object}{Runtime\+Object}} \texorpdfstring{$\ast$}{*} {\bfseries read\+\_\+ref} (size\+\_\+t idx) const
+\begin{DoxyCompactList}\small\item\em Lê uma referência de objeto do array. \end{DoxyCompactList}\item 
+\Hypertarget{class_runtime_array_a1f2bf1145fd8677bf7601d2db876ea12}\label{class_runtime_array_a1f2bf1145fd8677bf7601d2db876ea12} 
+void {\bfseries write\+\_\+ref} (size\+\_\+t idx, \mbox{\hyperlink{struct_runtime_object}{Runtime\+Object}} \texorpdfstring{$\ast$}{*}ref)
+\begin{DoxyCompactList}\small\item\em Escreve uma referência de objeto no array. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{class_runtime_array}{Runtime\+Array}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_runtime_array_a242681a764e88eb7977412dd80feafa5}{create\+\_\+primitive}} (\mbox{\hyperlink{class_runtime_class}{Runtime\+Class}} \texorpdfstring{$\ast$}{*}component, size\+\_\+t len, size\+\_\+t elem\+\_\+sz)
+\begin{DoxyCompactList}\small\item\em Cria um array de tipos primitivos. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{class_runtime_array}{Runtime\+Array}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_runtime_array_aa9690293cbc281724e12d0f2cafbef18}{create\+\_\+reference}} (\mbox{\hyperlink{class_runtime_class}{Runtime\+Class}} \texorpdfstring{$\ast$}{*}component, size\+\_\+t len)
+\begin{DoxyCompactList}\small\item\em Cria um array de referências (objetos). \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_runtime_array_ac5a8470f4c006ec29c79881654f12538}\label{class_runtime_array_ac5a8470f4c006ec29c79881654f12538} 
+\mbox{\hyperlink{class_runtime_class}{Runtime\+Class}} \texorpdfstring{$\ast$}{*} {\bfseries component\+\_\+class}
+\item 
+\Hypertarget{class_runtime_array_aa4473ec551de9c841326880bfccce05f}\label{class_runtime_array_aa4473ec551de9c841326880bfccce05f} 
+bool {\bfseries is\+\_\+reference}
+\item 
+\Hypertarget{class_runtime_array_a9fb51864323d4eb286e2426b7db7ba20}\label{class_runtime_array_a9fb51864323d4eb286e2426b7db7ba20} 
+size\+\_\+t {\bfseries length}
+\item 
+size\+\_\+t \mbox{\hyperlink{class_runtime_array_afbd9dcb83d0f0bc79f14202580f4336f}{elem\+\_\+size}}
+\begin{DoxyCompactList}\small\item\em Tamanho em bytes de cada elemento (apenas para arrays primitivos). Ex\+: 4 para int, 8 para double. \end{DoxyCompactList}\item 
+\Hypertarget{class_runtime_array_a9a8cbcca314d855072717dbff34cf369}\label{class_runtime_array_a9a8cbcca314d855072717dbff34cf369} 
+std\+::vector$<$ u1 $>$ {\bfseries raw}
+\begin{DoxyCompactList}\small\item\em Armazenamento contíguo para tipos primitivos (byte, int, long, etc). \end{DoxyCompactList}\item 
+\Hypertarget{class_runtime_array_aebd3b5c10ec2e684cab7e37234614080}\label{class_runtime_array_aebd3b5c10ec2e684cab7e37234614080} 
+std\+::vector$<$ \mbox{\hyperlink{struct_runtime_object}{Runtime\+Object}} \texorpdfstring{$\ast$}{*} $>$ {\bfseries refs}
+\begin{DoxyCompactList}\small\item\em Armazenamento para arrays de referência (ponteiros para \doxylink{struct_runtime_object}{Runtime\+Object}). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Representa um array alocado na Heap da JVM. 
+
+Esta classe lida com dois tipos de armazenamento\+:
+\begin{DoxyEnumerate}
+\item Primitivos (int, float, byte, etc.)\+: Armazenados como bytes brutos no vetor {\ttfamily \doxylink{class_runtime_array_a9a8cbcca314d855072717dbff34cf369}{raw}}.
+\item Referências (Object\mbox{[}\mbox{]}, String\mbox{[}\mbox{]}, etc.)\+: Armazenados como ponteiros no vetor {\ttfamily \doxylink{class_runtime_array_aebd3b5c10ec2e684cab7e37234614080}{refs}}. 
+\end{DoxyEnumerate}
+
+\label{doc-func-members}
+\Hypertarget{class_runtime_array_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_runtime_array_a1bd21e91ac048309bf37302b593038cb}\index{RuntimeArray@{RuntimeArray}!check\_index@{check\_index}}
+\index{check\_index@{check\_index}!RuntimeArray@{RuntimeArray}}
+\doxysubsubsection{\texorpdfstring{check\_index()}{check\_index()}}
+{\footnotesize\ttfamily \label{class_runtime_array_a1bd21e91ac048309bf37302b593038cb} 
+void Runtime\+Array\+::check\+\_\+index (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{idx}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Verifica se o índice está dentro dos limites. 
+
+
+\begin{DoxyExceptions}{Exceptions}
+{\em std\+::runtime\+\_\+error} & Se o índice for inválido (Array\+Index\+Out\+Of\+Bounds). \\
+\hline
+\end{DoxyExceptions}
+\Hypertarget{class_runtime_array_a242681a764e88eb7977412dd80feafa5}\index{RuntimeArray@{RuntimeArray}!create\_primitive@{create\_primitive}}
+\index{create\_primitive@{create\_primitive}!RuntimeArray@{RuntimeArray}}
+\doxysubsubsection{\texorpdfstring{create\_primitive()}{create\_primitive()}}
+{\footnotesize\ttfamily \label{class_runtime_array_a242681a764e88eb7977412dd80feafa5} 
+\mbox{\hyperlink{class_runtime_array}{Runtime\+Array}} \texorpdfstring{$\ast$}{*} Runtime\+Array\+::create\+\_\+primitive (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_runtime_class}{Runtime\+Class}} \texorpdfstring{$\ast$}{*}}]{component}{, }\item[{size\+\_\+t}]{len}{, }\item[{size\+\_\+t}]{elem\+\_\+sz}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Cria um array de tipos primitivos. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em component} & Classe do componente (ex\+: int.\+class). \\
+\hline
+{\em len} & Quantidade de elementos. \\
+\hline
+{\em elem\+\_\+sz} & Tamanho em bytes de cada elemento. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Ponteiro para o novo \doxylink{class_runtime_array}{Runtime\+Array} alocado. 
+\end{DoxyReturn}
+\Hypertarget{class_runtime_array_aa9690293cbc281724e12d0f2cafbef18}\index{RuntimeArray@{RuntimeArray}!create\_reference@{create\_reference}}
+\index{create\_reference@{create\_reference}!RuntimeArray@{RuntimeArray}}
+\doxysubsubsection{\texorpdfstring{create\_reference()}{create\_reference()}}
+{\footnotesize\ttfamily \label{class_runtime_array_aa9690293cbc281724e12d0f2cafbef18} 
+\mbox{\hyperlink{class_runtime_array}{Runtime\+Array}} \texorpdfstring{$\ast$}{*} Runtime\+Array\+::create\+\_\+reference (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_runtime_class}{Runtime\+Class}} \texorpdfstring{$\ast$}{*}}]{component}{, }\item[{size\+\_\+t}]{len}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Cria um array de referências (objetos). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em component} & Classe do componente (ex\+: String.\+class). \\
+\hline
+{\em len} & Quantidade de elementos. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Ponteiro para o novo \doxylink{class_runtime_array}{Runtime\+Array} alocado. 
+\end{DoxyReturn}
+\Hypertarget{class_runtime_array_a6f6dbe6799503acfac8bc7c0aa912983}\index{RuntimeArray@{RuntimeArray}!read\_primitive@{read\_primitive}}
+\index{read\_primitive@{read\_primitive}!RuntimeArray@{RuntimeArray}}
+\doxysubsubsection{\texorpdfstring{read\_primitive()}{read\_primitive()}}
+{\footnotesize\ttfamily \label{class_runtime_array_a6f6dbe6799503acfac8bc7c0aa912983} 
+template$<$typename T$>$ \\
+T Runtime\+Array\+::read\+\_\+primitive (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{idx}{}\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Lê um valor primitivo do array. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & Tipo do dado a ler (int, float, etc). \\
+\hline
+\end{DoxyTemplParams}
+\Hypertarget{class_runtime_array_a9e46f8d0a734eb2cc7bfeecbb7282a70}\index{RuntimeArray@{RuntimeArray}!write\_primitive@{write\_primitive}}
+\index{write\_primitive@{write\_primitive}!RuntimeArray@{RuntimeArray}}
+\doxysubsubsection{\texorpdfstring{write\_primitive()}{write\_primitive()}}
+{\footnotesize\ttfamily \label{class_runtime_array_a9e46f8d0a734eb2cc7bfeecbb7282a70} 
+template$<$typename T$>$ \\
+void Runtime\+Array\+::write\+\_\+primitive (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{idx}{, }\item[{T}]{value}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Escreve um valor primitivo no array. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & Tipo do dado a escrever. \\
+\hline
+\end{DoxyTemplParams}
+
+
+\label{doc-variable-members}
+\Hypertarget{class_runtime_array_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_runtime_array_afbd9dcb83d0f0bc79f14202580f4336f}\index{RuntimeArray@{RuntimeArray}!elem\_size@{elem\_size}}
+\index{elem\_size@{elem\_size}!RuntimeArray@{RuntimeArray}}
+\doxysubsubsection{\texorpdfstring{elem\_size}{elem\_size}}
+{\footnotesize\ttfamily \label{class_runtime_array_afbd9dcb83d0f0bc79f14202580f4336f} 
+size\+\_\+t Runtime\+Array\+::elem\+\_\+size}
+
+
+
+Tamanho em bytes de cada elemento (apenas para arrays primitivos). Ex\+: 4 para int, 8 para double. 
+
+
+\begin{DoxyItemize}
+\item 
+\end{DoxyItemize}
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+runtime/array.\+h\end{DoxyCompactItemize}

@@ -1,0 +1,622 @@
+\doxysection{runtime/interpreter.h File Reference}
+\hypertarget{interpreter_8h}{}\label{interpreter_8h}\index{runtime/interpreter.h@{runtime/interpreter.h}}
+
+
+Declaração das funções de execução para cada instrução de bytecode (opcode). Cada função implementa a lógica definida na especificação da JVM.  
+
+
+{\ttfamily \#include "{}./runtime\+\_\+class\+\_\+types.\+h"{}}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{interpreter_8h_a51c06265119a7a8e81af44c90f0692f9}\label{interpreter_8h_a51c06265119a7a8e81af44c90f0692f9} 
+void {\bfseries exec\+\_\+nop} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x00\+: Não faz nada. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a2a28f3ffb610777d5b8aa173b87f942f}\label{interpreter_8h_a2a28f3ffb610777d5b8aa173b87f942f} 
+void {\bfseries exec\+\_\+aconst\+\_\+null} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x01\+: Empilha referência null. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aae15c4f05a625541981c0940683fd161}\label{interpreter_8h_aae15c4f05a625541981c0940683fd161} 
+void {\bfseries exec\+\_\+iconst\+\_\+m1} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x02\+: Empilha int -\/1. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a93746aa9f4481769e0f878c68b4e876f}\label{interpreter_8h_a93746aa9f4481769e0f878c68b4e876f} 
+void {\bfseries exec\+\_\+iconst\+\_\+0} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x03\+: Empilha int 0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a08e58314840692e74c0c3c01d73b0c9f}\label{interpreter_8h_a08e58314840692e74c0c3c01d73b0c9f} 
+void {\bfseries exec\+\_\+iconst\+\_\+1} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x04\+: Empilha int 1. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aae2d26cd925872f1551a9b5936af1651}\label{interpreter_8h_aae2d26cd925872f1551a9b5936af1651} 
+void {\bfseries exec\+\_\+iconst\+\_\+2} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x05\+: Empilha int 2. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aac3c379a3a99957164ce809398cd5a93}\label{interpreter_8h_aac3c379a3a99957164ce809398cd5a93} 
+void {\bfseries exec\+\_\+iconst\+\_\+3} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x06\+: Empilha int 3. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_af900ee8fa7db4da7c6aa67651e8c5c45}\label{interpreter_8h_af900ee8fa7db4da7c6aa67651e8c5c45} 
+void {\bfseries exec\+\_\+iconst\+\_\+4} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x07\+: Empilha int 4. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aab0aa06338fb118b9467de4a0fc646bc}\label{interpreter_8h_aab0aa06338fb118b9467de4a0fc646bc} 
+void {\bfseries exec\+\_\+iconst\+\_\+5} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x08\+: Empilha int 5. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_af63f10a27a8e97f63503442fef49b37a}\label{interpreter_8h_af63f10a27a8e97f63503442fef49b37a} 
+void {\bfseries exec\+\_\+lconst\+\_\+0} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x09\+: Empilha long 0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a21514dd4bdf020564adcf2d4cd948d85}\label{interpreter_8h_a21514dd4bdf020564adcf2d4cd948d85} 
+void {\bfseries exec\+\_\+lconst\+\_\+1} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x0A\+: Empilha long 1. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a8c58273980dc3cbdd4a5ea4fafec8154}\label{interpreter_8h_a8c58273980dc3cbdd4a5ea4fafec8154} 
+void {\bfseries exec\+\_\+fconst\+\_\+0} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x0B\+: Empilha float 0.\+0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aa1fe43ebbd4ab761b25462d22fc69304}\label{interpreter_8h_aa1fe43ebbd4ab761b25462d22fc69304} 
+void {\bfseries exec\+\_\+fconst\+\_\+1} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x0C\+: Empilha float 1.\+0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a5bfc9899e8582b673027173dc381bc49}\label{interpreter_8h_a5bfc9899e8582b673027173dc381bc49} 
+void {\bfseries exec\+\_\+fconst\+\_\+2} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x0D\+: Empilha float 2.\+0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ab03775db235a99e778f5ddd7f5360424}\label{interpreter_8h_ab03775db235a99e778f5ddd7f5360424} 
+void {\bfseries exec\+\_\+dconst\+\_\+0} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x0E\+: Empilha double 0.\+0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_adfc447b5d8a80c3310e1324979d558df}\label{interpreter_8h_adfc447b5d8a80c3310e1324979d558df} 
+void {\bfseries exec\+\_\+dconst\+\_\+1} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x0F\+: Empilha double 1.\+0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a9e10b3518674840a1fc0beb29ed0a0b1}\label{interpreter_8h_a9e10b3518674840a1fc0beb29ed0a0b1} 
+void {\bfseries exec\+\_\+bipush} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x10\+: Empilha byte (extensão de sinal). \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a5d534924109a55269b3d9728fddc357e}\label{interpreter_8h_a5d534924109a55269b3d9728fddc357e} 
+void {\bfseries exec\+\_\+sipush} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x11\+: Empilha short (extensão de sinal). \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a06ee9671ba7ab3dba3dabd10deef5c51}\label{interpreter_8h_a06ee9671ba7ab3dba3dabd10deef5c51} 
+void {\bfseries exec\+\_\+ldc} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x12\+: Empilha item da Constant Pool (índice 8 bits). \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a125d8577c3610d5975ca37086b7c5fce}\label{interpreter_8h_a125d8577c3610d5975ca37086b7c5fce} 
+void {\bfseries exec\+\_\+ldc\+\_\+w} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x13\+: Empilha item da Constant Pool (índice 16 bits). \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a752a44eaf8cf941b4e66ddc59e795be1}\label{interpreter_8h_a752a44eaf8cf941b4e66ddc59e795be1} 
+void {\bfseries exec\+\_\+ldc2\+\_\+w} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x14\+: Empilha item long/double da Constant Pool. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a47495959146dca44b207fb3b65827283}\label{interpreter_8h_a47495959146dca44b207fb3b65827283} 
+void {\bfseries exec\+\_\+iload} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x15\+: Carrega int de variável local. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a9fb21aa3402f7cff193e027911de2dc9}\label{interpreter_8h_a9fb21aa3402f7cff193e027911de2dc9} 
+void {\bfseries exec\+\_\+lload} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x16\+: Carrega long de variável local. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a3031c1d86658420ebac44e9e71acc9c0}\label{interpreter_8h_a3031c1d86658420ebac44e9e71acc9c0} 
+void {\bfseries exec\+\_\+fload} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x17\+: Carrega float de variável local. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_af05e28d2763b1b92ad48e4ea5eca831f}\label{interpreter_8h_af05e28d2763b1b92ad48e4ea5eca831f} 
+void {\bfseries exec\+\_\+dload} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x18\+: Carrega double de variável local. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ac5ef1c15481ab42812b78888ad5fc9aa}\label{interpreter_8h_ac5ef1c15481ab42812b78888ad5fc9aa} 
+void {\bfseries exec\+\_\+aload} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x19\+: Carrega referência de variável local. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aaa41ec4e471ffc74013e6e7a4e3c3269}\label{interpreter_8h_aaa41ec4e471ffc74013e6e7a4e3c3269} 
+void {\bfseries exec\+\_\+iload\+\_\+0} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x1A\+: Carrega int da var local 0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a8f3d6b70e8f59c4884bfb79f9ea81b46}\label{interpreter_8h_a8f3d6b70e8f59c4884bfb79f9ea81b46} 
+void {\bfseries exec\+\_\+iload\+\_\+1} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x1B\+: Carrega int da var local 1. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aee88ff15d0e4cb0c40c986b0b9adb913}\label{interpreter_8h_aee88ff15d0e4cb0c40c986b0b9adb913} 
+void {\bfseries exec\+\_\+iload\+\_\+2} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x1C\+: Carrega int da var local 2. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a4252eee41b3323f142c6fdf60d1b046d}\label{interpreter_8h_a4252eee41b3323f142c6fdf60d1b046d} 
+void {\bfseries exec\+\_\+iload\+\_\+3} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x1D\+: Carrega int da var local 3. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aca2ef2281625d0daa92f5bfc77edff89}\label{interpreter_8h_aca2ef2281625d0daa92f5bfc77edff89} 
+void {\bfseries exec\+\_\+lload\+\_\+0} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x1E\+: Carrega long da var local 0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ab6d1c30ea5599fd58f763faf1dd6831b}\label{interpreter_8h_ab6d1c30ea5599fd58f763faf1dd6831b} 
+void {\bfseries exec\+\_\+lload\+\_\+1} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x1F\+: Carrega long da var local 1. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a9c0dddd59be26bc607f416fa5ac1dbb8}\label{interpreter_8h_a9c0dddd59be26bc607f416fa5ac1dbb8} 
+void {\bfseries exec\+\_\+lload\+\_\+2} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x20\+: Carrega long da var local 2. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ac5ff684fb56bbc524c31d6047f59415f}\label{interpreter_8h_ac5ff684fb56bbc524c31d6047f59415f} 
+void {\bfseries exec\+\_\+lload\+\_\+3} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x21\+: Carrega long da var local 3. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a41b891d5adbd861c61b4883f240b6ee3}\label{interpreter_8h_a41b891d5adbd861c61b4883f240b6ee3} 
+void {\bfseries exec\+\_\+fload\+\_\+0} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x22\+: Carrega float da var local 0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_af8086b7ec51d4496209bfa18a15a7780}\label{interpreter_8h_af8086b7ec51d4496209bfa18a15a7780} 
+void {\bfseries exec\+\_\+fload\+\_\+1} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x23\+: Carrega float da var local 1. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_acecaf9fc15f104b4e72896f6015bf052}\label{interpreter_8h_acecaf9fc15f104b4e72896f6015bf052} 
+void {\bfseries exec\+\_\+fload\+\_\+2} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x24\+: Carrega float da var local 2. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_abc9fa1f4d5cbf71ef4a9000aa5e7b68a}\label{interpreter_8h_abc9fa1f4d5cbf71ef4a9000aa5e7b68a} 
+void {\bfseries exec\+\_\+fload\+\_\+3} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x25\+: Carrega float da var local 3. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a6cecc6f090fb61c4b24d135e4590b9f3}\label{interpreter_8h_a6cecc6f090fb61c4b24d135e4590b9f3} 
+void {\bfseries exec\+\_\+dload\+\_\+0} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x26\+: Carrega double da var local 0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a6a281f241661d2ae8d25a691347f7bbe}\label{interpreter_8h_a6a281f241661d2ae8d25a691347f7bbe} 
+void {\bfseries exec\+\_\+dload\+\_\+1} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x27\+: Carrega double da var local 1. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ae0dd4272b8447728ffa7dc6d500e8182}\label{interpreter_8h_ae0dd4272b8447728ffa7dc6d500e8182} 
+void {\bfseries exec\+\_\+dload\+\_\+2} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x28\+: Carrega double da var local 2. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a3da9f877ee3b8fd94a099e65606e170f}\label{interpreter_8h_a3da9f877ee3b8fd94a099e65606e170f} 
+void {\bfseries exec\+\_\+dload\+\_\+3} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x29\+: Carrega double da var local 3. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a04c6bd8628b76bdcb1379d15300cba9c}\label{interpreter_8h_a04c6bd8628b76bdcb1379d15300cba9c} 
+void {\bfseries exec\+\_\+aload\+\_\+0} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x2A\+: Carrega referência da var local 0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a42409a8c9d583ebb92292dfc7075899b}\label{interpreter_8h_a42409a8c9d583ebb92292dfc7075899b} 
+void {\bfseries exec\+\_\+aload\+\_\+1} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x2B\+: Carrega referência da var local 1. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_acea8dad13ac8747bf485eca53ffc9a6f}\label{interpreter_8h_acea8dad13ac8747bf485eca53ffc9a6f} 
+void {\bfseries exec\+\_\+aload\+\_\+2} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x2C\+: Carrega referência da var local 2. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a8e389772640ebc7513d9804b2499ed84}\label{interpreter_8h_a8e389772640ebc7513d9804b2499ed84} 
+void {\bfseries exec\+\_\+aload\+\_\+3} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x2D\+: Carrega referência da var local 3. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a69a6d3a82ad60813cabb77d4b396e36d}\label{interpreter_8h_a69a6d3a82ad60813cabb77d4b396e36d} 
+void {\bfseries exec\+\_\+iaload} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x2E\+: Carrega int de array. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aa036ff29e36339c2dd06a32ec1745b09}\label{interpreter_8h_aa036ff29e36339c2dd06a32ec1745b09} 
+void {\bfseries exec\+\_\+laload} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x2F\+: Carrega long de array. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aa20f1bd12abea20287b87e7a24f241cb}\label{interpreter_8h_aa20f1bd12abea20287b87e7a24f241cb} 
+void {\bfseries exec\+\_\+faload} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x30\+: Carrega float de array. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a14e04643ebff31fb83129f98acc2fea3}\label{interpreter_8h_a14e04643ebff31fb83129f98acc2fea3} 
+void {\bfseries exec\+\_\+daload} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x31\+: Carrega double de array. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a1b759eface54f80da3b00b10ad658210}\label{interpreter_8h_a1b759eface54f80da3b00b10ad658210} 
+void {\bfseries exec\+\_\+aaload} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x32\+: Carrega referência de array. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a6618cbd5bc5946ea13f10decf801a00d}\label{interpreter_8h_a6618cbd5bc5946ea13f10decf801a00d} 
+void {\bfseries exec\+\_\+baload} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x33\+: Carrega byte/boolean de array. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a2bb2cd47a864e16046852dc6b748362b}\label{interpreter_8h_a2bb2cd47a864e16046852dc6b748362b} 
+void {\bfseries exec\+\_\+caload} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x34\+: Carrega char de array. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_af652ca6ad46cd3cc3595de55ff0e888a}\label{interpreter_8h_af652ca6ad46cd3cc3595de55ff0e888a} 
+void {\bfseries exec\+\_\+saload} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x35\+: Carrega short de array. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a006b748ebb9f63018e07cc2be801734c}\label{interpreter_8h_a006b748ebb9f63018e07cc2be801734c} 
+void {\bfseries exec\+\_\+istore} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x36\+: Armazena int em variável local. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aa884a3a8964ab35326732a4a5f8ef153}\label{interpreter_8h_aa884a3a8964ab35326732a4a5f8ef153} 
+void {\bfseries exec\+\_\+lstore} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x37\+: Armazena long em variável local. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a69b4a9cbd83f783021b91c1cb212a4db}\label{interpreter_8h_a69b4a9cbd83f783021b91c1cb212a4db} 
+void {\bfseries exec\+\_\+fstore} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x38\+: Armazena float em variável local. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a86613a99722498d95602a1f3fe6f6e5d}\label{interpreter_8h_a86613a99722498d95602a1f3fe6f6e5d} 
+void {\bfseries exec\+\_\+dstore} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x39\+: Armazena double em variável local. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a2f0b4d278634214b990d4e7a4b0bc755}\label{interpreter_8h_a2f0b4d278634214b990d4e7a4b0bc755} 
+void {\bfseries exec\+\_\+astore} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x3A\+: Armazena referência em variável local. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_adc75a22ff5811c9b6e2e73fbddd96b68}\label{interpreter_8h_adc75a22ff5811c9b6e2e73fbddd96b68} 
+void {\bfseries exec\+\_\+istore\+\_\+0} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x3B\+: Armazena int na var local 0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_add91d933858fea3666bc3af18ba1bd6e}\label{interpreter_8h_add91d933858fea3666bc3af18ba1bd6e} 
+void {\bfseries exec\+\_\+istore\+\_\+1} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x3C\+: Armazena int na var local 1. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a8f7de6a62abd43aee82ee190971ba2ee}\label{interpreter_8h_a8f7de6a62abd43aee82ee190971ba2ee} 
+void {\bfseries exec\+\_\+istore\+\_\+2} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x3D\+: Armazena int na var local 2. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a86efd76670f7ca5449a2a46ca1e1559d}\label{interpreter_8h_a86efd76670f7ca5449a2a46ca1e1559d} 
+void {\bfseries exec\+\_\+istore\+\_\+3} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x3E\+: Armazena int na var local 3. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_af56c411a66a6aa6c7a7ca2d192a79c4f}\label{interpreter_8h_af56c411a66a6aa6c7a7ca2d192a79c4f} 
+void {\bfseries exec\+\_\+lstore\+\_\+0} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x3F\+: Armazena long na var local 0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a6a4764e5a5d609c555a24f1aa547fad6}\label{interpreter_8h_a6a4764e5a5d609c555a24f1aa547fad6} 
+void {\bfseries exec\+\_\+lstore\+\_\+1} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x40\+: Armazena long na var local 1. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a42eeb3987ca477f5fa92914ec6f22815}\label{interpreter_8h_a42eeb3987ca477f5fa92914ec6f22815} 
+void {\bfseries exec\+\_\+lstore\+\_\+2} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x41\+: Armazena long na var local 2. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_afdc05d631e863507e1e7cf546f912929}\label{interpreter_8h_afdc05d631e863507e1e7cf546f912929} 
+void {\bfseries exec\+\_\+lstore\+\_\+3} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x42\+: Armazena long na var local 3. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ab8aa55c0d92687b5dc1792392177ae22}\label{interpreter_8h_ab8aa55c0d92687b5dc1792392177ae22} 
+void {\bfseries exec\+\_\+fstore\+\_\+0} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x43\+: Armazena float na var local 0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a1fbcc467700106d9e4356d3162d17e13}\label{interpreter_8h_a1fbcc467700106d9e4356d3162d17e13} 
+void {\bfseries exec\+\_\+fstore\+\_\+1} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x44\+: Armazena float na var local 1. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_af8cc28f244e1814a9e4cb16bb07ac748}\label{interpreter_8h_af8cc28f244e1814a9e4cb16bb07ac748} 
+void {\bfseries exec\+\_\+fstore\+\_\+2} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x45\+: Armazena float na var local 2. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ab685b9acbdda2ceda42c3d2d175ef803}\label{interpreter_8h_ab685b9acbdda2ceda42c3d2d175ef803} 
+void {\bfseries exec\+\_\+fstore\+\_\+3} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x46\+: Armazena float na var local 3. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aca9556758543532e5ec2ef838c4bd2a3}\label{interpreter_8h_aca9556758543532e5ec2ef838c4bd2a3} 
+void {\bfseries exec\+\_\+dstore\+\_\+0} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x47\+: Armazena double na var local 0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a5df0ffd2f55d2eb2d225586cadf46035}\label{interpreter_8h_a5df0ffd2f55d2eb2d225586cadf46035} 
+void {\bfseries exec\+\_\+dstore\+\_\+1} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x48\+: Armazena double na var local 1. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a888b1795b5b18cf39b7591559bf22788}\label{interpreter_8h_a888b1795b5b18cf39b7591559bf22788} 
+void {\bfseries exec\+\_\+dstore\+\_\+2} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x49\+: Armazena double na var local 2. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a31e0ba5e2514f8c3e64c9e9617581876}\label{interpreter_8h_a31e0ba5e2514f8c3e64c9e9617581876} 
+void {\bfseries exec\+\_\+dstore\+\_\+3} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x4A\+: Armazena double na var local 3. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a55d58be4f8470a825dd0d9d7ad63998b}\label{interpreter_8h_a55d58be4f8470a825dd0d9d7ad63998b} 
+void {\bfseries exec\+\_\+astore\+\_\+0} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x4B\+: Armazena referência na var local 0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ad208a0227551512292809ee39c5ffc8e}\label{interpreter_8h_ad208a0227551512292809ee39c5ffc8e} 
+void {\bfseries exec\+\_\+astore\+\_\+1} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x4C\+: Armazena referência na var local 1. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a84a88b0900b2910aa4c604222c8e5e12}\label{interpreter_8h_a84a88b0900b2910aa4c604222c8e5e12} 
+void {\bfseries exec\+\_\+astore\+\_\+2} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x4D\+: Armazena referência na var local 2. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a6c52209508ad6882188a857167f9f2dc}\label{interpreter_8h_a6c52209508ad6882188a857167f9f2dc} 
+void {\bfseries exec\+\_\+astore\+\_\+3} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x4E\+: Armazena referência na var local 3. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a8b7719853232b29794c09e0f2984a0c0}\label{interpreter_8h_a8b7719853232b29794c09e0f2984a0c0} 
+void {\bfseries exec\+\_\+iastore} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x4F\+: Armazena int em array. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a0e25ccacddd36a82842684cec846fd81}\label{interpreter_8h_a0e25ccacddd36a82842684cec846fd81} 
+void {\bfseries exec\+\_\+lastore} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x50\+: Armazena long em array. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a9047f826b9b64e4a29118176b7cb1cc0}\label{interpreter_8h_a9047f826b9b64e4a29118176b7cb1cc0} 
+void {\bfseries exec\+\_\+fastore} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x51\+: Armazena float em array. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a7f8a9acee936475bf45a50c7c3676296}\label{interpreter_8h_a7f8a9acee936475bf45a50c7c3676296} 
+void {\bfseries exec\+\_\+dastore} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x52\+: Armazena double em array. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ae9b089390269c33ed7247fecac86851a}\label{interpreter_8h_ae9b089390269c33ed7247fecac86851a} 
+void {\bfseries exec\+\_\+aastore} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x53\+: Armazena referência em array. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a79e1c2ebea8c4702b10eb9da6abf692b}\label{interpreter_8h_a79e1c2ebea8c4702b10eb9da6abf692b} 
+void {\bfseries exec\+\_\+bastore} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x54\+: Armazena byte/boolean em array. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a1603cea5b9d7fc40677f3ec432e8a703}\label{interpreter_8h_a1603cea5b9d7fc40677f3ec432e8a703} 
+void {\bfseries exec\+\_\+castore} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x55\+: Armazena char em array. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ac6bb69cb7ec8b25735308b69b63c5346}\label{interpreter_8h_ac6bb69cb7ec8b25735308b69b63c5346} 
+void {\bfseries exec\+\_\+sastore} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x56\+: Armazena short em array. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aba0a303e9f07d7837c67dbcb104d73d1}\label{interpreter_8h_aba0a303e9f07d7837c67dbcb104d73d1} 
+void {\bfseries exec\+\_\+pop} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x57\+: Descarta o valor do topo. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_af8d3b177c3a94d2fe51ed404bcf24420}\label{interpreter_8h_af8d3b177c3a94d2fe51ed404bcf24420} 
+void {\bfseries exec\+\_\+pop2} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x58\+: Descarta os 2 valores do topo. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ac7bd329a070750c87934c021483e9161}\label{interpreter_8h_ac7bd329a070750c87934c021483e9161} 
+void {\bfseries exec\+\_\+dup} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x59\+: Duplica o valor do topo. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a99b0a2d8be55efb78eebb0c15ca0116a}\label{interpreter_8h_a99b0a2d8be55efb78eebb0c15ca0116a} 
+void {\bfseries exec\+\_\+dup\+\_\+x1} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x5A\+: Duplica topo e insere 2 abaixo. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a38847395dc1b00077cc1426f0b6b8c85}\label{interpreter_8h_a38847395dc1b00077cc1426f0b6b8c85} 
+void {\bfseries exec\+\_\+dup\+\_\+x2} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x5B\+: Duplica topo e insere 3 abaixo. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aea883dd0e0169084e698b4b932851f4e}\label{interpreter_8h_aea883dd0e0169084e698b4b932851f4e} 
+void {\bfseries exec\+\_\+dup2} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x5C\+: Duplica os 2 valores do topo. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ab8c711f63d7b76185df82df14378a68a}\label{interpreter_8h_ab8c711f63d7b76185df82df14378a68a} 
+void {\bfseries exec\+\_\+dup2\+\_\+x1} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x5D\+: Dup2 e insere 1 abaixo. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ac3db558ddb3e5d1f5f6a8ef01872ef04}\label{interpreter_8h_ac3db558ddb3e5d1f5f6a8ef01872ef04} 
+void {\bfseries exec\+\_\+dup2\+\_\+x2} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x5E\+: Dup2 e insere 2 abaixo. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a1b3060f3f376c849e2bd7de43078cef0}\label{interpreter_8h_a1b3060f3f376c849e2bd7de43078cef0} 
+void {\bfseries exec\+\_\+swap} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x5F\+: Troca os dois valores do topo. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_adcbad7232403ed81f7f3bfd734a2ad85}\label{interpreter_8h_adcbad7232403ed81f7f3bfd734a2ad85} 
+void {\bfseries exec\+\_\+iadd} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x60\+: Soma int. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a5b7deed28ac81f13caa16793f9df5e7e}\label{interpreter_8h_a5b7deed28ac81f13caa16793f9df5e7e} 
+void {\bfseries exec\+\_\+ladd} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x61\+: Soma long. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a93c684d3b2c93cc26608f4fc977159f7}\label{interpreter_8h_a93c684d3b2c93cc26608f4fc977159f7} 
+void {\bfseries exec\+\_\+fadd} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x62\+: Soma float. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a8766a4eb30168258de26917585067252}\label{interpreter_8h_a8766a4eb30168258de26917585067252} 
+void {\bfseries exec\+\_\+dadd} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x63\+: Soma double. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a5070b74bc736bfbd29438c30b1cae9cf}\label{interpreter_8h_a5070b74bc736bfbd29438c30b1cae9cf} 
+void {\bfseries exec\+\_\+isub} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x64\+: Subtrai int. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_acd56968dbd24a1f5bdf35f0eee275755}\label{interpreter_8h_acd56968dbd24a1f5bdf35f0eee275755} 
+void {\bfseries exec\+\_\+lsub} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x65\+: Subtrai long. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a9c78de6677707fdee0ecc01c82955bac}\label{interpreter_8h_a9c78de6677707fdee0ecc01c82955bac} 
+void {\bfseries exec\+\_\+fsub} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x66\+: Subtrai float. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a3785eee443dd86120513c48dd7552e88}\label{interpreter_8h_a3785eee443dd86120513c48dd7552e88} 
+void {\bfseries exec\+\_\+dsub} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x67\+: Subtrai double. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ad6418b0b16c9a8a13ecbfbdd1fa5b176}\label{interpreter_8h_ad6418b0b16c9a8a13ecbfbdd1fa5b176} 
+void {\bfseries exec\+\_\+imul} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x68\+: Multiplica int. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ac40ad09ea104dee1a8d99fae8836bcdc}\label{interpreter_8h_ac40ad09ea104dee1a8d99fae8836bcdc} 
+void {\bfseries exec\+\_\+lmul} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x69\+: Multiplica long. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a024013c3e6ad0fff2804523351ab7790}\label{interpreter_8h_a024013c3e6ad0fff2804523351ab7790} 
+void {\bfseries exec\+\_\+fmul} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x6A\+: Multiplica float. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aa887cc25303edd10f728dd7cbba0528f}\label{interpreter_8h_aa887cc25303edd10f728dd7cbba0528f} 
+void {\bfseries exec\+\_\+dmul} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x6B\+: Multiplica double. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a5472c1fb7748d46b63241d634350d80c}\label{interpreter_8h_a5472c1fb7748d46b63241d634350d80c} 
+void {\bfseries exec\+\_\+idiv} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x6C\+: Divide int. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a7c4333a6d191de55847d1b4457ede027}\label{interpreter_8h_a7c4333a6d191de55847d1b4457ede027} 
+void {\bfseries exec\+\_\+ldiv} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x6D\+: Divide long. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a6671d364fc21be5cbaf1bfda5c3bad75}\label{interpreter_8h_a6671d364fc21be5cbaf1bfda5c3bad75} 
+void {\bfseries exec\+\_\+fdiv} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x6E\+: Divide float. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_acb0708e696a6e4a8f21bf218169c6370}\label{interpreter_8h_acb0708e696a6e4a8f21bf218169c6370} 
+void {\bfseries exec\+\_\+ddiv} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x6F\+: Divide double. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a3c939c9cd5fb9d66b8d483d6d5703695}\label{interpreter_8h_a3c939c9cd5fb9d66b8d483d6d5703695} 
+void {\bfseries exec\+\_\+irem} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x70\+: Resto da divisão int. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aa1029a41fc6e4d76cdc138403f5ead28}\label{interpreter_8h_aa1029a41fc6e4d76cdc138403f5ead28} 
+void {\bfseries exec\+\_\+lrem} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x71\+: Resto da divisão long. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aef6b1ffb5357f0ad2e06fe66d9b49d11}\label{interpreter_8h_aef6b1ffb5357f0ad2e06fe66d9b49d11} 
+void {\bfseries exec\+\_\+frem} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x72\+: Resto da divisão float. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_abf5aa67972d710bc0c794bf46b1bb3d0}\label{interpreter_8h_abf5aa67972d710bc0c794bf46b1bb3d0} 
+void {\bfseries exec\+\_\+drem} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x73\+: Resto da divisão double. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a47f2a29eca774126f8eaef802e3055dd}\label{interpreter_8h_a47f2a29eca774126f8eaef802e3055dd} 
+void {\bfseries exec\+\_\+ineg} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x74\+: Negação int. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aca04f070d2359a3ff53a315ce79a5e12}\label{interpreter_8h_aca04f070d2359a3ff53a315ce79a5e12} 
+void {\bfseries exec\+\_\+lneg} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x75\+: Negação long. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a8d3428304c1b483813487099b98aaa10}\label{interpreter_8h_a8d3428304c1b483813487099b98aaa10} 
+void {\bfseries exec\+\_\+fneg} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x76\+: Negação float. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a4035ce430240ad4a3e6cbf3522e81d88}\label{interpreter_8h_a4035ce430240ad4a3e6cbf3522e81d88} 
+void {\bfseries exec\+\_\+dneg} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x77\+: Negação double. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a7a1b797d20f694fcf1f9ed1ecef998cd}\label{interpreter_8h_a7a1b797d20f694fcf1f9ed1ecef998cd} 
+void {\bfseries exec\+\_\+ishl} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x78\+: Shift left int. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aeeebdeaef85ccb1a45d2cadd09d55b23}\label{interpreter_8h_aeeebdeaef85ccb1a45d2cadd09d55b23} 
+void {\bfseries exec\+\_\+lshl} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x79\+: Shift left long. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a212e10f51e35935d2c4df7297f666ce0}\label{interpreter_8h_a212e10f51e35935d2c4df7297f666ce0} 
+void {\bfseries exec\+\_\+ishr} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x7A\+: Shift right int (aritmético). \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a9ea154a7c56c5b2c7fac45112d25096d}\label{interpreter_8h_a9ea154a7c56c5b2c7fac45112d25096d} 
+void {\bfseries exec\+\_\+lshr} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x7B\+: Shift right long (aritmético). \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a62f90a6c1960f23218de6fdda66d38c3}\label{interpreter_8h_a62f90a6c1960f23218de6fdda66d38c3} 
+void {\bfseries exec\+\_\+iushr} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x7C\+: Shift right int (lógico). \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a94d954a6c5ad0d4ef7fbecce6484248b}\label{interpreter_8h_a94d954a6c5ad0d4ef7fbecce6484248b} 
+void {\bfseries exec\+\_\+lushr} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x7D\+: Shift right long (lógico). \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a4a21b9dc8b3af9f13062baef16cc3c42}\label{interpreter_8h_a4a21b9dc8b3af9f13062baef16cc3c42} 
+void {\bfseries exec\+\_\+iand} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x7E\+: AND bit a bit int. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a13fcf08e9c9d7f3fcf39e73f438e87e9}\label{interpreter_8h_a13fcf08e9c9d7f3fcf39e73f438e87e9} 
+void {\bfseries exec\+\_\+land} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x7F\+: AND bit a bit long. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_afcb44f3c42ea665b136d02a7582d0e8f}\label{interpreter_8h_afcb44f3c42ea665b136d02a7582d0e8f} 
+void {\bfseries exec\+\_\+ior} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x80\+: OR bit a bit int. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aa95faa716e879a846996318213cd06a1}\label{interpreter_8h_aa95faa716e879a846996318213cd06a1} 
+void {\bfseries exec\+\_\+lor} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x81\+: OR bit a bit long. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_addb0b7cf2ee8e394d6e7dcf0830c6099}\label{interpreter_8h_addb0b7cf2ee8e394d6e7dcf0830c6099} 
+void {\bfseries exec\+\_\+ixor} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x82\+: XOR bit a bit int. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_abb0c692322097e43c4815a4b3886887c}\label{interpreter_8h_abb0c692322097e43c4815a4b3886887c} 
+void {\bfseries exec\+\_\+lxor} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x83\+: XOR bit a bit long. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a58f6ef819a7e4200f13b96edb42fa43b}\label{interpreter_8h_a58f6ef819a7e4200f13b96edb42fa43b} 
+void {\bfseries exec\+\_\+iinc} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x84\+: Incrementa variável local. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a2d9d7836c9add6e19c2750c53de73afa}\label{interpreter_8h_a2d9d7836c9add6e19c2750c53de73afa} 
+void {\bfseries exec\+\_\+i2l} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x85\+: Converte int para long. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a80d6e0127fe7c6dcb8501ca93fcd37d6}\label{interpreter_8h_a80d6e0127fe7c6dcb8501ca93fcd37d6} 
+void {\bfseries exec\+\_\+i2f} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x86\+: Converte int para float. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_adc1184a9123bfbee51daad600018037a}\label{interpreter_8h_adc1184a9123bfbee51daad600018037a} 
+void {\bfseries exec\+\_\+i2d} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x87\+: Converte int para double. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a629cf31b46f7b15b4c2edbb845738fa7}\label{interpreter_8h_a629cf31b46f7b15b4c2edbb845738fa7} 
+void {\bfseries exec\+\_\+l2i} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x88\+: Converte long para int. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_afb4dfff3bcad088921143953cd83edaf}\label{interpreter_8h_afb4dfff3bcad088921143953cd83edaf} 
+void {\bfseries exec\+\_\+l2f} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x89\+: Converte long para float. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_af1acc7827851f34eba222fdf2f6f481e}\label{interpreter_8h_af1acc7827851f34eba222fdf2f6f481e} 
+void {\bfseries exec\+\_\+l2d} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x8A\+: Converte long para double. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_abc70e94644cc8d8e9528f208f41c53ac}\label{interpreter_8h_abc70e94644cc8d8e9528f208f41c53ac} 
+void {\bfseries exec\+\_\+f2i} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x8B\+: Converte float para int. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_acf70fc3a05b3b964ab296faa64324a3e}\label{interpreter_8h_acf70fc3a05b3b964ab296faa64324a3e} 
+void {\bfseries exec\+\_\+f2l} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x8C\+: Converte float para long. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a6d236dd9cc0d3918ccc0fb6a1fb1c027}\label{interpreter_8h_a6d236dd9cc0d3918ccc0fb6a1fb1c027} 
+void {\bfseries exec\+\_\+f2d} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x8D\+: Converte float para double. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a3f2f4824bf88b735d7caf28efd879e01}\label{interpreter_8h_a3f2f4824bf88b735d7caf28efd879e01} 
+void {\bfseries exec\+\_\+d2i} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x8E\+: Converte double para int. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a8eae52c065a1c96e1ca1d21eb470189b}\label{interpreter_8h_a8eae52c065a1c96e1ca1d21eb470189b} 
+void {\bfseries exec\+\_\+d2l} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x8F\+: Converte double para long. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ac27492bdb5eccdfd81563ef536a53861}\label{interpreter_8h_ac27492bdb5eccdfd81563ef536a53861} 
+void {\bfseries exec\+\_\+d2f} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x90\+: Converte double para float. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a282edef247ddffec236d73b4eda835c2}\label{interpreter_8h_a282edef247ddffec236d73b4eda835c2} 
+void {\bfseries exec\+\_\+i2b} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x91\+: Converte int para byte. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a93eda2f5d9b69b4a6d9ddf6fbae5da63}\label{interpreter_8h_a93eda2f5d9b69b4a6d9ddf6fbae5da63} 
+void {\bfseries exec\+\_\+i2c} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x92\+: Converte int para char. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a4d44d9d9a1524ab7f09ce5f9d9f22b43}\label{interpreter_8h_a4d44d9d9a1524ab7f09ce5f9d9f22b43} 
+void {\bfseries exec\+\_\+i2s} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x93\+: Converte int para short. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a6ae8b24db723cbb0f51933a3b5679a77}\label{interpreter_8h_a6ae8b24db723cbb0f51933a3b5679a77} 
+void {\bfseries exec\+\_\+lcmp} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x94\+: Compara long. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a9f6d72301e21282709aeefcb6252de33}\label{interpreter_8h_a9f6d72301e21282709aeefcb6252de33} 
+void {\bfseries exec\+\_\+fcmpl} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x95\+: Compara float (NaN é menor). \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a3cebff981fedd100b3331fa82ea73d26}\label{interpreter_8h_a3cebff981fedd100b3331fa82ea73d26} 
+void {\bfseries exec\+\_\+fcmpg} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x96\+: Compara float (NaN é maior). \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a1040bdbdf56aee79e6b18a643a24b80b}\label{interpreter_8h_a1040bdbdf56aee79e6b18a643a24b80b} 
+void {\bfseries exec\+\_\+dcmpl} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x97\+: Compara double (NaN é menor). \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a924cff915d47376c623be3b0f61e3948}\label{interpreter_8h_a924cff915d47376c623be3b0f61e3948} 
+void {\bfseries exec\+\_\+dcmpg} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x98\+: Compara double (NaN é maior). \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a6cc2a052abc9524eda74d442c83c5d7a}\label{interpreter_8h_a6cc2a052abc9524eda74d442c83c5d7a} 
+void {\bfseries exec\+\_\+ifeq} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x99\+: Branch se int == 0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a7f7024b160f6a29d5faa3ed57ca9b789}\label{interpreter_8h_a7f7024b160f6a29d5faa3ed57ca9b789} 
+void {\bfseries exec\+\_\+ifne} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x9A\+: Branch se int != 0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a972d69cc19df278030801d3bfa0bc635}\label{interpreter_8h_a972d69cc19df278030801d3bfa0bc635} 
+void {\bfseries exec\+\_\+iflt} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x9B\+: Branch se int \texorpdfstring{$<$}{<} 0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a20487d523935d3e7ebae6522b6503f37}\label{interpreter_8h_a20487d523935d3e7ebae6522b6503f37} 
+void {\bfseries exec\+\_\+ifge} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x9C\+: Branch se int \texorpdfstring{$>$}{>}= 0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aef5d8293e01fcf7ceec2fbd0d98d749d}\label{interpreter_8h_aef5d8293e01fcf7ceec2fbd0d98d749d} 
+void {\bfseries exec\+\_\+ifgt} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x9D\+: Branch se int \texorpdfstring{$>$}{>} 0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a00d0c84dca8e79c114c177fa166aad92}\label{interpreter_8h_a00d0c84dca8e79c114c177fa166aad92} 
+void {\bfseries exec\+\_\+ifle} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x9E\+: Branch se int \texorpdfstring{$<$}{<}= 0. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a865a6417955d48591acbf70d4ffd03e2}\label{interpreter_8h_a865a6417955d48591acbf70d4ffd03e2} 
+void {\bfseries exec\+\_\+if\+\_\+icmpeq} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x9F\+: Branch se int1 == int2. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ab4b1e8445d38e52948bb662e1a253085}\label{interpreter_8h_ab4b1e8445d38e52948bb662e1a253085} 
+void {\bfseries exec\+\_\+if\+\_\+icmpne} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+A0\+: Branch se int1 != int2. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aab7d26d98ed61b9d6661d814ecd4c76e}\label{interpreter_8h_aab7d26d98ed61b9d6661d814ecd4c76e} 
+void {\bfseries exec\+\_\+if\+\_\+icmplt} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+A1\+: Branch se int1 \texorpdfstring{$<$}{<} int2. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a8866206c0b30a51b64f3ace72a952e7f}\label{interpreter_8h_a8866206c0b30a51b64f3ace72a952e7f} 
+void {\bfseries exec\+\_\+if\+\_\+icmpge} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+A2\+: Branch se int1 \texorpdfstring{$>$}{>}= int2. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aa5ca6e2162af6f3c4f94229ff455f57a}\label{interpreter_8h_aa5ca6e2162af6f3c4f94229ff455f57a} 
+void {\bfseries exec\+\_\+if\+\_\+icmpgt} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+A3\+: Branch se int1 \texorpdfstring{$>$}{>} int2. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a606cb8e44a84666443b940996244e80a}\label{interpreter_8h_a606cb8e44a84666443b940996244e80a} 
+void {\bfseries exec\+\_\+if\+\_\+icmple} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+A4\+: Branch se int1 \texorpdfstring{$<$}{<}= int2. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_af4590083d3162854bc1de6b8e53fff5d}\label{interpreter_8h_af4590083d3162854bc1de6b8e53fff5d} 
+void {\bfseries exec\+\_\+if\+\_\+acmpeq} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+A5\+: Branch se ref1 == ref2. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a4fcf695ca6d41ac17a984f14617bfbd8}\label{interpreter_8h_a4fcf695ca6d41ac17a984f14617bfbd8} 
+void {\bfseries exec\+\_\+if\+\_\+acmpne} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+A6\+: Branch se ref1 != ref2. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_adb94aa5fb331480353f7a5e63c424046}\label{interpreter_8h_adb94aa5fb331480353f7a5e63c424046} 
+void {\bfseries exec\+\_\+goto} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+A7\+: Salto incondicional. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_af9b729b1872d6eff9bfd3396a7079777}\label{interpreter_8h_af9b729b1872d6eff9bfd3396a7079777} 
+void {\bfseries exec\+\_\+jsr} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+A8\+: Jump subroutine. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a4332473ea7970b466b0ca422890dfb0c}\label{interpreter_8h_a4332473ea7970b466b0ca422890dfb0c} 
+void {\bfseries exec\+\_\+ret} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+A9\+: Return from subroutine. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a15e419b8611683d9128975555b6e4d22}\label{interpreter_8h_a15e419b8611683d9128975555b6e4d22} 
+void {\bfseries exec\+\_\+tableswitch} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+AA\+: Switch case (tabela). \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a09bb671935539db9aa0eef3f1ed17f9f}\label{interpreter_8h_a09bb671935539db9aa0eef3f1ed17f9f} 
+void {\bfseries exec\+\_\+lookupswitch} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+AB\+: Switch case (busca). \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a03a992d5bebc6c4a0afd94696c18f344}\label{interpreter_8h_a03a992d5bebc6c4a0afd94696c18f344} 
+void {\bfseries exec\+\_\+ireturn} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+AC\+: Retorna int. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a11ffe69421c16b6024bcc7d74fda1329}\label{interpreter_8h_a11ffe69421c16b6024bcc7d74fda1329} 
+void {\bfseries exec\+\_\+lreturn} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+AD\+: Retorna long. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a78a3a76263444f4a70ea42ccd478e5f3}\label{interpreter_8h_a78a3a76263444f4a70ea42ccd478e5f3} 
+void {\bfseries exec\+\_\+freturn} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+AE\+: Retorna float. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ac27c947d16f139e73f5eaf210840edbf}\label{interpreter_8h_ac27c947d16f139e73f5eaf210840edbf} 
+void {\bfseries exec\+\_\+dreturn} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+AF\+: Retorna double. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ae62a60c9748423f2c0d3c07a49da57e3}\label{interpreter_8h_ae62a60c9748423f2c0d3c07a49da57e3} 
+void {\bfseries exec\+\_\+areturn} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+B0\+: Retorna referência. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aaf488fc371a563968bd26221fc620721}\label{interpreter_8h_aaf488fc371a563968bd26221fc620721} 
+void {\bfseries exec\+\_\+return} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+B1\+: Retorna void. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_adda304c0b5fe75652912d994d0da7208}\label{interpreter_8h_adda304c0b5fe75652912d994d0da7208} 
+void {\bfseries exec\+\_\+getstatic} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+B2\+: Lê campo estático. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_adadbbe3f34b1036e2dbe81893490ff8e}\label{interpreter_8h_adadbbe3f34b1036e2dbe81893490ff8e} 
+void {\bfseries exec\+\_\+putstatic} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+B3\+: Escreve campo estático. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a69f36da274bca6e029167712a9432904}\label{interpreter_8h_a69f36da274bca6e029167712a9432904} 
+void {\bfseries exec\+\_\+getfield} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+B4\+: Lê campo de instância. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a9fb5af6657545d1fd313bb4cb4ea9c28}\label{interpreter_8h_a9fb5af6657545d1fd313bb4cb4ea9c28} 
+void {\bfseries exec\+\_\+putfield} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+B5\+: Escreve campo de instância. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_adb47bf5ffeef95e3be677a557b020cf8}\label{interpreter_8h_adb47bf5ffeef95e3be677a557b020cf8} 
+void {\bfseries exec\+\_\+invokevirtual} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+B6\+: Invoca método de instância. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ac9ffdaa08a863385f0cd21c6e456ddae}\label{interpreter_8h_ac9ffdaa08a863385f0cd21c6e456ddae} 
+void {\bfseries exec\+\_\+invokespecial} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+B7\+: Invoca construtor ou método privado. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a4837e33bccb876fac2af27ef50e7a24a}\label{interpreter_8h_a4837e33bccb876fac2af27ef50e7a24a} 
+void {\bfseries exec\+\_\+invokestatic} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+B8\+: Invoca método estático. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aa1e4b274dac482dda4336d2261d855d2}\label{interpreter_8h_aa1e4b274dac482dda4336d2261d855d2} 
+void {\bfseries exec\+\_\+invokeinterface} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+B9\+: Invoca método de interface. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a89f99598d1d7d29c45ea44591c1d8f38}\label{interpreter_8h_a89f99598d1d7d29c45ea44591c1d8f38} 
+void {\bfseries exec\+\_\+invokedynamic} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+BA\+: Invoca dinamicamente (Java 7+). \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a20f37a41fd31877de6d4a2987389359e}\label{interpreter_8h_a20f37a41fd31877de6d4a2987389359e} 
+void {\bfseries exec\+\_\+new} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+BB\+: Cria nova instância de objeto. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a3472e4ec66e52ff10c395ed5456a878b}\label{interpreter_8h_a3472e4ec66e52ff10c395ed5456a878b} 
+void {\bfseries exec\+\_\+newarray} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+BC\+: Cria array de tipo primitivo. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a7f476f1b2d1d45ba21191deadc9f39c7}\label{interpreter_8h_a7f476f1b2d1d45ba21191deadc9f39c7} 
+void {\bfseries exec\+\_\+anewarray} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+BD\+: Cria array de referências. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_aab7e1784835ec5b62835ad6fc2e23ce8}\label{interpreter_8h_aab7e1784835ec5b62835ad6fc2e23ce8} 
+void {\bfseries exec\+\_\+arraylength} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+BE\+: Obtém tamanho do array. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_acea0297c0afddd44ebda94773ccb795c}\label{interpreter_8h_acea0297c0afddd44ebda94773ccb795c} 
+void {\bfseries exec\+\_\+athrow} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+BF\+: Lança exceção. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a38eaa0e77578e369b95f67ffa6e710bb}\label{interpreter_8h_a38eaa0e77578e369b95f67ffa6e710bb} 
+void {\bfseries exec\+\_\+checkcast} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+C0\+: Verifica tipo do objeto. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a877dd81197cc97e48ba2d7d5cedc0852}\label{interpreter_8h_a877dd81197cc97e48ba2d7d5cedc0852} 
+void {\bfseries exec\+\_\+instanceof} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+C1\+: Verifica \textquotesingle{}instanceof\textquotesingle{}. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_af06a52d4b0b1104adad013dfdec3a626}\label{interpreter_8h_af06a52d4b0b1104adad013dfdec3a626} 
+void {\bfseries exec\+\_\+monitorenter} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+C2\+: Entra em monitor (sync). \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a5744eeb4ecaea2f43e20cfa7458e0fd7}\label{interpreter_8h_a5744eeb4ecaea2f43e20cfa7458e0fd7} 
+void {\bfseries exec\+\_\+monitorexit} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+C3\+: Sai de monitor (sync). \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a52f27fe097de7172f5efa79e47d0fccd}\label{interpreter_8h_a52f27fe097de7172f5efa79e47d0fccd} 
+void {\bfseries exec\+\_\+wide} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+C4\+: Extende índice de variável local. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a9ebbc526efd4831540ef978245445aa9}\label{interpreter_8h_a9ebbc526efd4831540ef978245445aa9} 
+void {\bfseries exec\+\_\+multianewarray} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+C5\+: Cria array multidimensional. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a23e0377eb7d12261fa122554e371ff94}\label{interpreter_8h_a23e0377eb7d12261fa122554e371ff94} 
+void {\bfseries exec\+\_\+ifnull} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+C6\+: Branch se null. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ae6f69e177aa15af938c0191712523fe8}\label{interpreter_8h_ae6f69e177aa15af938c0191712523fe8} 
+void {\bfseries exec\+\_\+ifnonnull} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+C7\+: Branch se não null. \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_ac81111873dab0dc8f8be97ef5b4cef6a}\label{interpreter_8h_ac81111873dab0dc8f8be97ef5b4cef6a} 
+void {\bfseries exec\+\_\+goto\+\_\+w} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+C8\+: Salto longo (wide). \end{DoxyCompactList}\item 
+\Hypertarget{interpreter_8h_a65aa2041cbfc5bcd25e975ead3166e22}\label{interpreter_8h_a65aa2041cbfc5bcd25e975ead3166e22} 
+void {\bfseries exec\+\_\+jsr\+\_\+w} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\begin{DoxyCompactList}\small\item\em 0x\+C9\+: Jump subroutine longo (wide). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Declaração das funções de execução para cada instrução de bytecode (opcode). Cada função implementa a lógica definida na especificação da JVM. 
+

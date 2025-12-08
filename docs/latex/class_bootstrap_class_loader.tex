@@ -1,0 +1,58 @@
+\doxysection{Bootstrap\+Class\+Loader Class Reference}
+\hypertarget{class_bootstrap_class_loader}{}\label{class_bootstrap_class_loader}\index{BootstrapClassLoader@{BootstrapClassLoader}}
+
+
+Carregador de classes inicial (Bootstrap).  
+
+
+
+
+{\ttfamily \#include $<$runtime\+\_\+class\+\_\+types.\+h$>$}
+
+Inheritance diagram for Bootstrap\+Class\+Loader\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_bootstrap_class_loader}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_bootstrap_class_loader_a07abacc6e13c74b42e542bfaa0746a18}\label{class_bootstrap_class_loader_a07abacc6e13c74b42e542bfaa0746a18} 
+{\bfseries Bootstrap\+Class\+Loader} (const std\+::string classpath, \mbox{\hyperlink{class_runtime}{Runtime}} \texorpdfstring{$\ast$}{*}runtime)
+\item 
+\mbox{\hyperlink{class_runtime_class}{Runtime\+Class}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{class_bootstrap_class_loader_a27805c3f0663ed3a71e026170daadb60}{load\+\_\+class}} (const std\+::string \&name) override
+\begin{DoxyCompactList}\small\item\em Carrega uma classe pelo nome (ex\+: "{}java/lang/\+Object"{}). Se já estiver carregada, retorna a referência existente. \end{DoxyCompactList}\item 
+\Hypertarget{class_bootstrap_class_loader_affc9cba2b98d3905d9ab50e769afbc37}\label{class_bootstrap_class_loader_affc9cba2b98d3905d9ab50e769afbc37} 
+void {\bfseries set\+\_\+classpath} (std\+::string path)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Carregador de classes inicial (Bootstrap). 
+
+Responsável por encontrar o arquivo .class no disco, usar o Parser para lê-\/lo e construir a estrutura \doxylink{class_runtime_class}{Runtime\+Class} na memória. 
+
+\label{doc-func-members}
+\Hypertarget{class_bootstrap_class_loader_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_bootstrap_class_loader_a27805c3f0663ed3a71e026170daadb60}\index{BootstrapClassLoader@{BootstrapClassLoader}!load\_class@{load\_class}}
+\index{load\_class@{load\_class}!BootstrapClassLoader@{BootstrapClassLoader}}
+\doxysubsubsection{\texorpdfstring{load\_class()}{load\_class()}}
+{\footnotesize\ttfamily \label{class_bootstrap_class_loader_a27805c3f0663ed3a71e026170daadb60} 
+\mbox{\hyperlink{class_runtime_class}{Runtime\+Class}} \texorpdfstring{$\ast$}{*} Bootstrap\+Class\+Loader\+::load\+\_\+class (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{name}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Carrega uma classe pelo nome (ex\+: "{}java/lang/\+Object"{}). Se já estiver carregada, retorna a referência existente. 
+
+
+
+Implements \mbox{\hyperlink{class_class_loader}{Class\+Loader}}.
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+runtime/runtime\+\_\+class\+\_\+types.\+h\item 
+runtime/class.\+cpp\end{DoxyCompactItemize}
