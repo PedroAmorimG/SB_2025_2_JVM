@@ -1,0 +1,32 @@
+\doxysection{native\+\_\+methods.\+h}
+\hypertarget{native__methods_8h_source}{}\label{native__methods_8h_source}\index{runtime/native\_methods.h@{runtime/native\_methods.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}array.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}runtime\_class\_types.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <unordered\_map>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00013\ \textcolor{keyword}{using\ }NativeMethod\ =\ void\ (*)(\mbox{\hyperlink{struct_frame}{Frame}}\ \&frame);}
+\DoxyCodeLine{00019\ \textcolor{keywordtype}{void}\ load\_map(std::unordered\_map<std::string,\ NativeMethod>\ *native\_methods);}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ Implementações\ de\ Métodos\ Nativos\ (System.out)}}
+\DoxyCodeLine{00022\ \textcolor{keywordtype}{void}\ print\_ln(\mbox{\hyperlink{struct_frame}{Frame}}\ \&frame);}
+\DoxyCodeLine{00024\ \textcolor{keywordtype}{void}\ print\_str\_ln(\mbox{\hyperlink{struct_frame}{Frame}}\ \&frame);}
+\DoxyCodeLine{00026\ \textcolor{keywordtype}{void}\ print\_int\_ln(\mbox{\hyperlink{struct_frame}{Frame}}\ \&frame);}
+\DoxyCodeLine{00028\ \textcolor{keywordtype}{void}\ print\_lg\_ln(\mbox{\hyperlink{struct_frame}{Frame}}\ \&frame);}
+\DoxyCodeLine{00030\ \textcolor{keywordtype}{void}\ print\_bl\_ln(\mbox{\hyperlink{struct_frame}{Frame}}\ \&frame);}
+\DoxyCodeLine{00032\ \textcolor{keywordtype}{void}\ print\_fl\_ln(\mbox{\hyperlink{struct_frame}{Frame}}\ \&frame);}
+\DoxyCodeLine{00034\ \textcolor{keywordtype}{void}\ print\_db\_ln(\mbox{\hyperlink{struct_frame}{Frame}}\ \&frame);}
+\DoxyCodeLine{00036\ \textcolor{keywordtype}{void}\ print\_char\_ln(\mbox{\hyperlink{struct_frame}{Frame}}\ \&frame);}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \textcolor{comment}{//\ Implementações\ de\ Métodos\ Nativos\ (String)}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00041\ \textcolor{keywordtype}{void}\ str\_len(\mbox{\hyperlink{struct_frame}{Frame}}\ \&frame);}
+\DoxyCodeLine{00043\ \textcolor{keywordtype}{void}\ str\_char\_at(\mbox{\hyperlink{struct_frame}{Frame}}\ \&frame);}
+\DoxyCodeLine{00045\ \textcolor{keywordtype}{void}\ str\_eq(\mbox{\hyperlink{struct_frame}{Frame}}\ \&frame);}
+\DoxyCodeLine{00047\ \textcolor{keywordtype}{void}\ str\_get\_bytes(\mbox{\hyperlink{struct_frame}{Frame}}\ \&frame);}
+
+\end{DoxyCode}

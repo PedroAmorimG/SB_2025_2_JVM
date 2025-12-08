@@ -1,0 +1,86 @@
+\doxysection{array.\+h}
+\hypertarget{array_8h_source}{}\label{array_8h_source}\index{runtime/array.h@{runtime/array.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}./runtime\_class\_types.h"{}}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <cstddef>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <stdexcept>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00015\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_runtime_array_a2a1c669c3acb01d9fba81da285196ffe}{RuntimeArray}}\ \{}
+\DoxyCodeLine{00016\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00017\ \ \ \mbox{\hyperlink{class_runtime_class}{RuntimeClass}}\ *component\_class;}
+\DoxyCodeLine{00018\ \ \ \textcolor{keywordtype}{bool}\ is\_reference;}
+\DoxyCodeLine{00019\ \ \ \textcolor{keywordtype}{size\_t}\ length;}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \ \ \textcolor{comment}{//\ Para\ arrays\ de\ primitivos,\ os\ bytes\ ficam\ em\ raw\ com\ passo\ elem\_size.}}
+\DoxyCodeLine{00025\ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{class_runtime_array_afbd9dcb83d0f0bc79f14202580f4336f}{elem\_size}};}
+\DoxyCodeLine{00027\ \ \ std::vector<u1>\ \mbox{\hyperlink{class_runtime_array_a9a8cbcca314d855072717dbff34cf369}{raw}};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \textcolor{comment}{//\ Para\ arrays\ de\ referência,\ usamos\ refs.}}
+\DoxyCodeLine{00031\ \ \ std::vector<RuntimeObject\ *>\ \mbox{\hyperlink{class_runtime_array_aebd3b5c10ec2e684cab7e37234614080}{refs}};}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00034\ \ \ \mbox{\hyperlink{class_runtime_array_a2a1c669c3acb01d9fba81da285196ffe}{RuntimeArray}}()}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ :\ component\_class(nullptr),\ is\_reference(false),\ length(0),\ \mbox{\hyperlink{class_runtime_array_afbd9dcb83d0f0bc79f14202580f4336f}{elem\_size}}(0)\ \{}
+\DoxyCodeLine{00036\ \ \ \}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00045\ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_runtime_array_a2a1c669c3acb01d9fba81da285196ffe}{RuntimeArray}}\ *\mbox{\hyperlink{class_runtime_array_a242681a764e88eb7977412dd80feafa5}{create\_primitive}}(\mbox{\hyperlink{class_runtime_class}{RuntimeClass}}\ *component,\ \textcolor{keywordtype}{size\_t}\ len,}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ elem\_sz)\ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keyword}{auto}\ *arr\ =\ \textcolor{keyword}{new}\ \mbox{\hyperlink{class_runtime_array_a2a1c669c3acb01d9fba81da285196ffe}{RuntimeArray}}();}
+\DoxyCodeLine{00048\ \ \ \ \ arr-\/>component\_class\ =\ component;}
+\DoxyCodeLine{00049\ \ \ \ \ arr-\/>is\_reference\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00050\ \ \ \ \ arr-\/>length\ =\ len;}
+\DoxyCodeLine{00051\ \ \ \ \ arr-\/>elem\_size\ =\ elem\_sz;}
+\DoxyCodeLine{00052\ \ \ \ \ arr-\/>raw.resize(len\ *\ elem\_sz);}
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{keywordflow}{return}\ arr;}
+\DoxyCodeLine{00054\ \ \ \}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00062\ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_runtime_array_a2a1c669c3acb01d9fba81da285196ffe}{RuntimeArray}}\ *\mbox{\hyperlink{class_runtime_array_aa9690293cbc281724e12d0f2cafbef18}{create\_reference}}(\mbox{\hyperlink{class_runtime_class}{RuntimeClass}}\ *component,\ \textcolor{keywordtype}{size\_t}\ len)\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keyword}{auto}\ *arr\ =\ \textcolor{keyword}{new}\ \mbox{\hyperlink{class_runtime_array_a2a1c669c3acb01d9fba81da285196ffe}{RuntimeArray}}();}
+\DoxyCodeLine{00064\ \ \ \ \ arr-\/>component\_class\ =\ component;}
+\DoxyCodeLine{00065\ \ \ \ \ arr-\/>is\_reference\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00066\ \ \ \ \ arr-\/>length\ =\ len;}
+\DoxyCodeLine{00067\ \ \ \ \ arr-\/>elem\_size\ =\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{struct_runtime_object}{RuntimeObject}}\ *);}
+\DoxyCodeLine{00068\ \ \ \ \ arr-\/>refs.resize(len,\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keywordflow}{return}\ arr;}
+\DoxyCodeLine{00070\ \ \ \}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00076\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_runtime_array_a1bd21e91ac048309bf37302b593038cb}{check\_index}}(\textcolor{keywordtype}{size\_t}\ idx)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00077\ \ \ \ \ \textcolor{keywordflow}{if}\ (idx\ >=\ length)\ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}Array\ index\ out\ of\ bounds"{}});}
+\DoxyCodeLine{00079\ \ \ \ \ \}}
+\DoxyCodeLine{00080\ \ \ \}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ T\ \mbox{\hyperlink{class_runtime_array_a6f6dbe6799503acfac8bc7c0aa912983}{read\_primitive}}(\textcolor{keywordtype}{size\_t}\ idx)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00087\ \ \ \ \ \mbox{\hyperlink{class_runtime_array_a1bd21e91ac048309bf37302b593038cb}{check\_index}}(idx);}
+\DoxyCodeLine{00088\ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_reference)}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}Attempt\ to\ read\ primitive\ from\ ref\ array"{}});}
+\DoxyCodeLine{00090\ \ \ \ \ T\ value\{\};}
+\DoxyCodeLine{00091\ \ \ \ \ std::memcpy(\&value,\ \&\mbox{\hyperlink{class_runtime_array_a9a8cbcca314d855072717dbff34cf369}{raw}}[idx\ *\ \mbox{\hyperlink{class_runtime_array_afbd9dcb83d0f0bc79f14202580f4336f}{elem\_size}}],\ \textcolor{keyword}{sizeof}(T));}
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keywordflow}{return}\ value;}
+\DoxyCodeLine{00093\ \ \ \}}
+\DoxyCodeLine{00098\ }
+\DoxyCodeLine{00099\ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_runtime_array_a9e46f8d0a734eb2cc7bfeecbb7282a70}{write\_primitive}}(\textcolor{keywordtype}{size\_t}\ idx,\ T\ value)\ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \mbox{\hyperlink{class_runtime_array_a1bd21e91ac048309bf37302b593038cb}{check\_index}}(idx);}
+\DoxyCodeLine{00101\ \ \ \ \ \textcolor{keywordflow}{if}\ (is\_reference)}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}Attempt\ to\ write\ primitive\ to\ ref\ array"{}});}
+\DoxyCodeLine{00103\ \ \ \ \ std::memcpy(\&\mbox{\hyperlink{class_runtime_array_a9a8cbcca314d855072717dbff34cf369}{raw}}[idx\ *\ \mbox{\hyperlink{class_runtime_array_afbd9dcb83d0f0bc79f14202580f4336f}{elem\_size}}],\ \&value,\ \textcolor{keyword}{sizeof}(T));}
+\DoxyCodeLine{00104\ \ \ \}}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00107\ \ \ \mbox{\hyperlink{struct_runtime_object}{RuntimeObject}}\ *\mbox{\hyperlink{class_runtime_array_a5aa7bd264c3f4760c275fc70c7342a38}{read\_ref}}(\textcolor{keywordtype}{size\_t}\ idx)\textcolor{keyword}{\ const\ }\{}
+\DoxyCodeLine{00108\ \ \ \ \ \mbox{\hyperlink{class_runtime_array_a1bd21e91ac048309bf37302b593038cb}{check\_index}}(idx);}
+\DoxyCodeLine{00109\ \ \ \ \ \textcolor{keywordflow}{if}\ (!is\_reference)}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}Attempt\ to\ read\ ref\ from\ primitive\ array"{}});}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_runtime_array_aebd3b5c10ec2e684cab7e37234614080}{refs}}[idx];}
+\DoxyCodeLine{00112\ \ \ \}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00115\ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_runtime_array_a1f2bf1145fd8677bf7601d2db876ea12}{write\_ref}}(\textcolor{keywordtype}{size\_t}\ idx,\ \mbox{\hyperlink{struct_runtime_object}{RuntimeObject}}\ *ref)\ \{}
+\DoxyCodeLine{00116\ \ \ \ \ \mbox{\hyperlink{class_runtime_array_a1bd21e91ac048309bf37302b593038cb}{check\_index}}(idx);}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keywordflow}{if}\ (!is\_reference)}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \textcolor{keywordflow}{throw}\ std::runtime\_error(\textcolor{stringliteral}{"{}Attempt\ to\ write\ ref\ to\ primitive\ array"{}});}
+\DoxyCodeLine{00119\ \ \ \ \ \mbox{\hyperlink{class_runtime_array_aebd3b5c10ec2e684cab7e37234614080}{refs}}[idx]\ =\ ref;}
+\DoxyCodeLine{00120\ \ \ \}}
+\DoxyCodeLine{00121\ \};}
+
+\end{DoxyCode}

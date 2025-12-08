@@ -33,6 +33,13 @@ static const std::unordered_map<char, u4> descriptor_table = {
     {'J', 8}, // long
     {'D', 8}, // double
 };
+/**
+ * @struct RuntimeField
+ * @brief Representação de um campo (field) de uma classe em tempo de execução.
+ *
+ * Diferente do FieldInfo (que é estático), o RuntimeField sabe o seu offset (posição)
+ * dentro dos dados do objeto, permitindo acesso rápido na memória.
+ */
 
 struct RuntimeField {
   std::string name;
@@ -43,6 +50,10 @@ struct RuntimeField {
   u4 static_offset;
   class RuntimeClass *owner;
 
+  /**
+   * @brief Calcula o tamanho do campo em bytes com base no descritor.
+   * @return Tamanho em bytes (ex: 4 para int, 8 para long).
+   */
   // Offset em bytes ou slots (dependendo do modelo)
   u4 offset;
 
@@ -65,7 +76,12 @@ struct RuntimeField {
     return 4;
   }
 };
-
+/**
+ * @struct RuntimeMethod
+ * @brief Representação de um método em tempo de execução.
+ *
+ * Contém um ponteiro direto para o atributo Code, facilitando a execução pelo interpretador.
+ */
 struct RuntimeMethod {
   std::string name;
   std::string descriptor;
@@ -81,7 +97,13 @@ struct RuntimeMethod {
 // ------------------------------------------------------
 // 2. RuntimeClass
 // ------------------------------------------------------
-
+/**
+ * @class RuntimeClass
+ * @brief Representação de uma classe carregada na memória (Área de Métodos).
+ *
+ * Contém a estrutura da classe já resolvida, com mapas para busca rápida
+ * de campos e métodos por nome.
+ */
 class RuntimeClass {
 public:
   std::string name;
@@ -100,29 +122,58 @@ public:
         class_file(nullptr), fields(), methods() {}
 
   // Busca de método/field
+  /**
+   * @brief Busca um método na classe pelo nome e descritor.
+   */
   RuntimeMethod *find_method(const std::string &name,
-                             const std::string &descriptor);
+                        const std::string &descriptor);
+
+   /**
+   * @brief Busca um campo na classe pelo nome e descritor.
+   */
   RuntimeField *find_field(const std::string &name,
                            const std::string &descriptor);
 
   // Tamanho em bytes do data
+  /**
+   * @brief Calcula o tamanho total necessário para armazenar uma instância desta classe.
+   * Soma o tamanho de todos os campos de instância (não estáticos).
+   */
   u4 data_size();
 };
+/**
+ * @struct RuntimeObject
+ * @brief Representa um objeto (instância de classe) ou array na Heap.
+ */
 
 // Objetos
 
 struct RuntimeObject {
   RuntimeClass *klass;
   std::vector<u1> data; // bytes da instância
+/**
+   * @brief Cria um objeto e aloca memória na Heap.
+   * O tamanho é calculado automaticamente com base na classe fornecida.
+   */
 
+  // Métodos genéricos para ler/escrever na memória do objeto
   RuntimeObject(RuntimeClass *k) : klass(k) { data.resize(k->data_size()); }
-
+/**
+   * @brief Lê um valor de um campo da memória do objeto.
+   * @tparam T O tipo de dado a ser lido (int, float, etc).
+   * @param field A estrutura RuntimeField que contém o offset correto.
+   */
   template <typename T> T read_field(const RuntimeField &field) const {
     T value;
     std::memcpy(&value, &data[field.offset], sizeof(T));
     return value;
   }
-
+/**
+   * @brief Escreve um valor num campo na memória do objeto.
+   * @tparam T O tipo de dado a ser escrito.
+   * @param field A estrutura RuntimeField que contém o offset correto.
+   * @param value O valor a ser escrito.
+   */
   template <typename T> void write_field(const RuntimeField &field, T value) {
     std::memcpy(&data[field.offset], &value, sizeof(T));
   }
@@ -131,7 +182,13 @@ struct RuntimeObject {
 // Frame e pilha de execução
 
 using Slot = u4;
-
+/**
+ * @struct OperandStack
+ * @brief Pilha de operandos de um Frame.
+ *
+ * Gerencia o push/pop de valores. Tipos de 64 bits (long/double) ocupam
+ * dois slots na pilha, conforme especificação da JVM.
+ */
 struct OperandStack {
   std::vector<Slot> stack;
 
@@ -227,22 +284,38 @@ struct OperandStack {
 // =====================================================
 // Frame: contexto de execução de um método
 // =====================================================
+/**
+ * @struct Frame
+ * @brief Contexto de execução de um único método.
+ *
+ * Cada chamada de método cria um novo Frame contendo suas próprias variáveis locais,
+ * pilha de operandos e contador de programa (PC).
+ */
 struct Frame {
-  RuntimeMethod *method;
-  RuntimeClass *current_class;
-  std::vector<Slot> local_vars;
-  OperandStack operand_stack;
-  u4 pc;
+  RuntimeMethod *method;        ///< Método sendo executado.
+  RuntimeClass *current_class;  ///< Classe a que o método pertence.
+  std::vector<Slot> local_vars; ///< Vetor de variáveis locais (argumentos + locais).
+  OperandStack operand_stack;   ///< Pilha de operandos para cálculos.
+  u4 pc;                        ///< Program Counter (índice do bytecode atual).
 
   Frame(RuntimeMethod *method, RuntimeClass *current_class)
       : method(method), current_class(current_class), pc(0) {}
 
+  /**
+   * @brief Inicializa as estruturas do frame com os tamanhos definidos no atributo Code.
+   */
   void init(u4 max_locals, u4 max_stack) {
     local_vars.resize(max_locals);
     operand_stack.stack.reserve(max_stack);
   }
 };
 
+/**
+ * @struct Thread
+ * @brief Representa uma thread de execução da JVM.
+ *
+ * Mantém a Pilha de Chamadas (Call Stack), que é a sequência de métodos sendo executados.
+ */
 struct Thread {
   std::vector<Frame *> call_stack;
   Frame &current_frame() { return *call_stack.back(); }
@@ -298,6 +371,10 @@ struct Thread {
 };
 
 //  ClassLoader base
+/**
+ * @class ClassLoader
+ * @brief Classe abstrata base para carregadores de classe.
+ */
 class ClassLoader {
 public:
   virtual RuntimeClass *load_class(const std::string &name) = 0;
@@ -306,19 +383,30 @@ public:
 };
 
 //  BootstrapClassLoader
-
+/**
+ * @class BootstrapClassLoader
+ * @brief Carregador de classes inicial (Bootstrap).
+ *
+ * Responsável por encontrar o arquivo .class no disco, usar o Parser para lê-lo
+ * e construir a estrutura RuntimeClass na memória.
+ */
 class BootstrapClassLoader : public ClassLoader {
 public:
   explicit BootstrapClassLoader(const std::string classpath, Runtime *runtime)
       : classpath_(classpath), runtime(runtime) {}
-
+    /**
+   * @brief Carrega uma classe pelo nome (ex: "java/lang/Object").
+   * Se já estiver carregada, retorna a referência existente.
+   */
   RuntimeClass *load_class(const std::string &name) override;
   void set_classpath(std::string path) { classpath_ = std::move(path); }
 
 private:
   std::string classpath_;
   std::unordered_map<std::string, std::unique_ptr<RuntimeClass>> loaded_;
-
+  /**
+   * @brief Converte a estrutura ClassFile (do parser) para RuntimeClass (da execução).
+   */
   std::unique_ptr<RuntimeClass>
   build_runtime_class(std::unique_ptr<ClassFile> cf);
 
@@ -326,7 +414,16 @@ private:
 };
 
 // Interpretador (esqueleto)
+/**
+ * @struct Interpreter
+ * @brief O motor de execução de bytecode.
+ *
+ * Contém o loop principal que busca instruções (fetch) e o switch gigante que as executa.
+ */
 struct Interpreter {
+  /**
+   * @brief Executa o bytecode presente no frame fornecido.
+   */
   Thread *thread;
   using Opfunc = void (*)(Thread *, Frame &);
   std::unordered_map<uint8_t, Opfunc> opcode_table = {};
@@ -336,18 +433,30 @@ struct Interpreter {
 };
 
 // Method Area
+/**
+ * @class MethodArea
+ * @brief Área de memória compartilhada que armazena todas as classes carregadas.
+ */
 class MethodArea {
 private:
   std::unordered_map<std::string, std::unique_ptr<RuntimeClass>> classes;
 
 public:
+/** @brief Recupera referência para uma classe armazenada. */
   RuntimeClass *getClassRef(const std::string &name);
+  /** @brief Armazena uma nova classe carregada na área de métodos. */
   void storeClass(std::unique_ptr<RuntimeClass> klass);
 };
 
 // Runtime
 // Pensei mais como um classe para resolver o início do modo interpretador e
 // reunir os componentes para organizar melhor as classes
+/**
+ * @class Runtime
+ * @brief Classe principal que gerencia o ciclo de vida da JVM.
+ *
+ * Inicializa a Thread principal, a Área de Métodos e o ClassLoader.
+ */
 class Runtime {
 public:
   Thread *thread;
@@ -362,5 +471,9 @@ public:
   }
 
   ~Runtime();
+  /**
+   * @brief Inicia a execução da JVM carregando a classe especificada.
+   * @param filepath Nome da classe principal a ser executada.
+   */
   void start(std::string filepath, const std::vector<std::string> &args);
 };

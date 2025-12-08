@@ -1,0 +1,46 @@
+\doxysection{Interpreter Struct Reference}
+\hypertarget{struct_interpreter}{}\label{struct_interpreter}\index{Interpreter@{Interpreter}}
+
+
+O motor de execução de bytecode.  
+
+
+
+
+{\ttfamily \#include $<$runtime\+\_\+class\+\_\+types.\+h$>$}
+
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_interpreter_ac0c0f6375a9e4f2cd04fd0c703459a90}\label{struct_interpreter_ac0c0f6375a9e4f2cd04fd0c703459a90} 
+using {\bfseries Opfunc} = void (\texorpdfstring{$\ast$}{*})(\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}, \mbox{\hyperlink{struct_frame}{Frame}} \&)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_interpreter_ac5089b03468e48a608c79de0b93a6d42}\label{struct_interpreter_ac5089b03468e48a608c79de0b93a6d42} 
+{\bfseries Interpreter} (\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*}t)
+\item 
+\Hypertarget{struct_interpreter_a7d73144577c694b25dcf2313700d7e1c}\label{struct_interpreter_a7d73144577c694b25dcf2313700d7e1c} 
+void {\bfseries execute} (\mbox{\hyperlink{struct_frame}{Frame}} \&frame)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_interpreter_a7175041b558673e6e7a89af54e947f07}\label{struct_interpreter_a7175041b558673e6e7a89af54e947f07} 
+\mbox{\hyperlink{struct_thread}{Thread}} \texorpdfstring{$\ast$}{*} {\bfseries thread}
+\begin{DoxyCompactList}\small\item\em Executa o bytecode presente no frame fornecido. \end{DoxyCompactList}\item 
+\Hypertarget{struct_interpreter_a0c55c1dd687b2e267258ac318f0fe7ae}\label{struct_interpreter_a0c55c1dd687b2e267258ac318f0fe7ae} 
+std\+::unordered\+\_\+map$<$ uint8\+\_\+t, Opfunc $>$ {\bfseries opcode\+\_\+table} = \{\}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+O motor de execução de bytecode. 
+
+Contém o loop principal que busca instruções (fetch) e o switch gigante que as executa. 
+
+The documentation for this struct was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+runtime/runtime\+\_\+class\+\_\+types.\+h\item 
+runtime/interpreter.\+cpp\end{DoxyCompactItemize}

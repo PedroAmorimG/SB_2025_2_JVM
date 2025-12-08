@@ -1,0 +1,74 @@
+\doxysection{Runtime\+Field Struct Reference}
+\hypertarget{struct_runtime_field}{}\label{struct_runtime_field}\index{RuntimeField@{RuntimeField}}
+
+
+Representação de um campo (field) de uma classe em tempo de execução.  
+
+
+
+
+{\ttfamily \#include $<$runtime\+\_\+class\+\_\+types.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_runtime_field_a0cb1c27d14e0af4d5d45e780ac5487de}\label{struct_runtime_field_a0cb1c27d14e0af4d5d45e780ac5487de} 
+u4 {\bfseries size\+\_\+in\+\_\+bytes} () const
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_runtime_field_a96e76640ea3539a268509372b43c316b}\label{struct_runtime_field_a96e76640ea3539a268509372b43c316b} 
+std\+::string {\bfseries name}
+\item 
+\Hypertarget{struct_runtime_field_a9dbd3b82f76a447ff3388b37484780b2}\label{struct_runtime_field_a9dbd3b82f76a447ff3388b37484780b2} 
+std\+::string {\bfseries descriptor}
+\item 
+\Hypertarget{struct_runtime_field_a22278d49c72bed955dc1a79421c7fe36}\label{struct_runtime_field_a22278d49c72bed955dc1a79421c7fe36} 
+u2 {\bfseries access\+\_\+flags}
+\item 
+\Hypertarget{struct_runtime_field_aeb61407757f872469bd64274a466cf69}\label{struct_runtime_field_aeb61407757f872469bd64274a466cf69} 
+bool {\bfseries is\+\_\+static}
+\item 
+\Hypertarget{struct_runtime_field_a77752e9c8004352b9a567c1de8d90349}\label{struct_runtime_field_a77752e9c8004352b9a567c1de8d90349} 
+bool {\bfseries is\+\_\+64bit}
+\item 
+\Hypertarget{struct_runtime_field_a63434b0755e185d8c7662521701cdb86}\label{struct_runtime_field_a63434b0755e185d8c7662521701cdb86} 
+u4 {\bfseries static\+\_\+offset}
+\item 
+\Hypertarget{struct_runtime_field_a44338b825f14c03a441b8cd36381c93d}\label{struct_runtime_field_a44338b825f14c03a441b8cd36381c93d} 
+class \mbox{\hyperlink{class_runtime_class}{Runtime\+Class}} \texorpdfstring{$\ast$}{*} {\bfseries owner}
+\item 
+u4 \mbox{\hyperlink{struct_runtime_field_a46dae7a27f2c2a70a3418065ebbd5c21}{offset}}
+\begin{DoxyCompactList}\small\item\em Calcula o tamanho do campo em bytes com base no descritor. \end{DoxyCompactList}\item 
+\Hypertarget{struct_runtime_field_a1d33647232c6832490fb0a1e033ea5d6}\label{struct_runtime_field_a1d33647232c6832490fb0a1e033ea5d6} 
+std\+::vector$<$ u1 $>$ {\bfseries static\+\_\+data}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Representação de um campo (field) de uma classe em tempo de execução. 
+
+Diferente do \doxylink{struct_field_info}{Field\+Info} (que é estático), o \doxylink{struct_runtime_field}{Runtime\+Field} sabe o seu offset (posição) dentro dos dados do objeto, permitindo acesso rápido na memória. 
+
+\label{doc-variable-members}
+\Hypertarget{struct_runtime_field_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{struct_runtime_field_a46dae7a27f2c2a70a3418065ebbd5c21}\index{RuntimeField@{RuntimeField}!offset@{offset}}
+\index{offset@{offset}!RuntimeField@{RuntimeField}}
+\doxysubsubsection{\texorpdfstring{offset}{offset}}
+{\footnotesize\ttfamily \label{struct_runtime_field_a46dae7a27f2c2a70a3418065ebbd5c21} 
+u4 Runtime\+Field\+::offset}
+
+
+
+Calcula o tamanho do campo em bytes com base no descritor. 
+
+\begin{DoxyReturn}{Returns}
+Tamanho em bytes (ex\+: 4 para int, 8 para long). 
+\end{DoxyReturn}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+runtime/runtime\+\_\+class\+\_\+types.\+h\end{DoxyCompactItemize}
