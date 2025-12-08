@@ -19,4 +19,6 @@ public class PrintStream {
 
     public native void println(double d);
 
+    public native void println(char c);
+
 }

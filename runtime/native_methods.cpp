@@ -1,5 +1,5 @@
 #include "native_methods.h"
-
+#include <cmath>
 #include <cstring>
 #include <iostream>
 #include <string>
@@ -13,21 +13,17 @@ static void log_native_call(const char *id) {
 // Chaves para mapear métodos nativos.
 // Formato: "<descriptor> <class>/<method>"
 static const std::string PRINTLN_VOID_KEY = "()V java/io/PrintStream.println";
-static const std::string PRINTLN_STR_KEY =
-    "(Ljava/lang/String;)V java/io/PrintStream.println";
+static const std::string PRINTLN_STR_KEY = "(Ljava/lang/String;)V java/io/PrintStream.println";
 static const std::string PRINTLN_INT_KEY = "(I)V java/io/PrintStream.println";
 static const std::string PRINTLN_LONG_KEY = "(J)V java/io/PrintStream.println";
 static const std::string PRINTLN_BOOL_KEY = "(Z)V java/io/PrintStream.println";
 static const std::string PRINTLN_FLOAT_KEY = "(F)V java/io/PrintStream.println";
-static const std::string PRINTLN_DOUBLE_KEY =
-    "(D)V java/io/PrintStream.println";
-
+static const std::string PRINTLN_DOUBLE_KEY = "(D)V java/io/PrintStream.println";
+static const std::string PRINTLN_CHAR_KEY = "(C)V java/io/PrintStream.println";
 static const std::string STRING_LENGTH_KEY = "()I java/lang/String.length";
 static const std::string STRING_CHAR_AT_KEY = "(I)C java/lang/String.charAt";
-static const std::string STRING_EQUALS_KEY =
-    "(Ljava/lang/Object;)Z java/lang/String.equals";
-static const std::string STRING_GET_BYTES_KEY =
-    "()[B java/lang/String.getBytes";
+static const std::string STRING_EQUALS_KEY = "(Ljava/lang/Object;)Z java/lang/String.equals";
+static const std::string STRING_GET_BYTES_KEY = "()[B java/lang/String.getBytes";
 
 // Helpers para manipular o campo value da String.
 static RuntimeArray *get_string_value(RuntimeObject *str_obj) {
@@ -90,13 +86,15 @@ void print_bl_ln(Frame &frame) {
 }
 
 void print_fl_ln(Frame &frame) {
-  log_native_call("java/io/PrintStream.println(F)V");
-  float value = 0.0f;
-  if (frame.local_vars.size() > 1) {
-    u4 bits = frame.local_vars[1];
-    std::memcpy(&value, &bits, sizeof(float));
+  log_native_call("java/io/PrintStream.println(F)V"); 
+  u4 bits = frame.local_vars.size() > 1 ? frame.local_vars[1] : 0;
+  float value;
+  std::memcpy(&value, &bits, sizeof(float));
+  std::cout << value;
+  if (value == std::floor(value) && !std::isinf(value)) {
+      std::cout << ".0";
   }
-  std::cout << value << std::endl;
+  std::cout << std::endl;
 }
 
 void print_db_ln(Frame &frame) {
@@ -109,6 +107,13 @@ void print_db_ln(Frame &frame) {
     std::memcpy(&value, &bits, sizeof(double));
   }
   std::cout << value << std::endl;
+}
+
+void print_char_ln(Frame &frame) {
+  log_native_call("java/io/PrintStream.println(C)V");
+  int32_t value = static_cast<int32_t>(frame.local_vars.size() > 1 ? frame.local_vars[1] : 0);
+
+  std::cout << static_cast<char>(value) << std::endl;
 }
 
 void str_len(Frame &frame) {
@@ -186,6 +191,7 @@ void load_map(std::unordered_map<std::string, NativeMethod> *native_methods) {
   native_methods->emplace(PRINTLN_BOOL_KEY, &print_bl_ln);
   native_methods->emplace(PRINTLN_FLOAT_KEY, &print_fl_ln);
   native_methods->emplace(PRINTLN_DOUBLE_KEY, &print_db_ln);
+  native_methods->emplace(PRINTLN_CHAR_KEY, &print_char_ln);
 
   native_methods->emplace(STRING_LENGTH_KEY, &str_len);
   native_methods->emplace(STRING_CHAR_AT_KEY, &str_char_at);
