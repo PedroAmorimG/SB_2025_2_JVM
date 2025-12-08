@@ -1,0 +1,5 @@
+<map id="RuntimeArray::create_primitive" name="RuntimeArray::create_primitive">
+<area shape="rect" id="Node000001" title="Cria um array de tipos primitivos." alt="" coords="5,5,151,48"/>
+<area shape="rect" id="Node000002" href="$class_runtime_array.html#a2a1c669c3acb01d9fba81da285196ffe" title="Construtor padrão privado (use os métodos estáticos create_*)." alt="" coords="199,13,388,40"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="151,24,186,26,180,27,151,29"/>
+</map>

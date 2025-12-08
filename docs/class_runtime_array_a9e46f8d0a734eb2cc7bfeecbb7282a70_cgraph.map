@@ -1,0 +1,5 @@
+<map id="RuntimeArray::write_primitive" name="RuntimeArray::write_primitive">
+<area shape="rect" id="Node000001" title="Escreve um valor primitivo no array." alt="" coords="5,5,143,48"/>
+<area shape="rect" id="Node000002" href="$class_runtime_array.html#a1bd21e91ac048309bf37302b593038cb" title="Verifica se o índice está dentro dos limites." alt="" coords="191,5,335,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="143,24,178,26,173,27,143,29"/>
+</map>

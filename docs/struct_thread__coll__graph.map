@@ -1,0 +1,13 @@
+<map id="Thread" name="Thread">
+<area shape="rect" id="Node000001" title="Representa uma thread de execução da JVM." alt="" coords="102,5,163,32"/>
+<area shape="rect" id="Node000002" href="$class_runtime.html" title="Classe principal que gerencia o ciclo de vida da JVM." alt="" coords="260,104,330,131"/>
+<area shape="poly" id="edge2_Node000002_Node000001" title=" " alt="" coords="147,43,161,62,178,78,219,98,262,111,257,111,217,103,175,82,157,66,145,48"/>
+<area shape="rect" id="Node000005" href="$struct_interpreter.html" title="O motor de execução de bytecode." alt="" coords="5,104,86,131"/>
+<area shape="poly" id="edge6_Node000005_Node000001" title=" " alt="" coords="84,24,49,35,33,44,20,57,16,68,19,80,35,103,30,105,14,82,11,68,15,55,30,40,47,30,88,20"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="267,93,224,58,193,43,163,32,163,26,195,38,227,54,272,94"/>
+<area shape="rect" id="Node000003" href="$class_method_area.html" title="Área de memória compartilhada que armazena todas as classes carregadas." alt="" coords="290,5,382,32"/>
+<area shape="poly" id="edge3_Node000002_Node000003" title=" " alt="" coords="327,45,302,106,298,102,322,48"/>
+<area shape="rect" id="Node000004" href="$class_class_loader.html" title="Classe abstrata base para carregadores de classe." alt="" coords="406,5,501,32"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="442,44,428,66,410,82,371,102,331,113,330,108,369,97,407,78,424,62,437,47"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="57,89,83,54,114,31,111,34,87,58,62,92"/>
+</map>

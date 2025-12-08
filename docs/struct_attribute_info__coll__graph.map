@@ -1,0 +1,23 @@
+<map id="AttributeInfo" name="AttributeInfo">
+<area shape="rect" id="Node000001" title="Estrutura genérica que encapsula qualquer tipo de atributo. O parser preenche o campo específico base..." alt="" coords="361,274,453,301"/>
+<area shape="rect" id="Node000002" href="$struct_code_attribute.html" title="O atributo mais importante, contendo o bytecode do método." alt="" coords="40,28,142,54"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="155,29,201,27,249,31,296,44,338,68,360,91,377,118,389,147,398,176,407,232,408,275,403,273,401,233,393,178,384,148,372,120,356,94,335,72,294,49,248,36,201,32,158,33"/>
+<area shape="rect" id="Node000003" href="$struct_source_file_attribute.html" title=" " alt="" coords="25,82,157,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="172,95,268,103,310,112,338,124,355,140,370,159,390,201,401,242,407,275,402,273,396,243,385,203,365,162,352,144,335,128,308,117,268,108,174,100"/>
+<area shape="rect" id="Node000004" href="$struct_constant_value_attribute.html" title=" " alt="" coords="13,137,169,164"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="183,151,273,160,311,168,338,179,362,200,381,225,404,274,398,273,376,228,358,203,335,183,310,173,272,165,185,156"/>
+<area shape="rect" id="Node000005" href="$struct_synthetic_attribute.html" title=" " alt="" coords="28,192,154,218"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="168,204,252,214,295,223,338,237,368,253,393,274,388,274,365,258,336,242,294,229,251,219,170,209"/>
+<area shape="rect" id="Node000006" href="$struct_line_number_table_attribute.html" title=" " alt="" coords="5,246,177,273"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="192,266,362,282,358,285,193,271"/>
+<area shape="rect" id="Node000007" href="$struct_stack_map_table_info.html" title=" " alt="" coords="24,301,158,328"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="172,318,253,319,336,310,377,300,372,303,337,316,253,324,174,323"/>
+<area shape="rect" id="Node000008" href="$struct_local_variable_table_info.html" title=" " alt="" coords="15,356,167,382"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="181,374,259,370,298,362,335,349,369,326,394,303,398,300,373,330,338,354,300,367,260,375,183,379"/>
+<area shape="rect" id="Node000009" href="$struct_unknown_attribute.html" title=" " alt="" coords="28,410,154,437"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="168,433,209,435,253,432,296,422,335,404,360,381,379,353,400,303,404,299,384,355,364,385,338,408,297,427,254,437,210,440,169,438"/>
+<area shape="rect" id="Node000010" href="$struct_exceptions_attribute.html" title=" " alt="" coords="23,465,159,492"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="167,492,209,495,253,493,296,484,335,464,353,447,368,427,388,381,399,336,403,303,407,299,404,336,393,383,373,430,357,451,338,468,298,489,254,499,209,501,167,497"/>
+<area shape="rect" id="Node000011" href="$struct_inner_classes_attribute.html" title=" " alt="" coords="17,520,165,546"/>
+<area shape="poly" id="edge10_Node000001_Node000011" title=" " alt="" coords="154,548,198,554,246,555,293,547,315,538,335,526,348,510,359,486,379,421,402,303,406,299,384,422,364,488,352,513,338,530,317,543,295,552,246,561,198,560,154,553"/>
+</map>
