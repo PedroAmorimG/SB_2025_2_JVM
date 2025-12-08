@@ -1,0 +1,13 @@
+<map id="Frame" name="Frame">
+<area shape="rect" id="Node000001" title="Contexto de execução de um único método." alt="" coords="156,203,214,229"/>
+<area shape="rect" id="Node000002" href="$struct_runtime_method.html" title="Representação de um método em tempo de execução." alt="" coords="23,104,137,131"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="92,142,104,161,117,177,136,191,158,204,153,204,133,195,114,181,100,164,91,147"/>
+<area shape="rect" id="Node000003" href="$struct_code_attribute.html" title="O atributo mais importante, contendo o bytecode do método." alt="" coords="5,5,107,32"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="54,45,60,79,72,103,67,104,55,81,53,50"/>
+<area shape="rect" id="Node000004" href="$class_runtime_class.html" title="Representação de uma classe carregada na memória (Área de Métodos)." alt="" coords="132,5,236,32"/>
+<area shape="poly" id="edge5_Node000001_Node000004" title=" " alt="" coords="187,46,188,203,183,202,182,49"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="143,42,125,58,105,82,89,105,85,102,100,78,122,54,147,38"/>
+<area shape="poly" id="edge4_Node000004_Node000004" title=" " alt="" coords="252,9,263,19,255,27,238,30,236,25,252,23,258,19,252,14"/>
+<area shape="rect" id="Node000005" href="$struct_operand_stack.html" title="Pilha de operandos de um Frame." alt="" coords="296,104,400,131"/>
+<area shape="poly" id="edge6_Node000001_Node000005" title=" " alt="" coords="317,139,208,205,205,200,311,139"/>
+</map>

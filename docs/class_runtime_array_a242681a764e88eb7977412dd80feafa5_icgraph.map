@@ -1,0 +1,9 @@
+<map id="RuntimeArray::create_primitive" name="RuntimeArray::create_primitive">
+<area shape="rect" id="Node000001" title="Cria um array de tipos primitivos." alt="" coords="163,48,308,91"/>
+<area shape="rect" id="Node000002" href="$interpreter_8cpp.html#a8e01913c0132990ac73fcbd07da502e1" title="0x12: Empilha item da Constant Pool (índice 8 bits)." alt="" coords="23,5,97,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="146,45,97,32,97,27,150,43"/>
+<area shape="rect" id="Node000003" href="$interpreter_8cpp.html#a66f6c7354f2008fe0d838fe23a208318" title="0x13: Empilha item da Constant Pool (índice 16 bits)." alt="" coords="15,56,105,83"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="145,70,106,72,105,67,150,68"/>
+<area shape="rect" id="Node000004" href="$interpreter_8cpp.html#ac473bf12a2748bfd1c44fae0a0d00220" title="0xBC: Cria array de tipo primitivo." alt="" coords="5,107,115,133"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="150,94,110,109,108,103,145,95"/>
+</map>

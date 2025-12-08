@@ -1,0 +1,17 @@
+<map id="RuntimeArray::check_index" name="RuntimeArray::check_index">
+<area shape="rect" id="Node000001" title="Verifica se o índice está dentro dos limites." alt="" coords="356,93,500,136"/>
+<area shape="rect" id="Node000002" href="$class_runtime_array.html#a6f6dbe6799503acfac8bc7c0aa912983" title="Lê um valor primitivo do array." alt="" coords="161,5,296,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="364,87,307,62,282,51,282,46,309,58,369,86"/>
+<area shape="rect" id="Node000003" href="$class_runtime_array.html#a5aa7bd264c3f4760c275fc70c7342a38" title="Lê uma referência de objeto do array." alt="" coords="150,72,306,99"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="338,102,307,100,307,94,343,101"/>
+<area shape="rect" id="Node000004" href="$class_runtime_array.html#a9e46f8d0a734eb2cc7bfeecbb7282a70" title="Escreve um valor primitivo no array." alt="" coords="160,123,297,165"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="338,128,298,137,297,131,343,127"/>
+<area shape="rect" id="Node000008" href="$class_runtime_array.html#a1f2bf1145fd8677bf7601d2db876ea12" title="Escreve uma referência de objeto no array." alt="" coords="149,189,308,216"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="379,143,309,180,278,191,277,186,307,175,374,144"/>
+<area shape="rect" id="Node000005" href="$interpreter_8cpp.html#af6a0b7b9438dd440cf542096e64da1aa" title="0x4F: Armazena int em array." alt="" coords="5,80,101,107"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="143,121,101,110,101,104,147,119"/>
+<area shape="rect" id="Node000006" href="$interpreter_8cpp.html#a8e01913c0132990ac73fcbd07da502e1" title="0x12: Empilha item da Constant Pool (índice 8 bits)." alt="" coords="16,131,90,157"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="142,145,91,147,90,141,146,143"/>
+<area shape="rect" id="Node000007" href="$interpreter_8cpp.html#a66f6c7354f2008fe0d838fe23a208318" title="0x13: Empilha item da Constant Pool (índice 16 bits)." alt="" coords="8,181,98,208"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="142,169,99,184,98,179,147,167"/>
+</map>

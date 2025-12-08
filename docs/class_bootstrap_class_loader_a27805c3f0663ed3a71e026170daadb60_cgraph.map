@@ -1,0 +1,6 @@
+<map id="BootstrapClassLoader::load_class" name="BootstrapClassLoader::load_class">
+<area shape="rect" id="Node000001" title="Carrega uma classe pelo nome (ex: &quot;java/lang/Object&quot;). Se já estiver carregada, retorna a referência ..." alt="" coords="5,29,156,72"/>
+<area shape="poly" id="edge1_Node000001_Node000001" title=" " alt="" coords="44,28,43,19,49,10,61,5,81,3,101,5,115,13,109,14,99,10,80,8,63,10,52,15,48,21,49,29"/>
+<area shape="rect" id="Node000002" href="$class_class_parser.html#a764ff81f2fc634b23e4dfa0875e76107" title="Executa o processo de parsing completo." alt="" coords="204,37,337,64"/>
+<area shape="poly" id="edge2_Node000001_Node000002" title=" " alt="" coords="156,48,191,50,186,51,156,53"/>
+</map>
